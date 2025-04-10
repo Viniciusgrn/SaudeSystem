@@ -1,0 +1,177 @@
+{% extends 'paginas/modelo-ifpr.html' %}
+
+{% load static %}
+
+{% block conteudo %}
+<h4 class="text-center">
+    <i class="fa fa-house-chimney-medical"></i> Estabelecimentos / Prestadores
+    <a href="{% url 'create-estabelecimentos' %}" class="btn btn-primary btn-sm float-right">Novo estabelecimento</a>
+</h4>
+
+<hr>
+
+<div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active py-5" id="home" role="tabpanel" aria-labelledby="home-tab">
+        <div class="table-responsive">
+            <table class="table table-striped" id="tabela-listar">
+                <thead>
+                    <tr>
+                        <!-- <th>#</th> -->
+                        <th>CNES</th>
+                        <th>Prestador</th>
+                        <th>Telefone</th>
+                        <th>Gerente</th>
+                        <th>Tipo do estabelecimento</th>
+                        <!-- <th>Documento do estabelecimento</th> -->
+                        <!-- <th>CNPJ da Mantenedora</th> -->
+                        <!-- <th>Natureza Juridica</th> -->
+                        <!-- <th>Nome da Empresarial</th> -->
+                        <!-- <th>Tipo de estrutura</th> -->
+                        <!-- <th>Logradouro</th> -->
+                        <!-- <th>Número de endereco</th> -->
+                        <!-- <th>Complemento de endereco</th> -->
+                        <!-- <th>Bairro</th> -->
+                        <!-- <th>Municipio</th> -->
+                        <!-- <th>UF</th> -->
+                        <!-- <th>CEP</th> -->
+                        <!-- <th>R.Saúde</th> -->
+                        <!-- <th>Microrregião</th> -->
+                        <!-- <th>Distritos/Regiões Administrativas</th> -->
+                        <!-- <th>Registro de conselho de classe</th> -->
+                        <th>E-mail</th>
+                        <!-- <th>URL</th> -->
+                        <!-- <th>Latitude</th>
+                        <th>Longitude</th> -->
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for estabelecimento in object_list %}
+                    <tr>
+                        <div class="accordion" id="accordionExample">
+                            <div class="card">
+                              <div class="card-header" id="headingOne">
+                                <h2 class="mb-0">
+                                    <div class="row text-center">
+                                        <div class="col-12 col-md-6">
+                                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne{{ estabelecimento.pk }}" aria-expanded="true" aria-controls="collapseOne">
+                                              {{ estabelecimento.cnes }} - {{ estabelecimento.nomeFantasia }}
+                                            </button>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <a href="{% url 'list-agenda' %}" class="btn btn-primary btn-sm" data-toggle="tooltip" title="Agenda">
+                                                <i class="fa-solid fa-calendar-days"></i>
+                                            </a>
+                                            <a href="{% url 'estabelecimentoProfissionaisList' estabelecimento.pk %}" class="btn btn-success btn-sm" data-toggle="tooltip" title="Funcionários">
+                                                <i class="fa-solid fa-users"></i>
+                                            </a>
+                                            <a href="{% url 'update-estabelecimentos' estabelecimento.pk %}" class="btn btn-warning btn-sm" data-toggle="tooltip" title="Configurações">
+                                                <i class="fa fa-cogs"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </h2>
+                              </div>
+                          
+                              <div id="collapseOne{{ estabelecimento.pk }}" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                                <div class="card-body">
+                                    <button type="button" class="btn btn-default btn-circle btn-xl"><i class="fa fa-check"></i></button>
+                                    <button type="button" class="btn btn-primary btn-circle btn-xl"><h1><i class="fa fa-check"></i></h1></button>
+                                    <button type="button" class="btn btn-success btn-circle btn-xl"><i class="fa fa-check"></i></button>
+                                    <button type="button" class="btn btn-info btn-circle btn-xl"><i class="fa fa-check"></i></button>
+                                    <button type="button" class="btn btn-warning btn-circle btn-xl"><i class="fa fa-check"></i></button>
+                                    <button type="button" class="btn btn-danger btn-circle btn-xl"><i class="fa fa-check"></i></button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                        <!-- <td>{{ estabelecimento.id }}</td> -->
+                        <td>{{ estabelecimento.cnes }}</td>
+                        <td>{{ estabelecimento.nomeFantasia }}</td>
+                        <td>{{ estabelecimento.telefone|default_if_none:"Não cadastrado" }}</td>
+                        <td>{{ estabelecimento.gerente }}</td>
+                        <td>{{ estabelecimento.tipoEstabelecimento }}</td>
+                        <!-- <td>{{ estabelecimento.tipoEstrutura }}</td> -->
+                        <!-- <td>{{ estabelecimento.documentoEstabelecimento}}</td> -->
+                        <!-- <td>{{ estabelecimento.cnpjMantenedora }}</td> -->
+                        <!-- <td>{{ estabelecimento.naturezaJuridica }}</td> -->
+                        <!-- <td>{{ estabelecimento.nomeEmpresarial }}</td> -->
+                        <!-- <td>{{ estabelecimento.logradouro }}</td> -->
+                        <!-- <td>{{ estabelecimento.numeroEndereco }}</td> -->
+                        <!-- <td>{{ estabelecimento.complementoEndereco }}</td> -->
+                        <!-- <td>{{ estabelecimento.bairro }}</td> -->
+                        <!-- <td>{{ estabelecimento.municipio }}</td> -->
+                        <!-- <td>{{ estabelecimento.uf }}</td> -->
+                        <!-- <td>{{ estabelecimento.cep }}</td> -->
+                        <!-- <td>{{ estabelecimento.rSaude }}</td> -->
+                        <!-- <td>{{ estabelecimento.microrregiao }}</td> -->
+                        <!-- <td>{{ estabelecimento.distritosRegioesAdministrativas }}</td> -->
+                        <!-- <td>{{ estabelecimento.registroConselhoDeClasse }}</td> -->
+                        <td>{{ estabelecimento.email }}</td>
+                        <!-- <td>{{ estabelecimento.url }}</td> -->
+                        <!-- <td>{{ estabelecimento.latitude }}</td> -->
+                        <!-- <td>{{ estabelecimento.longitude }}</td> -->
+                        <td class="text-center">
+                            <a href="{% url 'list-agenda' %}" class="btn btn-primary btn-sm" data-toggle="tooltip" title="Agenda">
+                                <i class="fa-solid fa-calendar-days"></i>
+                            </a>
+                            <a href="{% url 'estabelecimentoProfissionaisList' estabelecimento.pk %}" class="btn btn-success btn-sm" data-toggle="tooltip" title="Funcionários">
+                                <i class="fa-solid fa-users"></i>
+                            </a>
+                            <a href="{% url 'update-estabelecimentos' estabelecimento.pk %}" class="btn btn-warning btn-sm" data-toggle="tooltip" title="Configurações">
+                                <i class="fa fa-cogs"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+
+    $('#id_paciente').select2();
+
+    $("#tabela-listar").DataTable({
+        responsive: true,
+        // "bSort": false,
+        "aaSorting": [],
+        "pageLength": 100,
+        "language": {
+            "decimal": "",
+            "emptyTable": "Sem dados disponíveis",
+            "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+            "infoEmpty": "Mostrando de 0 até 0 de 0 registros",
+            "infoFiltered": "(filtrado de _MAX_ registros no total)",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "loadingRecords": "A carregar dados...",
+            "processing": "A processar...",
+            "search": "Procurar:",
+            "zeroRecords": "Não foram encontrados resultados",
+            "paginate": {
+                "first": "Primeiro",
+                "last": "Último",
+                "next": "Seguinte",
+                "previous": "Anterior"
+            },
+            "aria": {
+                "sortAscending": ": ordem crescente",
+                "sortDescending": ": ordem decrescente"
+            }
+        }
+    });
+
+</script>
+{% endblock %}
+
+{% block rodape-links %}
+
+{% endblock %}

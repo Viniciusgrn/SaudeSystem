@@ -1,0 +1,275 @@
+{% extends 'paginas/modelo-ifpr.html' %}
+
+{% load static %}
+
+{% load crispy_forms_tags%}
+
+{% block conteudo %}
+<h3>Novo Estabelecimento</h3>
+<p class="lead">
+    Preencher todos os campos obrigatorios.
+</p>
+
+<hr>
+
+<form action="" method="POST">
+
+    <input type="hidden" name="csrfmiddlewaretoken"
+        value="qxHOGM8HQ8H2RHp2qJY3YLvwx4E9Ci17gi9kQfyHsVXrTiPWwVw6EpEjgvoIJP5L">
+
+
+    <div class="row">
+        <div id="div_id_cnes" class="col-2 form-group">
+            <label for="id_cnes" class=" requiredField">
+                Codigo do CNES<span class="asteriskField">*</span> </label>
+            <div class=""> <input type="text" name="cnes" maxlength="7" class="textinput textInput form-control"
+                    required="" id="id_cnes"> </div>
+        </div>
+
+        <div id="div_id_nomeFantasia" class="col-3 form-group"> <label for="id_nomeFantasia" class=" requiredField">
+                Nome Fantasia<span class="asteriskField">*</span> </label>
+            <div class=""> <input type="text" name="nomeFantasia" maxlength="50"
+                    class="textinput textInput form-control" required="" id="id_nomeFantasia"> </div>
+        </div>
+
+        <div id="div_id_tipoEstabelecimento" class="col-3 form-group">
+            <label for="id_tipoEstabelecimento" class=" requiredField">
+                Tipo de Estabelecimento<span class="asteriskField">*</span> </label>
+            <div class="">
+                <select name="tipoEstabelecimento" class="select form-control" required="" id="id_tipoEstabelecimento">
+                    <option value="" selected="">Selecione um tipo</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                </select>
+            </div>
+        </div>
+        <div id="div_id_subtipoEstabelecimento" class="col-3 form-group"> <label for="id_subtipoEstabelecimento"
+                class=" requiredField">
+                Subtipo de Estabelecimento<span class="asteriskField">*</span> </label>
+            <div class=""> <select name="subtipoEstabelecimento" class="select form-control" required=""
+                    id="id_subtipoEstabelecimento">
+                    <option value="" selected="">Selecione um Subtipo</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+
+                </select> </div>
+        </div>
+        <!-- <div id="div_id_documentoEstabelecimento" class="col-2 form-group"> <label for="id_documentoEstabelecimento"
+                class=" requiredField">
+                CPF ou CNPJ do estabelecimento<span class="asteriskField">*</span> </label>
+            <div class=""> <input type="text" name="documentoEstabelecimento" maxlength="18"
+                    class="textinput textInput form-control" required="required" id="id_documentoEstabelecimento"> </div>
+        </div> -->
+        <!-- <div id="div_id_cnpjMantenedora" class="col-2 form-group"> <label for="id_cnpjMantenedora" class=" requiredField">
+                CNPJ da Mantenedora<span class="asteriskField">*</span> </label>
+            <div class=""> <input type="text" name="cnpjMantenedora" maxlength="18" class="textinput textInput form-control"
+                    required="" id="id_cnpjMantenedora"> </div>
+        </div> -->
+    </div>
+
+    <div class="row">
+        <!-- <div id="div_id_naturezaJuridica" class="col-3 form-group"> 
+            <label for="id_naturezaJuridica" class=" requiredField">
+                Natureza juridica<span class="asteriskField">*</span> 
+            </label>
+            <div class=""> 
+                <input type="text" name="naturezaJuridica" maxlength="14" class="textinput textInput form-control" required="" id="id_naturezaJuridica"> 
+            </div>
+        </div> -->
+        <!-- <div id="div_id_nomeEmpresarial" class="col-3 form-group"> <label for="id_nomeEmpresarial" class=" requiredField">
+                Nome Empresarial<span class="asteriskField">*</span> </label>
+            <div class=""> <input type="text" name="nomeEmpresarial" maxlength="120"
+                    class="textinput textInput form-control" required="" id="id_nomeEmpresarial"> </div>
+        </div> -->
+        <!-- <div id="div_id_tipoEstrutura" class="col-3 form-group"> <label for="id_tipoEstrutura" class=" requiredField">
+                Tipo de estrutura<span class="asteriskField">*</span> </label>
+            <div class=""> <input type="text" name="tipoEstrutura" maxlength="50" class="textinput textInput form-control"
+                    required="" id="id_tipoEstrutura"> </div>
+        </div> -->
+    </div>
+
+    <div class="row">
+        <div id="div_id_cep" class="col-2 form-group"> <label for="id_cep" class=" requiredField">
+                CEP<span class="asteriskField">*</span> </label>
+            <div class=""> <input type="text" name="cep" maxlength="8" class="textinput textInput form-control"
+                    required="" id="id_cep"> </div>
+        </div>
+
+        <div id="div_id_logradouro" class="col-6 form-group"> <label for="id_logradouro" class=" requiredField">
+                Logradouro<span class="asteriskField">*</span> </label>
+            <div class=""> <input type="text" name="logradouro" maxlength="50" class="textinput textInput form-control"
+                    required="" id="id_logradouro"> </div>
+        </div>
+        <div id="div_id_numeroEndereco" class="col-2 form-group"> <label for="id_numeroEndereco" class=" requiredField">
+                Número de endereço<span class="asteriskField">*</span> </label>
+            <div class=""> <input type="text" name="numeroEndereco" maxlength="10"
+                    class="textinput textInput form-control" required="" id="id_numeroEndereco"> </div>
+        </div>
+    </div>
+    <div class="row">
+        <div id="div_id_complementoEndereco" class="col-3 form-group"> <label for="id_complementoEndereco" class="">
+                Complemento
+            </label>
+            <div class=""> <input type="text" name="complementoEndereco" maxlength="50"
+                    class="textinput textInput form-control" id="id_complementoEndereco"> </div>
+        </div>
+        <div id="div_id_bairro" class="col-3 form-group"> <label for="id_bairro" class=" requiredField">
+                Bairro<span class="asteriskField">*</span> </label>
+            <div class=""> <input type="text" name="bairro" maxlength="50" class="textinput textInput form-control"
+                    required="" id="id_bairro"> </div>
+        </div>
+        <div id="div_id_municipio" class="col-3 form-group"> <label for="id_municipio" class=" requiredField">
+                Município<span class="asteriskField">*</span> </label>
+            <div class=""> <input type="text" name="municipio" maxlength="50" class="textinput textInput form-control"
+                    required="" id="id_municipio"> </div>
+        </div>
+        <div id="div_id_uf" class="col-1 form-group"> <label for="id_uf" class=" requiredField">
+                UF<span class="asteriskField">*</span> </label>
+            <div class=""> <input type="text" name="uf" maxlength="2" class="textinput textInput form-control"
+                    required="" id="id_uf"> </div>
+        </div>
+    </div>
+
+    <!-- <div id="div_id_rSaude" class="form-group"> <label for="id_rSaude" class=" requiredField">
+            Região de saúde<span class="asteriskField">*</span> </label>
+        <div class=""> <input type="text" name="rSaude" maxlength="6" class="textinput textInput form-control"
+                required="" id="id_rSaude"> </div>
+    </div> -->
+    <!-- <div id="div_id_microrregiao" class="form-group"> <label for="id_microrregiao" class=" requiredField">
+            Microrregião<span class="asteriskField">*</span> </label>
+        <div class=""> <input type="text" name="microrregiao" maxlength="50" class="textinput textInput form-control"
+                required="" id="id_microrregiao"> </div>
+    </div> -->
+    <!-- <div id="div_id_distritosRegioesAdministrativas" class="form-group"> <label for="id_distritosRegioesAdministrativas"
+            class=" requiredField">
+            Distrito/Regiões administrativas<span class="asteriskField">*</span> </label>
+        <div class=""> <input type="text" name="distritosRegioesAdministrativas" maxlength="50"
+                class="textinput textInput form-control" required="" id="id_distritosRegioesAdministrativas"> </div>
+    </div> -->
+    <!-- <div id="div_id_gerente" class="form-group"> <label for="id_gerente" class=" requiredField">
+            Gerente/Administrador<span class="asteriskField">*</span> </label>
+        <div class=""> <input type="text" name="gerente" maxlength="50" class="textinput textInput form-control"
+                required="" id="id_gerente"> </div>
+    </div> -->
+    <!-- <div id="div_id_registroConselhoDeClasse" class="form-group"> <label for="id_registroConselhoDeClasse"
+            class=" requiredField">
+            Registro Conselho de Classe<span class="asteriskField">*</span> </label>
+        <div class=""> <input type="text" name="registroConselhoDeClasse" maxlength="50"
+                class="textinput textInput form-control" required="" id="id_registroConselhoDeClasse"> </div>
+    </div> -->
+    <!-- <div id="div_id_email" class="form-group"> <label for="id_email" class=" requiredField">
+            Email<span class="asteriskField">*</span> </label>
+        <div class=""> <input type="email" name="email" maxlength="150" class="emailinput form-control" required=""
+                id="id_email"> </div>
+    </div> -->
+    <!-- <div id="div_id_url" class="form-group"> <label for="id_url" class="">
+            URL
+        </label>
+        <div class=""> <input type="text" name="url" maxlength="255" class="textinput textInput form-control"
+                id="id_url"> </div>
+    </div> -->
+    <!-- <div id="div_id_latitude" class="form-group"> <label for="id_latitude" class="">
+            Latitude
+        </label>
+        <div class=""> <input type="text" name="latitude" maxlength="15" class="textinput textInput form-control"
+                id="id_latitude"> </div>
+    </div>
+    <div id="div_id_longitude" class="form-group"> <label for="id_longitude" class="">
+            Longitude
+        </label>
+        <div class=""> <input type="text" name="longitude" maxlength="15" class="textinput textInput form-control"
+                id="id_longitude"> </div>
+    </div> -->
+
+
+    <button type="submit" class="btn btn-primary">Salvar</button>
+
+</form>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/jquery.mask.min.js' %}"></script>
+
+<!-- <script>
+    $(document).ready(function(){       
+        $('#id_telefone').mask("(00)00000000000");
+        $('#id_dataNascimento').mask("00/00/0000");
+        $('#id_cns').mask("000.0000.0000.0000");
+        
+        $('#id_cns').keypress(function(){
+            if($('#id_cns').val().length < 18){
+                changeBorderGreen();
+                limpaElementos();
+                disableSubmit()
+            }else if($('#id_cns').val().length == 18){
+                enableSubmit()
+            }
+        })
+
+        $('#id_cns').focusout('change', function() {
+            var cns = $('#id_cns').val();
+            cns = cns.replace(/[^0-9]/, "").replace(/[^0-9]/, "").replace(/[^0-9]/, "");
+            var token = $('[name="csrfmiddlewaretoken"]').val();
+            $.ajax({
+                url: "{% url 'verifica-cns' %}",
+                type: 'post',
+                data: {
+                    'cns': cns,
+                    'csrfmiddlewaretoken': token,
+                },
+                success: function (response){
+                    limpaElementos()
+                    if(response.status == true){
+                        var template = "<div class='invalid-feedback pacienteExistente' id='pacienteExistente'><i class='fas fa-exclamation-triangle'></i><strong> Paciente já existe.</strong></div>"                        
+                        changeBorderRed()                        
+                        document.getElementById('id_cns').insertAdjacentHTML("afterend", template)
+                        document.getElementById('pacienteExistente').style.display = 'block';
+                        disableSubmit()
+                    }else if(response.status == false){
+                        changeBorderGreen()
+                        enableSubmit()
+
+                    }
+                },
+                error: function (response) {
+                    console.log("Você não tem permissão para essa ação.")
+                }
+            });
+        });
+
+        function changeBorderRed(){
+            var element = document.getElementById("id_cns");
+            element.style.borderColor = "red";;
+        }
+
+        function changeBorderGreen(){
+            var element = document.getElementById("id_cns");
+            element.style.borderColor = "green";;
+        }        
+
+        function limpaElementos(){
+            var lista = document.getElementsByClassName("pacienteExistente");
+            for(var i = lista.length - 1; i >= 0; i--)
+            {
+                lista[i].remove()
+            }
+        }
+
+        function enableSubmit(){
+            $('button[type=submit]').attr('disabled', false);
+        }
+
+        function disableSubmit(){
+            $('button[type=submit]').attr('disabled', 'disabled');
+        }
+    });
+</script> -->
+{% endblock %}
+
+
+{% block rodape-links %}
+
+{% endblock %}
