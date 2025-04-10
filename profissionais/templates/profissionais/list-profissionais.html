@@ -1,0 +1,130 @@
+{% extends 'paginas/modelo-ifpr.html' %}
+
+{% load static %}
+
+{% block conteudo %}
+<h4 class="text-center">
+    Profissionais
+    <a href="{% url 'create-profissional' %}" class="btn btn-primary btn-sm float-right">Novo profissional</a>
+</h4>
+
+<hr>
+
+<div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active py-5" id="home" role="tabpanel" aria-labelledby="home-tab">
+        <div class="table-responsive">
+            <table class="table table-striped" id="tabela-listar">
+                <thead>
+                    <tr>                        
+                        <!-- <th>#</th> -->
+                        <th>CPF</th>
+                        <th>CNS</th>
+                        <th>Nome do profissional</th>
+                        <!-- <th>Programa</th> -->
+                        <!-- <th>Data de adesão</th> -->
+                        <th>Município Atuação</th>
+                        <th>Vínculo</th>
+                        <!-- <th>Perfil</th> -->
+                        <th>Código do CNES</th>
+                        <th>Nome Fantasia</th>
+                        <th>CBO</th>
+                        <!-- <th>Orgão emissor</th> -->
+                        <!-- <th>UF</th> -->
+                        <!-- <th>Registro Conselho de Classe</th> -->
+                        <!-- <th>CNPJ do empregrador</th> -->
+                        <!-- <th>Natureza juridica</th> -->
+                        <!-- <th>Atendimento ao SUS</th> -->
+                        <!-- <th>Carga horária ambulatorial</th> -->
+                        <!-- <th>Carga horária hospitalar</th> -->
+                        <!-- <th>Carga horária referente a outros</th> -->
+                        <!-- <th>Status do profissional</th> -->
+                        <!-- <th>Forma de contratação com o estabelecimento</th> -->
+                        <!-- <th>Forma de contratação com o empregador</th> -->
+                        <!-- <th>Detalhamento da forma de contratação</th> -->
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for profissional in object_list %}
+                    <!-- <td>{{ profissional.id }}</td> -->
+                    <td>{{ profissional.cpf }}</td>
+                    <td>{{ profissional.codigoCns }}</td>
+                    <td>{{ profissional.nomeProfissional }}</td>
+                    <!-- <td>{{ profissional.programa}}</td> -->
+                    <!-- <td>{{ profissional.dataDeAdesao }}</td> -->
+                    <td>{{ profissional.municipioAtuacao }}</td>
+                    <td>-></td>
+                    <!-- <td>{{ profissional.perfil }}</td> -->
+                    <td>{{ profissional.cnesEstabelecimento }}</td>
+                    <td>{{ profissional.nomeFantasiaEstabelecimento }}</td>
+                    <td>{{ profissional.cbo }}</td>
+                    <!-- <td>{{ profissional.orgaoEmissor }}</td> -->
+                    <!-- <td>{{ profissional.uf }}</td> -->
+                    <!-- <td>{{ profissional.registroConselhoClasse }}</td> -->
+                    <!-- <td>{{ profissional.cnpjEmpregador }}</td> -->
+                    <!-- <td>{{ profissional.naturezaJuridica }}</td> -->
+                    <!-- <td>{{ profissional.atendimentoSus }}</td> -->
+                    <!-- <td>{{ profissional.cargaHorariaAmbuladorial }}</td> -->
+                    <!-- <td>{{ profissional.cargaHorariaHospitalar }}</td> -->
+                    <!-- <td>{{ profissional.cargaHorariaOutros }}</td> -->
+                    <!-- <td>{{ profissional.profissionalStatus }}</td> -->
+                    <!-- <td>{{ profissional.formaContratacaoEstabelecimento }}</td> -->
+                    <!-- <td>{{ profissional.formaContratacaoEmpregador }}</td> -->
+                    <!-- <td>{{ profissional.detalhamentoFormaContratacao }}</td> -->
+                    <td>
+                        <a href="{% url 'update-profissional' profissional.pk %}" class="btn btn-warning btn-sm">
+                            <i class="fa fa-pencil"></i>
+                        </a>
+                    </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+
+    $('#id_paciente').select2();
+
+    $("#tabela-listar").DataTable({
+        responsive: true,
+        // "bSort": false,
+        "aaSorting": [],
+        "pageLength": 100,
+        "language": {
+            "decimal": "",
+            "emptyTable": "Sem dados disponíveis",
+            "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+            "infoEmpty": "Mostrando de 0 até 0 de 0 registros",
+            "infoFiltered": "(filtrado de _MAX_ registros no total)",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "loadingRecords": "A carregar dados...",
+            "processing": "A processar...",
+            "search": "Procurar:",
+            "zeroRecords": "Não foram encontrados resultados",
+            "paginate": {
+                "first": "Primeiro",
+                "last": "Último",
+                "next": "Seguinte",
+                "previous": "Anterior"
+            },
+            "aria": {
+                "sortAscending": ": ordem crescente",
+                "sortDescending": ": ordem decrescente"
+            }
+        }
+    });
+
+</script>
+{% endblock %}
+
+{% block rodape-links %}
+
+{% endblock %}

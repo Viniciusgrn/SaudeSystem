@@ -1,0 +1,505 @@
+{% extends 'paginas/modelo-ifpr.html' %}
+{% load humanize %}
+{% load static %}
+
+{% block conteudo %}
+
+<h3 class="text-center my-0 py-0">
+    <i class="fa fa-file-alt"></i> 
+    Relatório
+</h3>
+<div class="row my-0 py-0">
+    <div class="col-12 my-0 py-0">
+        <h5 class="my-0 py-0">
+            <span class="badge badge-pill badge-secondary my-3 float-right">Total de pessoas na fila: {{ countFilaRegulada|intcomma }}</span>
+        </h5>
+    </div>
+</div>
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <!-- <li class="nav-item">
+      <a class="nav-link active" id="simples-tab" data-toggle="tab" href="#simples" role="tab" aria-controls="simples" aria-selected="true">Fila de Espera ({{ quantidadeFilaSimples }})</a>
+    </li> -->
+    <!-- <li class="nav-item">
+      <a class="nav-link" id="simplesConsultas-tab" data-toggle="tab" href="#simplesConsultas" role="tab" aria-controls="simplesConsultas" aria-selected="true">Fila de Espera Consultas </a>
+    </li>
+    
+    <li class="nav-item">
+        <a class="nav-link" id="simplesExames-tab" data-toggle="tab" href="#simplesExames" role="tab" aria-controls="simplesExames" aria-selected="true">Fila de Espera Exames </a>
+    </li>  -->
+    <li class="nav-item">
+      <a class="nav-link" id="regulada-tab" data-toggle="tab" href="#regulada" role="tab" aria-controls="regulada" aria-selected="false">Fila Regulada <small>({{ countFilaRegulada|intcomma }})</small></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="reguladaConsultas-tab" data-toggle="tab" href="#reguladaConsultas" role="tab" aria-controls="reguladaConsultas" aria-selected="true">Consultas <small>({{countConsultas|intcomma}})</small></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="reguladaExames-tab" data-toggle="tab" href="#reguladaExames" role="tab" aria-controls="reguladaExames" aria-selected="true">Exames  <small>({{countExames|intcomma}})</small></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="reguladaCirurgias-tab" data-toggle="tab" href="#reguladaCirurgias" role="tab" aria-controls="reguladaCirurgias" aria-selected="true">Cirurgias  <small>({{countCirurgias|intcomma}})</small></a>
+    </li>
+ 
+    <!-- <li class="nav-item">
+        <a class="nav-link" id="semDicionario-tab" data-toggle="tab" href="#semDicionario" role="tab" aria-controls="semDicionario" aria-selected="false">Incluir no Dicionário</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="semDemanda-tab" data-toggle="tab" href="#semDemanda" role="tab" aria-controls="semDemanda" aria-selected="false">Sem demanda</a>
+    </li> -->
+
+  </ul>
+  <div class="tab-content" id="myTabContent">
+    <!-- <div class="tab-pane fade" id="simples" role="tabpanel" aria-labelledby="simples-tab">
+        <a href="{% url 'sincronizarDicionarioFilaEspera' %}" class="btn btn-primary rounded-circle btn-sm float-right m-2" title="Sincronizar Dicionário da Fila de Espera" data-toggle="tooltip"><i class="fas fa-sync"></i></a> 
+        <span class="badge badge-pill badge-warning my-3 float-right">Último arquivo importado da FILA DE ESPERA: <strong>{{ ultimaImportacaoSimples.dataDoArquivo|date:"d"}}/{{ ultimaImportacaoSimples.dataDoArquivo|date:"m"}}/{{ultimaImportacaoSimples.dataDoArquivo|date:"Y" }}</strong></span>
+        <div class="table-responsive">
+            <table class="table table-striped" id="filaSimples">        
+                <thead>
+                    <tr>
+                        <th>Código Sigtap</th>              
+                        <th>Descrição do procedimento</th>
+                        <th class="text-center">Total de pacientes na fila</th>
+                        <th class="text-center">Data mais antiga</th>
+                        <th class="text-center">Qtde. de dias aguardando na fila</th>
+                    </tr>
+                </thead>                
+                <tbody>
+                    {% for importar in filaSimples %}         
+                        <tr>
+                            <td class="m-1 p-1">{{ importar.codSigtap }}</td>               
+                            <td class="m-1 p-1">{{ importar.alias }}</td>
+                            <td class="m-1 p-1 text-center">{{ importar.fila }}</td>
+                            <td class="m-1 p-1 text-center">{{ importar.dataMaisAntiga|date:"d"}}/{{ importar.dataMaisAntiga|date:"m"}}/{{ importar.dataMaisAntiga|date:"Y" }}</td>
+                            <td class="m-1 p-1 text-center">{{ importar.quantidadeDiasNaFila }}</td>
+                        </tr>
+                    {% endfor %}   
+                </tbody>
+            </table>
+        </div> 
+    </div> -->
+
+    <!-- fila de espera consultas -->
+    <!-- <div class="tab-pane fade" id="simplesConsultas" role="tabpanel" aria-labelledby="simplesConsultas-tab">
+        <span class="badge badge-pill badge-warning my-3 float-right">Último arquivo importado da FILA DE ESPERA: <strong>{{ ultimaImportacaoSimples.dataDoArquivo|date:"d"}}/{{ ultimaImportacaoSimples.dataDoArquivo|date:"m"}}/{{ultimaImportacaoSimples.dataDoArquivo|date:"Y" }}</strong></span>
+        <div class="table-responsive">
+            <table class="table table-striped" id="filaSimplesConsultas">        
+                <thead>
+                    <tr>
+                        <th>Código Sigtap</th>              
+                        <th>Descrição do procedimento</th>
+                        <th class="text-center">Total de pacientes na fila</th>
+                        <th class="text-center">Data mais antiga</th>
+                        <th class="text-center">Qtde. de dias aguardando na fila</th>
+                    </tr>
+                </thead>                
+                <tbody>
+                    {% for importar in filaSimplesConsultas %}         
+                        <tr>
+                            <td class="m-1 p-1">{{ importar.codSigtap }}</td>               
+                            <td class="m-1 p-1">{{ importar.alias }}</td>
+                            <td class="m-1 p-1 text-center">{{ importar.fila }}</td>
+                            <td class="m-1 p-1 text-center">{{ importar.dataMaisAntiga|date:"d"}}/{{ importar.dataMaisAntiga|date:"m"}}/{{ importar.dataMaisAntiga|date:"Y" }}</td>
+                            <td class="m-1 p-1 text-center">{{ importar.quantidadeDiasNaFila }}</td>
+                        </tr>
+                    {% endfor %}   
+                </tbody>
+            </table>
+        </div> 
+    </div> -->
+    <!-- fila de espera exames -->
+    <!-- <div class="tab-pane fade" id="simplesExames" role="tabpanel" aria-labelledby="simplesExames-tab">
+        <span class="badge badge-pill badge-warning my-3 float-right">Último arquivo importado da FILA DE ESPERA: <strong>{{ ultimaImportacaoSimples.dataDoArquivo|date:"d"}}/{{ ultimaImportacaoSimples.dataDoArquivo|date:"m"}}/{{ultimaImportacaoSimples.dataDoArquivo|date:"Y" }}</strong></span>
+        <div class="table-responsive">
+            <table class="table table-striped" id="filaSimplesExames">        
+                <thead>
+                    <tr>
+                        <th>Código Sigtap</th>              
+                        <th>Descrição do procedimento</th>
+                        <th class="text-center">Total de pacientes na fila</th>
+                        <th class="text-center">Data mais antiga</th>
+                        <th class="text-center">Qtde. de dias aguardando na fila</th>
+                    </tr>
+                </thead>                
+                <tbody>
+                    {% for importar in filaSimplesExames %}         
+                        <tr>
+                            <td class="m-1 p-1">{{ importar.codSigtap }}</td>               
+                            <td class="m-1 p-1">{{ importar.alias }}</td>
+                            <td class="m-1 p-1 text-center">{{ importar.fila }}</td>
+                            <td class="m-1 p-1 text-center">{{ importar.dataMaisAntiga|date:"d"}}/{{ importar.dataMaisAntiga|date:"m"}}/{{ importar.dataMaisAntiga|date:"Y" }}</td>
+                            <td class="m-1 p-1 text-center">{{ importar.quantidadeDiasNaFila }}</td>
+                        </tr>
+                    {% endfor %}   
+                </tbody>
+            </table>
+        </div> 
+    </div> -->
+
+    <!-- <div class="tab-pane fade" id="simplesConsultas" role="tabpanel" aria-labelledby="simplesConsultas-tab">
+        <span class="badge badge-pill badge-warning my-3 float-right">Último arquivo importado da FILA DE ESPERA: <strong>{{ ultimaImportacaoSimples.dataDoArquivo|date:"d"}}/{{ ultimaImportacaoSimples.dataDoArquivo|date:"m"}}/{{ultimaImportacaoSimples.dataDoArquivo|date:"Y" }}</strong></span>
+        <div class="table-responsive">
+            <table class="table table-striped" id="filaSimplesConsultas">        
+                <thead>
+                    <tr>
+                        <th>Código Sigtap</th>              
+                        <th>Descrição do procedimento</th>
+                        <th class="text-center">Total de pacientes na fila</th>
+                        <th class="text-center">Data mais antiga</th>
+                        <th class="text-center">Qtde. de dias aguardando na fila</th>
+                    </tr>
+                </thead>                
+                <tbody>
+                    {% for importar in filaSimplesConsultas %}         
+                        <tr>
+                            <td class="m-1 p-1">{{ importar.codSigtap }}</td>               
+                            <td class="m-1 p-1">{{ importar.alias }}</td>
+                            <td class="m-1 p-1 text-center">{{ importar.fila }}</td>
+                            <td class="m-1 p-1 text-center">{{ importar.dataMaisAntiga|date:"d"}}/{{ importar.dataMaisAntiga|date:"m"}}/{{ importar.dataMaisAntiga|date:"Y" }}</td>
+                            <td class="m-1 p-1 text-center">{{ importar.quantidadeDiasNaFila }}</td>
+                        </tr>
+                    {% endfor %}   
+                </tbody>
+            </table>
+        </div> 
+    </div> -->
+    <!-- fila regulada completa -->
+    <div class="tab-pane fade show active" id="regulada" role="tabpanel" aria-labelledby="regulada-tab">        
+        <span class="badge badge-pill badge-warning my-3 float-right">Último arquivo importado da FILA REGULADA: <strong>{{ ultimaImportacaoRegulada.dataDoArquivo|date:"d"}}/{{ ultimaImportacaoRegulada.dataDoArquivo|date:"m"}}/{{ultimaImportacaoRegulada.dataDoArquivo|date:"Y" }}</strong></span>
+        <div class="table-responsive">
+            <table class="table table-striped" id="itensFilaRegulada">
+                <thead>
+                    <tr>
+                        <!-- <th>Código Procedimento</th>               -->
+                        <th>Código Sigtap</th>              
+                        <th>Descrição do procedimento</th>
+                        <th>Grupo</th>
+                        <th class="text-center">Pacientes na fila</th>
+                        <th class="text-center">Data mais antiga</th>
+                        <th class="text-center">Nº de dias na fila</th>
+                    </tr>
+                </thead>
+                
+                <tbody>                    
+                    {% for procedimento in filaReguladaCompleta %}
+                    <tr>
+                        <!-- <td class="m-1 p-1">{{ procedimento.codigoDoProcedimento }}</td> -->
+                        <td class="m-1 p-1">{{ procedimento.codSigtap }}</td>
+                        <td class="m-1 p-1">{{ procedimento.descricao }}</td>
+                        <td class="m-1 p-1">{{ procedimento.alias }}</td>
+                        <td class="m-1 p-1 text-center">{{ procedimento.fila }}</td>
+                        <td class="m-1 p-1 text-center">{{ procedimento.dataMaisAntiga|date:"d"}}/{{ procedimento.dataMaisAntiga|date:"m"}}/{{procedimento.dataMaisAntiga|date:"Y" }}</td>
+                        <td class="m-1 p-1 text-center">{{ procedimento.quantidadeDiasNaFila }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- fila regulada consulta -->
+    <div class="tab-pane fade" id="reguladaConsultas" role="tabpanel" aria-labelledby="reguladaConsultas-tab">
+        <span class="badge badge-pill badge-warning my-3 float-right">Último arquivo importado da FILA REGULADA: <strong>{{ ultimaImportacaoRegulada.dataDoArquivo|date:"d"}}/{{ ultimaImportacaoRegulada.dataDoArquivo|date:"m"}}/{{ultimaImportacaoRegulada.dataDoArquivo|date:"Y" }}</strong></span>
+        <div class="table-responsive">
+            <table class="table table-striped" id="itensFilaReguladaConsultas">
+                <thead>
+                    <tr>
+                        <th>Código Sigtap</th>              
+                        <th>Descrição do procedimento</th>
+                        <th>Grupo</th>
+                        <th class="text-center">Pacientes na fila</th>
+                        <th class="text-center">Data mais antiga</th>
+                        <th class="text-center">Nº de dias na fila</th>
+                    </tr>
+                </thead>
+                
+                <tbody>
+                    {% for procedimento in filaReguladaConsultas %}
+                    <tr>
+                        <td class="m-1 p-1">{{ procedimento.codSigtap }}</td>
+                        <td class="m-1 p-1">{{ procedimento.descricao }}</td>
+                        <td class="m-1 p-1">{{ procedimento.alias }}</td>
+                        <td class="m-1 p-1 text-center">{{ procedimento.fila }}</td>
+                        <td class="m-1 p-1 text-center">{{ procedimento.dataMaisAntiga|date:"d"}}/{{ procedimento.dataMaisAntiga|date:"m"}}/{{procedimento.dataMaisAntiga|date:"Y" }}</td>
+                        <td class="m-1 p-1 text-center">{{ procedimento.quantidadeDiasNaFila }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <!-- <tr>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td class="mt-1 p-1 text-center">{{ countConsultas }}</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr> -->
+            </table>
+        </div>
+    </div>
+    <!-- fila regulada Exames -->
+    <div class="tab-pane fade" id="reguladaExames" role="tabpanel" aria-labelledby="reguladaExames-tab">
+        <span class="badge badge-pill badge-warning my-3 float-right">Último arquivo importado da FILA REGULADA: <strong>{{ ultimaImportacaoRegulada.dataDoArquivo|date:"d"}}/{{ ultimaImportacaoRegulada.dataDoArquivo|date:"m"}}/{{ultimaImportacaoRegulada.dataDoArquivo|date:"Y" }}</strong></span>
+        <div class="table-responsive">
+            <table class="table table-striped" id="itensFilaReguladaExames">
+                <thead>
+                    <tr>
+                        <th>Código Sigtap</th>              
+                        <th>Descrição do procedimento</th>
+                        <th>Grupo</th>
+                        <th class="text-center">Pacientes na fila</th>
+                        <th class="text-center">Data mais antiga</th>
+                        <th class="text-center">Nº de dias na fila</th>
+                    </tr>
+                </thead>
+                
+                <tbody>
+                    {% for procedimento in filaReguladaExames %}
+                    <tr>
+                        <td class="m-1 p-1">{{ procedimento.codSigtap }}</td>
+                        <td class="m-1 p-1">{{ procedimento.descricao }}</td>
+                        <td class="m-1 p-1">{{ procedimento.alias }}</td>
+                        <td class="m-1 p-1 text-center">{{ procedimento.fila }}</td>
+                        <td class="m-1 p-1 text-center">{{ procedimento.dataMaisAntiga|date:"d"}}/{{ procedimento.dataMaisAntiga|date:"m"}}/{{procedimento.dataMaisAntiga|date:"Y" }}</td>
+                        <td class="m-1 p-1 text-center">{{ procedimento.quantidadeDiasNaFila }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <!-- <tr>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td class="mt-1 p-1 text-center">{{ countExames }}</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr> -->
+            </table>
+        </div>
+    </div>
+    <!-- Fila regulada cirurgias -->
+    <div class="tab-pane fade" id="reguladaCirurgias" role="tabpanel" aria-labelledby="reguladaCirurgias-tab">
+        <span class="badge badge-pill badge-warning my-3 float-right">Último arquivo importado da FILA REGULADA: <strong>{{ ultimaImportacaoRegulada.dataDoArquivo|date:"d"}}/{{ ultimaImportacaoRegulada.dataDoArquivo|date:"m"}}/{{ultimaImportacaoRegulada.dataDoArquivo|date:"Y" }}</strong></span>
+        <div class="table-responsive">
+            <table class="table table-striped" id="itensfilaReguladaCirurgias">
+                <thead>
+                    <tr>
+                        <th>Código Sigtap</th>              
+                        <th>Descrição do procedimento</th>
+                        <th>Grupo</th>
+                        <th class="text-center">Pacientes na fila</th>
+                        <th class="text-center">Data mais antiga</th>
+                        <th class="text-center">Nº de dias na fila</th>
+                    </tr>
+                </thead>
+                
+                <tbody>
+                    {% for procedimento in filaReguladaCirurgias %}
+                    <tr>
+                        <td class="m-1 p-1">{{ procedimento.codSigtap }}</td>
+                        <td class="m-1 p-1">{{ procedimento.descricao }}</td>
+                        <td class="m-1 p-1">{{ procedimento.alias }}</td>
+                        <td class="m-1 p-1 text-center">{{ procedimento.fila }}</td>
+                        <td class="m-1 p-1 text-center">{{ procedimento.dataMaisAntiga|date:"d"}}/{{ procedimento.dataMaisAntiga|date:"m"}}/{{procedimento.dataMaisAntiga|date:"Y" }}</td>
+                        <td class="m-1 p-1 text-center">{{ procedimento.quantidadeDiasNaFila }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <!-- <tr>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td class="mt-1 p-1 text-center">{{ countCirurgias }}</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr> -->
+            </table>
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="semDicionario" role="tabpanel" aria-labelledby="semDicionario-tab">        
+        <div class="table-responsive">
+            <table class="table table-striped" id="itensSemDicionario">
+                <thead>
+                    <tr>
+                        <th>Código Procedimento</th>
+                        <th>Descrição do procedimento</th>
+                        <th>Descrição no dicionário</th>                                    
+                    </tr>
+                </thead>
+        
+                <tbody>
+                    {% for semProcedimento in procedimentosSemDicionario %}
+                        <tr>
+                            <td class="m-1 p-1">{{ semProcedimento.codigoDoProcedimento }}</td>
+                            <td class="m-1 p-1">{{ semProcedimento.descricao }}</td>
+
+                            {% if semProcedimento.alias == None %}
+                                <td class="m-1 p-1">Indefinido no dicionário</td>
+                            {% else %}
+                                <td class="m-1 p-1">{{ semProcedimento.alias }}</td>
+                            {% endif %}                                        
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>                
+    </div>
+    <div class="tab-pane fade" id="semDemanda" role="tabpanel" aria-labelledby="semDemanda-tab">        
+        <div class="table-responsive">
+            <table class="table table-striped" id="itensSemDemanda">
+                <thead>
+                    <tr>
+                        <th>Código Procedimento</th>
+                        <th>Descrição do procedimento</th>                        
+                    </tr>
+                </thead>
+        
+                <tbody>
+                    {% for semDemanda in procedimentosSemDemanda %}
+                        <tr>
+                            <td class="m-1 p-1">{{ semDemanda.codigoSisreg }}</td>
+                            <td class="m-1 p-1">{{ semDemanda.nomenclatura }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>                
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+<script>        
+    $(document).ready(function () {
+        
+        $("#itensFilaRegulada").DataTable({
+            responsive: true,
+            // "bSort": false,
+            "aaSorting": [[ 1, "asc" ]],
+            "pageLength": -1,
+            "lengthMenu":[[10 , 25, 50, 100, -1],[10, 25, 50, 100, "Ver tudo"]],
+            "language": {
+                "decimal": "",
+                "emptyTable": "Sem dados disponíveis",
+                "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                "infoEmpty": "Mostrando de 0 até 0 de 0 registros",
+                "infoFiltered": "(filtrado de _MAX_ registros no total)",
+                "infoPostFix": "",
+                "thousands": ",",
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "loadingRecords": "A carregar dados...",
+                "processing": "A processar...",
+                "search": "Procurar:",
+                "zeroRecords": "Não foram encontrados resultados",
+                "paginate": {
+                    "first": "Primeiro",
+                    "last": "Último",
+                    "next": "Seguinte",
+                    "previous": "Anterior"
+                },
+                "aria": {
+                    "sortAscending": ": ordem crescente",
+                    "sortDescending": ": ordem decrescente"
+                }
+            }
+        });
+
+        $("#itensFilaReguladaConsultas").DataTable({
+            responsive: true,
+            // "bSort": false,
+            "aaSorting": [[ 1, "asc" ]],
+            "pageLength": -1,
+            "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Ver tudo"]],
+            "language": {
+                "decimal": "",
+                "emptyTable": "Sem dados disponíveis",
+                "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                "infoEmpty": "Mostrando de 0 até 0 de 0 registros",
+                "infoFiltered": "(filtrado de _MAX_ registros no total)",
+                "infoPostFix": "",
+                "thousands": ",",
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "loadingRecords": "A carregar dados...",
+                "processing": "A processar...",
+                "search": "Procurar:",
+                "zeroRecords": "Não foram encontrados resultados",
+                "paginate": {
+                    "first": "Primeiro",
+                    "last": "Último",
+                    "next": "Seguinte",
+                    "previous": "Anterior"
+                },
+                "aria": {
+                    "sortAscending": ": ordem crescente",
+                    "sortDescending": ": ordem decrescente"
+                }
+            }
+        });
+
+        $("#itensFilaReguladaExames").DataTable({
+            responsive: true,
+            // "bSort": false,
+            "aaSorting": [[ 1, "asc" ]],
+            "pageLength": -1,
+            "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Ver tudo"]],
+            "language": {
+                "decimal": "",
+                "emptyTable": "Sem dados disponíveis",
+                "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                "infoEmpty": "Mostrando de 0 até 0 de 0 registros",
+                "infoFiltered": "(filtrado de _MAX_ registros no total)",
+                "infoPostFix": "",
+                "thousands": ",",
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "loadingRecords": "A carregar dados...",
+                "processing": "A processar...",
+                "search": "Procurar:",
+                "zeroRecords": "Não foram encontrados resultados",
+                "paginate": {
+                    "first": "Primeiro",
+                    "last": "Último",
+                    "next": "Seguinte",
+                    "previous": "Anterior"
+                },
+                "aria": {
+                    "sortAscending": ": ordem crescente",
+                    "sortDescending": ": ordem decrescente"
+                }
+            }
+        });
+        
+        $("#itensfilaReguladaCirurgias").DataTable({
+            responsive: true,
+            // "bSort": false,
+            "aaSorting": [[ 1, "asc" ]],
+            "pageLength": -1,
+            "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Ver tudo"]],
+            "language": {
+                "decimal": "",
+                "emptyTable": "Sem dados disponíveis",
+                "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                "infoEmpty": "Mostrando de 0 até 0 de 0 registros",
+                "infoFiltered": "(filtrado de _MAX_ registros no total)",
+                "infoPostFix": "",
+                "thousands": ",",
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "loadingRecords": "A carregar dados...",
+                "processing": "A processar...",
+                "search": "Procurar:",
+                "zeroRecords": "Não foram encontrados resultados",
+                "paginate": {
+                    "first": "Primeiro",
+                    "last": "Último",
+                    "next": "Seguinte",
+                    "previous": "Anterior"
+                },
+                "aria": {
+                    "sortAscending": ": ordem crescente",
+                    "sortDescending": ": ordem decrescente"
+                }
+            }
+        });
+    });
+    
+</script>
+{% endblock %}
+
+
+{% block rodape-links %}
+
+{% endblock %}

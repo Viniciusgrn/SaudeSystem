@@ -1,0 +1,112 @@
+{% extends 'paginas/modelo-ifpr.html' %}
+
+{% load static %}
+
+{% block conteudo %}
+
+<h3 class="text-center my-0 py-0">
+    <i class="fa fa-file-alt"></i> 
+    Fila para {{ procedimento|title  }}
+</h3>
+<div class="row my-0 py-0">
+    <div class="col-12 my-0 py-0">
+        <h5 class="my-0 py-0">
+            <span class="badge badge-pill badge-secondary my-3 float-right">Total de pessoas na fila: {{ totalPessoasFila }}</span>
+        </h5>
+    </div>
+</div>
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item">
+    <a class="nav-link active" id="simples-tab" data-toggle="tab" href="#simples" role="tab" aria-controls="simples" aria-selected="true">Pacientes <small>({{ totalPessoasFila }})</small></a>
+    </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active" id="simples" role="tabpanel" aria-labelledby="simples-tab">
+        <a href="{% url 'relatorioFilaPorGrupo' %}" class="btn btn-primary btn-sm float-right m-2" ><i class="fas fa-arrow-left"></i> Voltar</a> 
+        <span class="badge badge-pill badge-warning my-3 float-right">Importação mais recente da fila: <strong>{{ ultimaImportacaoSimples.dataDoArquivo|date:"d"}}/{{ ultimaImportacaoSimples.dataDoArquivo|date:"m"}}/{{ultimaImportacaoSimples.dataDoArquivo|date:"Y" }}</strong></span>
+        <div class="table-responsive">
+            <table class="table table-striped" id="listaPacientes">        
+                <thead>
+                    <tr>
+                        <!-- <th>Código Sigtap</th>               -->
+                        <th class="text-center">Data Solicitação</th>
+                        <th>Paciente</th>
+                        <th class="text-center">Cartão Sus</th>
+                        <th class="text-center">Procedimento</th>
+                        <th class="text-center">Cid</th>
+                        <th>Unidade</th>                      
+                        <th class="text-center">Risco</th>
+                    </tr>
+                </thead>                
+                <tbody>
+                    {% for paciente in pacientes %}         
+                        <tr>
+                            <!-- <td class="m-1 p-1">{{ paciente.id }}</td>                -->
+                            <td class="m-1 p-1 text-center">{{ paciente.data_solicitacao|date:"d"}}/{{ paciente.data_solicitacao|date:"m"}}/{{ paciente.data_solicitacao|date:"Y" }}</td>
+                            <td class="m-1 p-1 cortar-texto" data-toggle="tooltip" title="{{ paciente.nomeUsuario }}">{{ paciente.nomeUsuario }}</td>
+                            <td class="m-1 p-1 text-center">{{ paciente.cns }}</td>
+                            <td class="m-1 p-1 text-center">{{ paciente.descricao }}</td>
+                            <td class="m-1 p-1 text-center">{{ paciente.codigoCid }}</td>
+                            <td class="m-1 p-1 cortar-texto" data-toggle="tooltip" title="{{ paciente.nomeUnidadeSolicitante }}">{{ paciente.nomeUnidadeSolicitante }}</td>
+                            {% if paciente.cod_class == '1' %}
+                                <td class="m-1 p-1 text-center"><span class="badge badge-pill badge-danger" data-toggle="tooltip" title="Necessidade de atendimento imediato">Emergência</span></td>
+                            {% elif paciente.cod_class == '2' %}
+                                <td class="m-1 p-1 text-center"><span class="badge badge-pill badge-warning" data-toggle="tooltip" title="Atendimento o mais rápido possível">Urgência</span></td>
+                            {% elif paciente.cod_class == '3' %}
+                                <td class="m-1 p-1 text-center"><span class="badge badge-pill badge-success" data-toggle="tooltip" title="Prioridade não urgente">Não urgente</span></td>
+                            {% elif paciente.cod_class == '4' %}
+                                <td class="m-1 p-1 text-center"><span class="badge badge-pill badge-primary" data-toggle="tooltip" title="Atendimento eletivo">Atendimento eletivo</span></td>                            
+                            {% endif %}
+                        </tr>
+                    {% endfor %}   
+                </tbody>
+            </table>
+        </div> 
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>        
+    $(document).ready(function () {
+        $("#listaPacientes").DataTable({
+            responsive: true,
+            // "bSort": false,
+            "aaSorting": [[ 1, "asc" ]],
+            "pageLength": -1,
+            "lengthMenu":[[10 , 25, 50, 100, -1],[10, 25, 50, 100, "Ver tudo"]],
+            "language": {
+                "decimal": "",
+                "emptyTable": "Sem dados disponíveis",
+                "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                "infoEmpty": "Mostrando de 0 até 0 de 0 registros",
+                "infoFiltered": "(filtrado de _MAX_ registros no total)",
+                "infoPostFix": "",
+                "thousands": ",",
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "loadingRecords": "A carregar dados...",
+                "processing": "A processar...",
+                "search": "Procurar:",
+                "zeroRecords": "Não foram encontrados resultados",
+                "paginate": {
+                    "first": "Primeiro",
+                    "last": "Último",
+                    "next": "Seguinte",
+                    "previous": "Anterior"
+                },
+                "aria": {
+                    "sortAscending": ": ordem crescente",
+                    "sortDescending": ": ordem decrescente"
+                }
+            }
+        });
+    });
+    
+</script>
+{% endblock %}
+
+
+{% block rodape-links %}
+
+{% endblock %}
