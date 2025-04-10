@@ -1,0 +1,181 @@
+body {
+    background-color: #f8f8f8;
+}
+/* 
+Cores do IFPR 
+*/
+.bg-ifpr {
+    background-color: #007834;
+}
+.bg-dark {
+    background-color: #1f1f1f;
+}
+
+.text-ifpr {
+    color: #007834;
+}
+
+.border-ifpr {
+    border-color: #007834;
+}
+.bg-ifpr-escuro {
+    background-color: #315C23;
+}
+
+.text-ifpr-escuro {
+    color: #315C23;
+}
+
+.border-ifpr-escuro {
+    border-color: #315C23;
+}
+
+
+/* 
+Tamanhos diferentes para fontes 
+*/
+.font-75 {
+    font-size: 75%;
+}
+
+.font-115 {
+    font-size: 115%;
+}
+
+.font-125 {
+    font-size: 125%;
+}
+
+.font-150 {
+    font-size: 150%;
+}
+
+.font-175 {
+    font-size: 175%;
+}
+
+
+/* 
+Formatação do DataTable 
+*/
+table.dataTable.dtr-inline.collapsed > tbody > tr[role="row"] > td:first-child::before,
+table.dataTable.dtr-inline.collapsed > tbody > tr[role="row"] > th:first-child::before {
+    top: 15px !important;
+}
+
+
+/* 
+Personalização da Barra de menu pra ficar igual do site 
+*/
+.navbar {
+    padding: 0 !important;
+}
+
+.navbar .navbar-brand{
+    padding-left: 10px;
+}
+
+/* .navbar a.nav-link{
+    color: white !important;
+} */
+
+.navbar .nav-item{
+    padding: 3px 5px;
+}
+
+.navbar .nav-item:hover{
+    background-color: rgba(0, 0, 128, 0.3);
+}
+
+
+/* 
+Alerta na validação dos formulários (login com senha errada, por exemplo) 
+*/
+.alert dl, .alert ol, .alert ul {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+
+/*
+Largura máxima das tabelas para não ficar mal formatada
+*/
+table td{
+    max-width: 500px;
+}
+
+.load {
+    width: 100%;
+    position: absolute;
+    background: rgba(255,255,255,.8);
+    
+ }
+
+.load img{
+    left: 35%;
+    top: 25%;
+    position: absolute;
+    width: 170px;
+    height: auto;
+}
+
+/* .load-text{
+    position: relative;
+    color: #000;
+} */
+
+
+.dropdown-submenu {
+    position: relative;
+  }
+  
+  .dropdown-submenu a::after {
+    transform: rotate(-90deg);
+    position: absolute;
+    right: 6px;
+    top: .8em;
+  }
+  
+  .dropdown-submenu .dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-left: .1rem;
+    margin-right: .1rem;
+  }
+
+
+/* (1920x1080) Full HD Display */
+@media  screen and (min-width: 1280px) and (max-width: 1920px) {
+    .load img{
+        left: 20%;        
+    }
+}
+
+.agendado {
+    background-color: #73C6B6;
+}
+
+.arquivado {
+    background-color: #85C1E9;
+}
+
+.devolvido {
+    background-color: #F1948A;
+}
+
+.encaminhado {
+    background-color: #E59866;
+}
+
+.pendente {
+    background-color: #BB8FCE;
+}
+
+.recebido {
+    background-color: #F7DC6F;
+}
+
+.naoveionomalote {
+    background-color: #7DCEA0;
+}
+
