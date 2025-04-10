@@ -1,0 +1,344 @@
+{% extends 'paginas/admin.html' %}
+
+"""
+{% block conteudo %}
+    {% if request.user.is_authenticated %}        
+        <section class="mb-4">
+            <h5>Dashboard</h5>
+        </section>        
+
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true"><i class="fa fa-user"></i> Usuários</a>
+            </li>
+            <!-- <li class="nav-item">
+                <a class="nav-link" id="paciente-tab" data-toggle="tab" href="#paciente" role="tab" aria-controls="paciente" aria-selected="false"><i class="fas fa-user-injured"></i> Pacientes</a>
+            </li> -->
+            <!-- <li class="nav-item">
+                <a class="nav-link" id="procedimento-tab" data-toggle="tab" href="#procedimento" role="tab" aria-controls="procedimento" aria-selected="false"><i class="fas fa-address-book"></i> Procedimentos</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="unidade-tab" data-toggle="tab" href="#unidade" role="tab" aria-controls="unidade" aria-selected="false"><i class="fas fa-clinic-medical"></i> Unidades</a>
+            </li> -->
+            <!-- <li class="nav-item">
+                <a class="nav-link" id="prestador-tab" data-toggle="tab" href="#prestador" role="tab" aria-controls="prestador" aria-selected="false"><i class="fas fa-user-md"></i> Prestadores</a>
+            </li> -->
+            <!-- <li class="nav-item">
+                <a class="nav-link" id="vaga-tab" data-toggle="tab" href="#vaga" role="tab" aria-controls="vaga" aria-selected="false"><i class="fas fa-clipboard-list"></i> Vagas</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="permutas-tab" data-toggle="tab" href="#permutas" role="tab" aria-controls="permutas" aria-selected="false"><i class="fa fa-exchange"></i> Permutas</a>
+            </li> -->
+        </ul>
+
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                <div class="my-3">
+                    <div class="table-responsive">
+                        <table class="table table-striped tabela-listar" id="tabela-listar">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Usuário</th>
+                                    <th>Primeiro nome</th>
+                                    <th>Último nome</th>
+                                    <th>Último login</th>
+                                    <th>Email</th>
+                                    <th>S.User</th>
+                                    <th>Staff</th>
+                                    <th>Ativo</th>
+                                    <th>Dada de cadastro</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in users %}
+                                    <tr>
+                                        <td>{{ user.id }}</td>
+                                        <td>{{ user.username }}</td>
+                                        <td>{{ user.first_name }}</td>
+                                        <td>{{ user.last_name }}</td>
+                                        <td>{{ user.last_login|date:"d/m/Y H:m" }}</td>
+                                        <td>{{ user.email }}</td>
+                                        <td>{{ user.is_superuser }}</td>
+                                        <td>{{ user.is_staff }}</td>
+                                        <td>{{ user.is_active }}</td>
+                                        <td>{{ user.date_joined|date:"d/m/Y H:m" }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>    
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- <div class="tab-pane fade" id="paciente" role="tabpanel" aria-labelledby="paciente-tab">
+                <div class="my-3">
+                    <div class="table-responsive">
+                        <table class="table table-striped tabela-listar" id="tabela-listar">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Cns</th>
+                                    <th>Telefone</th>
+                                    <th>Nome</th>
+                                    <th>Altura</th>
+                                    <th>Peso</th>
+                                    <th>Cadastrado</th>
+                                    <th>Atualizado</th>
+                                    <th>Operador</th>
+                                    <th>Comentário</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for paciente in pacientes %}
+                                    <tr>
+                                        <td>{{ paciente.id }}</td>
+                                        <td>{{ paciente.cns }}</td>
+                                        <td>{{ paciente.telefone }}</td>
+                                        <td>{{ paciente.nome }}</td>
+                                        <td>{{ paciente.altura }}</td>
+                                        <td>{{ paciente.peso }}</td>
+                                        <td>{{ paciente.created_at }}</td>
+                                        <td>{{ paciente.updated_at }}</td>
+                                        <td>{{ paciente.createdBy_user }}</td>
+                                        <td>{{ paciente.comment }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>       
+            <div class="tab-pane fade" id="procedimento" role="tabpanel" aria-labelledby="procedimento-tab">
+                <div class="my-3">
+                    <div class="table-responsive">
+                        <table class="table table-striped tabela-listar" id="tabela-listar">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for paciente in pacientes %}
+                                    <tr>
+                                        <td>{{ paciente.id }}</td>
+                                        <td>{{ paciente.cns }}</td>
+                                        <td>{{ paciente.telefone }}</td>
+                                        <td>{{ paciente.nome }}</td>
+                                        <td>{{ paciente.altura }}</td>
+                                        <td>{{ paciente.peso }}</td>
+                                        <td>{{ paciente.created_at }}</td>
+                                        <td>{{ paciente.updated_at }}</td>
+                                        <td>{{ paciente.createdBy_user }}</td>
+                                        <td>{{ paciente.comment }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="unidade" role="tabpanel" aria-labelledby="unidade-tab">
+                <div class="my-3">
+                    <div class="table-responsive">
+                        <table class="table table-striped tabela-listar" id="tabela-listar">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for paciente in pacientes %}
+                                    <tr>
+                                        <td>{{ paciente.id }}</td>
+                                        <td>{{ paciente.cns }}</td>
+                                        <td>{{ paciente.telefone }}</td>
+                                        <td>{{ paciente.nome }}</td>
+                                        <td>{{ paciente.altura }}</td>
+                                        <td>{{ paciente.peso }}</td>
+                                        <td>{{ paciente.created_at }}</td>
+                                        <td>{{ paciente.updated_at }}</td>
+                                        <td>{{ paciente.createdBy_user }}</td>
+                                        <td>{{ paciente.comment }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="prestador" role="tabpanel" aria-labelledby="prestador-tab">
+                <div class="my-3">
+                    <div class="table-responsive">
+                        <table class="table table-striped tabela-listar" id="tabela-listar">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for paciente in pacientes %}
+                                    <tr>
+                                        <td>{{ paciente.id }}</td>
+                                        <td>{{ paciente.cns }}</td>
+                                        <td>{{ paciente.telefone }}</td>
+                                        <td>{{ paciente.nome }}</td>
+                                        <td>{{ paciente.altura }}</td>
+                                        <td>{{ paciente.peso }}</td>
+                                        <td>{{ paciente.created_at }}</td>
+                                        <td>{{ paciente.updated_at }}</td>
+                                        <td>{{ paciente.createdBy_user }}</td>
+                                        <td>{{ paciente.comment }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="vaga" role="tabpanel" aria-labelledby="vaga-tab">
+                <div class="my-3">
+                    <div class="table-responsive">
+                        <table class="table table-striped tabela-listar" id="tabela-listar">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for paciente in pacientes %}
+                                    <tr>
+                                        <td>{{ paciente.id }}</td>
+                                        <td>{{ paciente.cns }}</td>
+                                        <td>{{ paciente.telefone }}</td>
+                                        <td>{{ paciente.nome }}</td>
+                                        <td>{{ paciente.altura }}</td>
+                                        <td>{{ paciente.peso }}</td>
+                                        <td>{{ paciente.created_at }}</td>
+                                        <td>{{ paciente.updated_at }}</td>
+                                        <td>{{ paciente.createdBy_user }}</td>
+                                        <td>{{ paciente.comment }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="permutas" role="tabpanel" aria-labelledby="permutas-tab">
+                <div class="my-3">
+                    <div class="table-responsive">
+                        <table class="table table-striped tabela-listar" id="tabela-listar">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for paciente in pacientes %}
+                                    <tr>
+                                        <td>{{ paciente.id }}</td>
+                                        <td>{{ paciente.cns }}</td>
+                                        <td>{{ paciente.telefone }}</td>
+                                        <td>{{ paciente.nome }}</td>
+                                        <td>{{ paciente.altura }}</td>
+                                        <td>{{ paciente.peso }}</td>
+                                        <td>{{ paciente.created_at }}</td>
+                                        <td>{{ paciente.updated_at }}</td>
+                                        <td>{{ paciente.createdBy_user }}</td>
+                                        <td>{{ paciente.comment }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $body = $("body");    
+    $(document).ready(function(){    
+        $(".tabela-listar").DataTable({
+            responsive: true,           
+            "pageLength": 10,
+            "language": {                
+                "emptyTable": "Sem dados disponíveis",
+                "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                // "info": false,
+                "infoEmpty": "Mostrando de 0 até 0 de 0 registros",
+                "infoFiltered": "(filtrado de _MAX_ registros no total)",
+                "search": "Pesquisar",
+                'searchPlaceholder': 'Pesquisar',
+                "thousands": ",",
+                "lengthMenu": "Mostrar _MENU_ registros",                
+                "search": '',
+                "zeroRecords": "Não foram encontrados resultados",
+                "paginate": {
+                    "first": "Primeiro",
+                    "last": "Último",
+                    "next": "Seguinte",
+                    "previous": "Anterior"
+                },
+                "aria": {
+                    "sortAscending": ": ordem crescente",
+                    "sortDescending": ": ordem decrescente"
+                }
+            },            
+        });
+    });
+</script>
+
+{% endblock %}
+    

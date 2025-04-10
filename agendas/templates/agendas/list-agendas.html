@@ -1,0 +1,102 @@
+{% extends 'paginas/modelo-ifpr.html' %}
+
+{% load static %}
+
+{% block conteudo %}
+<h4 class="text-center">
+    <i class="fa fa-calendar"></i> Agendamentos
+    <a href="{% url 'create-agenda' %}" class="btn btn-primary btn-sm float-right"> <i class="fa fa-calendar-plus"></i> Novo horário</a>
+</h4>
+
+<hr>
+<div class="container">
+
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Geral</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Medico 1</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Medico 2</a>
+        </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+        
+            <div id='calendar' class="calendar"></div>
+        
+    </div>
+    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+        
+        <div class="text-center py-5 my-5 text secondary card">
+            <p><i class="fa fa-calendar-times text-secondary fa-3x" aria-hidden="true"></i></p>
+            <p><h4 class="text-secondary">Sem Agenda para Exibir</h4></p>
+        </div>
+       
+    </div>
+    <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+        
+        <div class="text-center py-5 my-5 text secondary card">
+            <p><i class="fa fa-calendar-times text-secondary fa-3x" aria-hidden="true"></i></p>
+            <p><h4 class="text-secondary">Sem Agenda para Exibir</h4></p>
+        </div>
+        
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: 'dayGridMonth'
+        });
+        calendar.render();
+      });
+
+
+
+
+
+
+    $("#tabela-listar").DataTable({
+        responsive: true,
+        // "bSort": false,
+        "aaSorting": [],
+        "pageLength": 100,
+        "language": {
+            "decimal": "",
+            "emptyTable": "Sem dados disponíveis",
+            "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+            "infoEmpty": "Mostrando de 0 até 0 de 0 registros",
+            "infoFiltered": "(filtrado de _MAX_ registros no total)",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "loadingRecords": "A carregar dados...",
+            "processing": "A processar...",
+            "search": "Procurar:",
+            "zeroRecords": "Não foram encontrados resultados",
+            "paginate": {
+                "first": "Primeiro",
+                "last": "Último",
+                "next": "Seguinte",
+                "previous": "Anterior"
+            },
+            "aria": {
+                "sortAscending": ": ordem crescente",
+                "sortDescending": ": ordem decrescente"
+            }
+        }
+    });
+
+</script>
+{% endblock %}
+
+{% block rodape-links %}
+
+{% endblock %}
