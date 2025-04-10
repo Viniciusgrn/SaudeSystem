@@ -1,0 +1,327 @@
+{% extends 'paginas/modelo-ifpr.html' %}
+
+{% load static %}
+
+{% block conteudo %}
+<h4 class="text-center">
+    {{ nomeUnidade }}
+</h4>
+<hr>
+<div class="row justify-content-between">
+    <div class="col-1">
+        <a href="{% url 'list-maloteUnidadesSaida' %}"class="btn btn-primary btn-sm float-right"> Voltar</a>
+    </div>
+    <div class="col-2">
+        <a href="{% url 'create-maloteSaida-regulacao' %}" class="btn btn-primary btn-sm float-right"> Adicionar malote</a>
+    </div>
+</div>
+<hr>
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" id="recebidos-tab" data-toggle="tab" href="#todos" role="tab"
+            aria-controls="recebidos" aria-selected="true"><b>Todos</b></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="recebidos-tab" data-toggle="tab" href="#recebidos" role="tab"
+            aria-controls="recebidos" aria-selected="true"><b>Em andamento</b></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="agendados-tab" data-toggle="tab" href="#agendados" role="tab" aria-controls="agendados"
+            aria-selected="true"><b>Agendados</b></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="devolvidos-tab" data-toggle="tab" href="#devolvidos" role="tab" aria-controls="devolvidos"
+            aria-selected="true"><b>Devolvidos</b></a>
+    </li>
+</ul>
+
+
+
+  
+
+<div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active py-5" id="todos" role="tabpanel" aria-labelledby="todos-tab">
+        <div class="table-responsive">
+            <table class="table" id="tabela-todos">
+                    <thead>
+                        <tr>
+                            <th>Status</th>
+                            <th>Nome</th>
+                            <th>Data de nascimento</th>
+                            <th>SUS</th>
+                            <th>Procedimento</th>
+                            <th>Classificação</th>
+                        </tr>
+                    </thead>
+                
+                    <tbody>
+                        {% for maloteSaida in object_list %}
+                            <tr>
+                                {% if maloteSaida.statusProcesso == 7 and maloteSaida.agendado == 0 %}
+                                    <td>Recebido</td>
+                                {% elif maloteSaida.statusProcesso == 7 and maloteSaida.agendado == 1 %}
+                                    <td data-toggle="tooltip" title="{{ maloteSaida.agendamentoData|date:"d/m/Y"}} às {{ maloteSaida.agendamentoData|date:"H:i"}}">Agendado </td>
+                                {% elif maloteSaida.statusProcesso == 4%}
+                                    {%if maloteSaida.justificativa == 1%}
+                                    <td>Devolvido</td>
+                                    {%elif maloteSaida.justificativa == 2%}
+                                    <td data-toggle="tooltip" title="Faltam Dados/Exames">Devolvido</td>
+                                    {% elif maloteSaida.justificativa == 3%}
+                                    <td data-toggle="tooltip" title="Preencher APAC">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif maloteSaida.justificativa == 4%}
+                                    <td data-toggle="tooltip" title="Agendamento é realizado pela unidade">Devolvido <i class="fas fa-question-circle"></i>
+                                    </td>
+                                    {% elif maloteSaida.justificativa == 5%}
+                                    <td data-toggle="tooltip" title="Falta carta de sedação">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif maloteSaida.justificativa == 6%}
+                                    <td data-toggle="tooltip" title="Encaminhar para assistente social">Devolvido <i class="fas fa-question-circle"></i>
+                                    </td>
+                                    {% elif maloteSaida.justificativa == 7%}
+                                    <td data-toggle="tooltip" title="Encaminhar para planejamento familiar">Devolvido <i class="fas fa-question-circle"></i>
+                                    </td>
+                                    {% elif maloteSaida.justificativa == 8%}
+                                    <td data-toggle="tooltip" title="Encaminhar para ambulatório de especialidades">Devolvido <i
+                                            class="fas fa-question-circle"></i></td>
+                                    {% elif maloteSaida.justificativa == 9%}
+                                    <td data-toggle="tooltip" title="Encaminhar/Retorno no HUSF">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif maloteSaida.justificativa == 10%}
+                                    <td data-toggle="tooltip" title="Falta autorização para retirada do exame no AME">Devolvido <i
+                                            class="fas fa-question-circle"></i></td>
+                                    {% elif maloteSaida.justificativa == 11%}
+                                    <td data-toggle="tooltip" title="Encaminhar para centro de reabilitação(FISIO)">Devolvido <i
+                                            class="fas fa-question-circle"></i></td>
+                                    {% elif maloteSaida.justificativa == 12%}
+                                    <td data-toggle="tooltip" title="Guia e cadweb de pacientes diferentes">Devolvido <i class="fas fa-question-circle"></i>
+                                    </td>
+                                    {% elif maloteSaida.justificativa == 13%}
+                                    <td data-toggle="tooltip" title="Encaminhar para saúde mental infantil">Devolvido <i class="fas fa-question-circle"></i>
+                                    </td>
+                                    {% elif maloteSaida.justificativa == 14%}
+                                    <td data-toggle="tooltip" title="Inserir no CDR e fila de espera">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif maloteSaida.justificativa == 15%}
+                                    <td data-toggle="tooltip" title="Não veio no maloteSaida">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif maloteSaida.justificativa == 16%}
+                                    <td data-toggle="tooltip" title="Atualização de cadastro">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {%endif%}
+                                {%endif%}
+
+                                <td>
+                                    {{maloteSaida.nome}}
+                                </td>
+                
+                                {% if maloteSaida.dataNascimento == null%}
+                                <td>Sem registro</td>
+                                {% else %}
+                                <td>{{ maloteSaida.dataNascimento|date:"d/m/Y"}}</td>
+                                {%endif%}
+
+                                <td>{{maloteSaida.sus}}</td>
+                            
+                                <td class="cortar-texto" data-toggle="tooltip" title="{{maloteSaida.procedimento}}">{{maloteSaida.procedimento}}</td>                            
+                            
+                                {%if maloteSaida.classificacao == 1%}
+                                    <td>Sem classificação</td>
+                                {%elif maloteSaida.classificacao == 2%}
+                                    <td>Urgente</td>
+                                {% else %}
+                                    <td>Prioridade</td>
+                                {%endif%}
+                    
+                            
+                                    
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="tab-pane fade py-5" id="recebidos" role="tabpanel" aria-labelledby="recebidos-tab">
+        <div class="table-responsive">
+            <table class="table" id="tabela-recebidos">              
+                <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>SUS</th>
+                            <th>Procedimento</th>
+                            <th>Agendar</th>
+                        </tr>
+                    </thead>
+                
+                    <tbody>
+                        {% for maloteSaida in object_list %}
+                            {% if maloteSaida.statusProcesso == 7 and maloteSaida.agendado == 0 %}
+                                <tr>
+                                    <td>
+                                        {{maloteSaida.nome}}
+                                    </td>
+
+                                    <td>{{maloteSaida.sus}}</td>
+
+                                    <td class="cortar-texto" data-toggle="tooltip" title="{{maloteSaida.procedimento}}">{{maloteSaida.procedimento}}</td>                                                      
+                                        
+                                    <td><a href="{%url 'update-malote-saida' maloteSaida.maloteId%}"class="btn btn-primary"><i class="fas fa-calendar-alt"></i></a></td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </form>
+            </table>
+        </div>
+    </div>
+    
+    <div class="tab-pane fade py-5" id="agendados" role="tabpanel" aria-labelledby="agendados-tab">
+        <div class="table-responsive">
+            <table class="table" id="tabela-agendados">
+                <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>SUS</th>
+                            <th>Procedimento</th>
+                            <th>Data do agendamento</th>
+                            <th>Local</th>
+                        </tr>
+                    </thead>
+                
+                    <tbody>
+                        {% for maloteSaida in object_list %}
+                            {% if maloteSaida.statusProcesso == 7 and maloteSaida.agendado == 1 %}
+                                <tr>
+                                    <td>
+                                        {{maloteSaida.nome}}
+                                        
+                                    </td>
+                                
+                                    <td>{{maloteSaida.sus}}</td>
+
+                                    <td class="cortar-texto" data-toggle="tooltip" title="{{maloteSaida.procedimento}}">{{maloteSaida.procedimento}}</td>
+                                
+                                    <td>{{maloteSaida.agendamentoData|date:"d/m/Y"}} às {{maloteSaida.agendamentoData|date:" H:i"}} </td>
+
+                                    <td>{{maloteSaida.localAgendamento}}</td>
+                                    
+                                </tr>
+                            {%endif%}
+                        {% endfor %}
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="tab-pane fade py-5" id="devolvidos" role="tabpanel" aria-labelledby="devolvidos-tab">
+        <div class="table-responsive">
+            <table class="table" id="tabela-devolvidos">         
+                <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>SUS</th>
+                            <th>Procedimento</th>
+                            <th>Motivo da devolução</th>
+                        </tr>
+                </thead>
+                
+                <tbody>
+                    {% for maloteSaida in object_list %}
+                        {% if maloteSaida.statusProcesso == 4%}
+                            <tr>
+                                <td>
+                                    {{maloteSaida.nome}}
+                                </td>
+                            
+                                <td>{{maloteSaida.sus}}</td>
+                                
+                                <td class="cortar-texto" data-toggle="tooltip" title="{{maloteSaida.procedimento}}">{{maloteSaida.procedimento}}</td>
+                                
+                                
+                                {%if maloteSaida.justificativa == 1%}
+                                    <td>Devolvido</td>
+                                {%elif maloteSaida.justificativa == 2%}
+                                    <td>Faltam Dados/Exames</td>
+                                {% elif maloteSaida.justificativa == 3%}
+                                    <td>Preencher APAC</td>
+                                {% elif maloteSaida.justificativa == 4%}
+                                    <td>Agendamento é realizado pela unidade </td>
+                                {% elif maloteSaida.justificativa == 5%}
+                                    <td>Falta carta de sedação </td>
+                                {% elif maloteSaida.justificativa == 6%}
+                                    <td>Encaminhar para assistente social</td>
+                                {% elif maloteSaida.justificativa == 7%}
+                                    <td>Encaminhar para planejamento familiar</td>
+                                {% elif maloteSaida.justificativa == 8%}
+                                    <td >Encaminhar para ambulatório de especialidades</td>
+                                {% elif maloteSaida.justificativa == 9%}
+                                    <td>Encaminhar/Retorno no HUSF </td>
+                                {% elif maloteSaida.justificativa == 10%}
+                                    <td>Falta autorização para retirada do exame no AME </td>
+                                {% elif maloteSaida.justificativa == 11%}
+                                    <td>Encaminhar para centro de reabilitação(FISIO) </td>
+                                {% elif maloteSaida.justificativa == 12%}
+                                    <td>Guia e cadweb de pacientes diferentes</td>
+                                {% elif maloteSaida.justificativa == 13%}
+                                <td>Encaminhar para saúde mental infantil</td>
+                                {% elif maloteSaida.justificativa == 14%}
+                                    <td>Inserir no CDR e fila de espera</td>
+                                {% elif maloteSaida.justificativa == 15%}
+                                    <td>Não veio no malote</td>
+                                {% elif maloteSaida.justificativa == 16%}
+                                    <td>Atualização de cadastrovolvido</td>
+                                {%endif%}
+                            {%endif%}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+
+
+
+
+
+
+{% block scripts %}
+<script>
+
+    $('#id_paciente').select2();
+
+    $(".table").DataTable({
+        responsive: true,
+        // "bSort": false,
+        "aaSorting": [],
+        "pageLength": 100,
+        "language": {
+            "decimal": "",
+            "emptyTable": "Sem dados disponíveis",
+            "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+            "infoEmpty": "Mostrando de 0 até 0 de 0 registros",
+            "infoFiltered": "(filtrado de _MAX_ registros no total)",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "loadingRecords": "A carregar dados...",
+            "processing": "A processar...",
+            "search": "Procurar:",
+            "zeroRecords": "Não foram encontrados resultados",
+            "paginate": {
+                "first": "Primeiro",
+                "last": "Último",
+                "next": "Seguinte",
+                "previous": "Anterior"
+            },
+            "aria": {
+                "sortAscending": ": ordem crescente",
+                "sortDescending": ": ordem decrescente"
+            }
+        }
+    });
+    
+</script>
+{% endblock %}
+
+{% block rodape-links %}
+
+{% endblock %}

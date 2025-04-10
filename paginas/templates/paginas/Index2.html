@@ -1,0 +1,1044 @@
+{% extends 'paginas/modelo-ifpr.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block conteudo %}
+
+    {% if request.user.is_authenticated %}        
+        <section class="dashboard">
+            <div class="main-panel">
+				<div class="content">
+					<div class="container-fluid">						
+                        {% for group in request.user.groups.all %}
+                            <!-- ########################## DASHBOARD REGULAÇÃO INICIO ##############################-->
+                            {% if group.name == 'regulacao' %}
+                                <div class="row mb-3">
+                                    <div class="col-12 col-md-3 mb-3">
+                                        <div class="card text-center">
+                                            <div class="card-body">
+                                                <div class="text-center">
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            <div class="row">
+                                                                <div class="col-12 border-bottom mb-3">
+                                                                    <p class="card-category font-weight-bold">Pacientes na Fila de Espera</p>
+                                                                    <h4 class="card-title">{{ totalPessoasFila|intcomma }}</h4>
+                                                                </div>
+                                                                <div class="col-6">
+                                                                    <p class="card-category">Média</p>
+                                                                    <h5 class="">{{ totalPessoasFilaSimples|intcomma }}</h5>
+                                                                </div>
+                                                                <div class="col-6">
+                                                                    <p class="card-category">Alta</p>
+                                                                    <h5 class="">{{ totalPessoasFilaRegulada|intcomma }}</h5>
+                                                                </div>
+                                                            </div>
+                                                        </div>                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-3 mb-3">
+                                        <div class="card text-center">
+                                            <div class="card-body">
+                                                <div class="text-center">
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            <div class="row">
+                                                                <div class="col-12 border-bottom mb-3">
+                                                                    <p class="card-category font-weight-bold">Pacientes cadastrados pelas unidades (hoje)</p>
+                                                                    <h4 class="card-title">{{ totalPacientesHoje|intcomma }}</h4>
+                                                                </div>
+                                                                <div class="col-4">
+                                                                    <p class="card-category">30 dias</p>
+                                                                    <h4 class="card-title">{{ totalPacientes30|intcomma }}</h4>
+                                                                </div>
+                                                                <div class="col-4">
+                                                                    <p class="card-category">15 dias</p>
+                                                                    <h4 class="card-title">{{ totalPacientes15|intcomma }}</h4>
+                                                                </div>
+                                                                <div class="col-4">
+                                                                    <p class="card-category">7 dias</p>
+                                                                    <h4 class="card-title">{{ totalPacientes7|intcomma }}</h4>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-3 mb-3">
+                                        <div class="card text-center">
+                                            <div class="card-body">
+                                                <div class="text-center">
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            <div class="row">
+                                                                <div class="col-12 border-bottom mb-3">
+                                                                    <p class="card-category font-weight-bold">Vagas ofertadas pelas unidades para permuta (hoje)</p>
+                                                                    <h4 class="card-title">{{ vagaOfertadaHoje|intcomma }}</h4>
+                                                                </div>
+                                                                <div class="col-6">
+                                                                    <p class="card-category">30 dias</p>
+                                                                    <h4 class="card-title">{{ vagaOfertada30|intcomma }}</h4>
+                                                                </div>
+                                                                <div class="col-6">
+                                                                    <p class="card-category">7 dias</p>
+                                                                    <h4 class="card-title">{{ vagaOfertada7|intcomma }}</h4>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-3 mb-3">
+                                        <div class="card text-center">
+                                            <div class="card-body">
+                                                <div class="text-center">
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            <div class="row">
+                                                                <div class="col-12 border-bottom mb-3">
+                                                                    <p class="card-category font-weight-bold">Permutas realizadas pelo Callcenter (hoje)</p>
+                                                                    <h4 class="card-title">{{ vagaPermutadaHoje|intcomma }}</h4>
+                                                                </div>
+                                                                <div class="col-6">
+                                                                    <p class="card-category">30 dias</p>
+                                                                    <h4 class="card-title">{{ vagaPermutada30|intcomma }}</h4>
+                                                                </div>
+                                                                <div class="col-6">
+                                                                    <p class="card-category">7 dias</p>
+                                                                    <h4 class="card-title">{{ vagaPermutada7|intcomma }}</h4>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <div class="card p-3  text-center">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <h5 class="border-bottom pb-2"><i class="fa fa-baby"></i> Calculadora DPP</h5>
+                                                </div>
+                                            </div>
+                                            <div class="row mt-3">
+                                                <div class="col-12">
+                                                    <form action="">
+                                                        <div class="row">
+                                                            <div class="col-12 col-md-8 offset-md-2 mb-3">
+                                                                <label for="dum"><i class="fa fa-calendar"></i> Data da DUM ou IG Ultrassom</label>
+                                                                <input class="form-control text-center mb-2" type="date" name="dum" id="id_dum">
+                                                                <label for="dum"><i class="fa fa-calendar"></i> Semanas <span data-toggle="tooltip" title="Preencha esse campo com o número de SEMANAS presente no ultrassom ou deixe em branco caso o cálculo seja pela DUM."><i class="fa fa-info-circle text-primary"></i></span></label>
+                                                                <input class="form-control text-center h1" style="font-size: 22px;" type="number" name="somaSemanas" id="id_somaSemanas" min="0">
+                                                                <label for="dum"><i class="fa fa-calendar"></i> Dias  <span data-toggle="tooltip" title="Preencha esse campo com o número de DIAS presente no ultrassom ou deixe em branco caso o cálculo seja pela DUM."><i class="fa fa-info-circle text-primary"></i></span></label>
+                                                                <input class="form-control text-center h1" style="font-size: 22px;" type="number" name="somaDias" id="id_somaDias" min="0" max="7">
+                                                            </div>
+                                                            <!-- <div class="col-6">
+                                                                <label for="idadeGestacional"><i class="fa fa-calendar"></i> Data da IG ultrassom</label>
+                                                                <input class="form-control" type="date" name="idadeGestacional" id="id_idadeGestacional">
+                                                            </div> -->
+                                                        </div>
+                                                        <div class="row mt-3 mb-3">
+                                                            <div class="col-12 col-md-4 py-3 mb-2 bg-light rounded border border-info">
+                                                                <h5>DPP</h5>
+                                                                <h5 id="id_dpp">00/00/0000</h5>
+                                                            </div>
+                                                            <div class="col-12 col-md-4 py-3 mb-2 bg-light rounded border border-info">
+                                                                <h5>IG</h5>
+                                                                <h5><span id="semanas">0</span> e <span id="dias"> 0</span></h5>
+                                                            </div>
+                                                            <div class="col-12 col-md-4 py-3 mb-2 bg-light rounded border border-info">
+                                                                <h5>Trimestre</h5>
+                                                                <h5 id="trimestre">0º Trim</h5>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                        <!-- ########################## DASHBOARD REGULAÇÃO FIM ##############################-->
+
+                        <!-- ########################## DASHBOARD ADMINISTRATOR INICIO ##############################-->
+                        {% for group in request.user.groups.all %}
+                            {% if group.name == 'administrator' %}
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <h3>Suporte</h3>
+                                        <hr>
+                                    </div>
+                                    <div class="col-12 col-md-4 mb-3">
+                                        <div class="card text-center">
+                                            <div class="card-body">
+                                                <div class="text-center">
+                                                    <div class="row">
+                                                        <div class="col-12 col-md-8">
+                                                            <div class="row">
+                                                                <div class="col-12 border-bottom mb-3">
+                                                                    <p class="card-category">Chamados</p>
+                                                                    <h4 class="card-title">{{ chamadosTotal|intcomma }}</h4>
+                                                                </div>
+                                                                <div class="col-4">
+                                                                    <h4 class="card-title">{{ chamadosAguardando|intcomma }}</h4>
+                                                                    <p class="card-category">abertos</p>
+                                                                </div>
+                                                                <div class="col-4">
+                                                                    <h4 class="card-title">{{ chamadosAndamento|intcomma }}</h4>
+                                                                    <p class="card-category">andamento</p>
+                                                                </div>
+                                                                <div class="col-4">
+                                                                    <h4 class="card-title">{{ chamadosConcluido|intcomma }}</h4>
+                                                                    <p class="card-category">fechados</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-md-4 mt-4">
+                                                            <canvas id="graficoChamados"></canvas>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-4 mb-3">
+                                        <div class="card text-center">
+                                            <div class="card-body">
+                                                <div class="text-center">
+                                                    <div class="row">
+                                                        <div class="col-12 col-md-8">
+                                                            <div class="row">
+                                                                <div class="col-12 border-bottom mb-3">
+                                                                    <p class="card-category">Equipamentos</p>
+                                                                    <h4 class="card-title">{{ equipamentoTotal|intcomma }}</h4>
+                                                                    <a href="{% url 'RelatorioEquipamentos' %}" class="text-decoration-none">
+                                                                        <div class="card m-5 p-5 text-success border-success">
+                                                                            <div class="row">
+                                                                                <div><i class="fas fa-file-excel fa-2x"></i></div>
+                                                                                <div>
+                                                                                    <h5>Equipamentos</h5>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </a>
+                                                                </div>
+                                                                <div class="col-4">
+                                                                    <h4 class="card-title">{{ computadores|intcomma }}</h4>
+                                                                    <p class="card-category"><span title="Computadores" data-toggle="tooltip" data-placement="bottom"><i class="fa-solid fa-computer"></i></span></p>
+                                                                    <a href="{% url 'RelatorioComputadores' %}" class="text-decoration-none">
+                                                                        <div class="card m-5 p-5 text-success border-success">
+                                                                            <div class="row">
+                                                                                <div ><i class="fas fa-file-excel fa-2x"></i></div>
+                                                                                <div >
+                                                                                    <h5>Computadores</h5>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </a>
+                                                                </div>
+                                                                <div class="col-4">
+                                                                    <h4 class="card-title">{{ impressoras|intcomma }}</h4>
+                                                                    <p class="card-category"><span title="Impressoras" data-toggle="tooltip" data-placement="bottom"><i class="fa-solid fa-print"></i></span></p>
+                                                                    <a href="{% url 'RelatorioImpressoras' %}" class="text-decoration-none">
+                                                                        <div class="card m-5 p-5 text-success border-success">
+                                                                            <div class="row">
+                                                                                <div><i class="fas fa-file-excel fa-2x"></i></div>
+                                                                                <div>
+                                                                                    <h5>Impressoras</h5>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </a>
+                                                                </div>
+                                                                <div class="col-4">
+                                                                    <h4 class="card-title">{{ tablets|intcomma }}</h4>
+                                                                    <p class="card-category"><span title="Tablets" data-toggle="tooltip" data-placement="bottom"><i class="fa-solid fa-tablet-screen-button"></i></span></p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-md-4 mt-4">
+                                                            <canvas id="graficoEquipamentos"></canvas>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- <div class="col-12 col-md-4 mb-3">
+                                        <div class="card text-center">
+                                            <div class="card-body">
+                                                <div class="text-center">
+                                                    <div class="row">
+                                                        <div class="col-12 col-md-8">
+                                                            <div class="row">
+                                                                <div class="col-12 border-bottom mb-3">
+                                                                    <p class="card-category">Equipamentos</p>
+                                                                    <h4 class="card-title">{{ equipamentoTotal|intcomma }}</h4>
+                                                                </div>
+                                                                <div class="col-4">
+                                                                    <h4 class="card-title">{{ computadores|intcomma }}</h4>
+                                                                    <p class="card-category"><span title="Computadores" data-toggle="tooltip" data-placement="bottom"><i class="fa-solid fa-computer"></i></span></p>
+                                                                </div>
+                                                                <div class="col-4">
+                                                                    <h4 class="card-title">{{ impressoras|intcomma }}</h4>
+                                                                    <p class="card-category"><span title="Impressoras" data-toggle="tooltip" data-placement="bottom"><i class="fa-solid fa-print"></i></span></p>
+                                                                </div>
+                                                                <div class="col-4">
+                                                                    <h4 class="card-title">{{ tablets|intcomma }}</h4>
+                                                                    <p class="card-category"><span title="Tablets" data-toggle="tooltip" data-placement="bottom"><i class="fa-solid fa-tablet-screen-button"></i></span></p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-md-4 mt-4">
+                                                            <canvas id="graficoEquipamentos"></canvas>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div> -->
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <h3>Regulação</h3>
+                                        <hr>
+                                    </div>
+                                    <div class="col-12 col-md-4 mb-3">
+                                        <div class="card text-center shadow-sm">
+                                            <div class="card-body">
+                                                <div class="text-center">
+                                                    <div class="row">
+                                                        <div class="col-12 border-bottom pb-2">
+                                                            <h5>Pacientes</h5>
+                                                        </div>
+                                                        <div class="col-12 pt-2">
+                                                            <div class="row">
+                                                                <div class="col-12 border-bottom pt-2">
+                                                                    <p class="card-category">Total hoje</p>
+                                                                    <h4 class="card-title">{{ totalPacientesHoje|intcomma }}</h4>
+                                                                </div>
+                                                                <div class="col-12 bg-light border-bottom py-2">
+                                                                    <h6>últimos cadastros</h6>
+                                                                </div>
+                                                                <div class="col-4 pt-3">
+                                                                    <h6 class="card-title">{{ totalPacientes30|intcomma }}</h6>
+                                                                    <p class="card-category">30 dias</p>
+                                                                </div>
+                                                                <div class="col-4 pt-3">
+                                                                    <h6 class="card-title">{{ totalPacientes15|intcomma }}</h6>
+                                                                    <p class="card-category">15 dias</p>
+                                                                </div>
+                                                                <div class="col-4 pt-3">
+                                                                    <h6 class="card-title">{{ totalPacientes7|intcomma }}</h6>
+                                                                    <p class="card-category">7 dias</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-4 mb-3">
+                                        <div class="card text-center shadow-sm">
+                                            <div class="card-body">
+                                                <div class="text-center">
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            <div class="row">
+                                                                <div class="col-12 border-bottom pb-2">
+                                                                    <h5>Vagas</h5>
+                                                                </div>
+                                                                <div class="col-12 border-bottom pt-2">
+                                                                    <p class="card-category">Total hoje</p>
+                                                                    <h4 class="card-title">{{ vagaOfertadaHoje|intcomma }}</h4>
+                                                                </div>
+                                                                <div class="col-12 bg-light border-bottom py-2">
+                                                                    <h6>total no mês</h6>
+                                                                </div>
+                                                                <div class="col-6 pt-3">
+                                                                    <h6 class="card-title">{{ vagaOfertada30|intcomma }}</h6>
+                                                                    <p class="card-category">30 dias</p>
+                                                                </div>
+                                                                <div class="col-6 pt-3">
+                                                                    <h6 class="card-title">{{ vagaOfertada7|intcomma }}</h6>
+                                                                    <p class="card-category">7 dias</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-4 mb-3">
+                                        <div class="card text-center shadow-sm">
+                                            <div class="card-body">
+                                                <div class="text-center">
+                                                    <div class="row">
+                                                        <div class="col-12 border-bottom pb-2">
+                                                            <h5>Permutas</h5>
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <div class="row">
+                                                                <div class="col-12 border-bottom">
+                                                                    <p class="card-category">Total hoje</p>
+                                                                    <h4 class="card-title">{{ vagaPermutadaHoje|intcomma }}</h4>
+                                                                </div>
+                                                                <div class="col-12 bg-light border-bottom py-2">
+                                                                    <h6>total no mês</h6>
+                                                                </div>
+                                                                <div class="col-6 pt-3">
+                                                                    <h6 class="card-title">{{ vagaPermutada30|intcomma }}</h6>
+                                                                    <p class="card-category">30 dias</p>
+                                                                </div>
+                                                                <div class="col-6 pt-3">
+                                                                    <h6 class="card-title">{{ vagaPermutada7|intcomma }}</h6>
+                                                                    <p class="card-category">7 dias</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-4 mb-3">
+                                        <div class="card text-center shadow-sm">
+                                            <div class="card-body">
+                                                <div class="text-center">
+                                                    <div class="row">
+                                                        <div class="col-12 border-bottom pb-2">
+                                                            <h5>Fila de Espera / Regulada</h5>                                                            
+                                                        </div>
+                                                        <div class="col-12 col-md-8 pt-2">
+                                                            <div class="row">
+                                                                <div class="col-12 border-bottom mb-3">
+                                                                    <p class="card-category">Total na fila</p>
+                                                                    <h4 class="card-title">{{ totalPessoasFila|intcomma }}</h4>
+                                                                </div>
+                                                                <div class="col-6">
+                                                                    <h6 class="">{{ totalPessoasFilaSimples|intcomma }}</h4>
+                                                                    <p class="card-category">Fila de espera</p>
+                                                                </div>
+                                                                <div class="col-6">
+                                                                    <h6 class="">{{ totalPessoasFilaRegulada|intcomma }}</h6>
+                                                                    <p class="card-category">Fila regulada</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-md-4 mt-4">
+                                                            <canvas id="graficoFila"></canvas>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>                                    
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card">
+                                            <div class="card-header ">
+                                                <h6 class="card-title"><i class="fa fa-users"></i> {{ unidade|title }}</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <table class="table table-head-bg-success table-striped table-hover colaboradoresUnidade">
+                                                    <thead>
+                                                        <tr>
+                                                            <!-- <th>#</th> -->
+                                                            <th>Colaborador</th>
+                                                            <th>Usuario</th>
+                                                            <th>Último acesso</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for colaborador in colaboradores %}
+                                                            {% if colaborador.user.is_active  %}
+                                                            <tr>
+                                                                <!-- <td>{{ colaborador.id }}</td> -->
+                                                                <td>{{ colaborador|title }} {{ colaborador.user.last_name|title }}</td>
+                                                                <td>{{ colaborador.user.username|title }}</td>
+                                                                {% if colaborador.user.last_login != null %}
+                                                                <td class="text-center"><span title="{{ colaborador.user.last_login}}" data-toggle="tooltip">{{ colaborador.user.last_login|timesince}}</span></td>
+                                                                {% else %}
+                                                                <td class="text-center"><span title="{{ colaborador.user.last_login}}" data-toggle="tooltip">Sem registro</span></td>
+                                                                {% endif %}
+                                                            </tr>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">                                
+                                        <div class="card p-3  text-center">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <h5 class="border-bottom pb-2">Calculadora DPP</h5>
+                                                </div>
+                                            </div>
+                                            <div class="row mt-3">
+                                                <div class="col-12">
+                                                    <form action="">
+                                                        <div class="row">
+                                                            <div class="col-12">
+                                                                <label for="dum"><i class="fa fa-calendar"></i> Data da DUM ou IG Ultrassom</label>
+                                                                <input class="form-control" type="date" name="dum" id="id_dum">
+                                                                <label for="dum"><i class="fa fa-calendar"></i> Semanas <span data-toggle="tooltip" title="Preencha esse campo com o número de SEMANAS presente no ultrassom ou deixe em branco caso o cálculo seja pela DUM."><i class="fa fa-info-circle text-primary"></i></span></label>
+                                                                <input class="form-control text-center h1" style="font-size: 22px;" type="number" name="somaSemanas" id="id_somaSemanas" min="0">
+                                                                <label for="dum"><i class="fa fa-calendar"></i> Dias  <span data-toggle="tooltip" title="Preencha esse campo com o número de DIAS presente no ultrassom ou deixe em branco caso o cálculo seja pela DUM."><i class="fa fa-info-circle text-primary"></i></span></label>
+                                                                <input class="form-control text-center h1" style="font-size: 22px;" type="number" name="somaDias" id="id_somaDias" min="0" max="7">
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mt-5 mb-3">
+                                                            <div class="col-4 py-3 bg-light rounded border border-info">
+                                                                <h5>DPP</h5>
+                                                                <h5 id="id_dpp">00/00/0000</h5>
+                                                            </div>
+                                                            <div class="col-4 py-3 bg-light rounded border border-info">
+                                                                <h5>IG</h5>
+                                                                <h5><span id="semanas">0</span> e <span id="dias"> 0</span></h5>
+                                                            </div>
+                                                            <div class="col-4 py-3 bg-light rounded border border-info">
+                                                                <h5>Trimestre</h5>
+                                                                <h5 id="trimestre">0º Trim</h5>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                            <!-- <div class="row mt-3">
+                                                <div class="col-12">
+                                                    <h1>teste</h1>
+                                                    <input type="date" id="dataDum">
+                                                    <button id="calcularGravidez">Calcular</button>
+
+                                                    <div id="resultado"></div>
+                                                </div>
+                                            </div> -->
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                        <!-- ########################## DASHBOARD ADMINISTRATOR FIM ##############################-->
+
+                        <!-- ########################## DASHBOARD REGULAÇÃO CHEFIA ##############################-->
+                        {% for group in request.user.groups.all %}
+                            {% if group.name == 'regulacaoChefia' %}
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="card-header ">
+                                                <h6 class="card-title"><i class="fa fa-users"></i> {{ unidade|title }}</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <table class="table table-head-bg-success table-striped table-hover colaboradoresUnidade">
+                                                    <thead>
+                                                        <tr>
+                                                            <!-- <th>#</th> -->
+                                                            <th>Colaborador</th>
+                                                            <th>Usuario</th>
+                                                            <th>Último acesso</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for colaborador in colaboradores %}
+                                                            {% if colaborador.user.is_active  %}
+                                                            <tr>
+                                                                <!-- <td>{{ colaborador.id }}</td> -->
+                                                                <td>{{ colaborador|title }} {{ colaborador.user.last_name|title }}</td>
+                                                                <td>{{ colaborador.user.username|title }}</td>
+                                                                {% if colaborador.user.last_login != null %}
+                                                                <td class="text-center"><span title="{{ colaborador.user.last_login}}" data-toggle="tooltip">{{ colaborador.user.last_login|timesince}}</span></td>
+                                                                {% else %}
+                                                                <td class="text-center"><span title="{{ colaborador.user.last_login}}" data-toggle="tooltip">Sem registro</span></td>
+                                                                {% endif %}
+                                                            </tr>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                        <!-- ########################## DASHBOARD REGULAÇÃO CHEGIA FIM ##############################-->
+                        
+
+                        <!-- ########################## DASHBOARD TODOS ##############################-->
+                            <div class="row mb-3">                            
+                                {% for group in request.user.groups.all %}
+                                    {% if group.name == 'enfermeiros' %}
+                                        <div class="col mb-3">
+                                            <div class="card p-3  text-center">
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <h5 class="border-bottom pb-2">Calculadora DPP</h5>
+                                                    </div>
+                                                </div>
+                                                <div class="row mt-3">
+                                                    <div class="col-12">
+                                                        <form action="">
+                                                            <div class="row">
+                                                                <div class="col-12">
+                                                                    <label for="dum"><i class="fa fa-calendar"></i> Data da DUM ou IG Ultrassom</label>
+                                                                    <input class="form-control text-center h1" style="font-size: 22px;" type="date" name="dum" id="id_dum">
+                                                                    <label for="dum"><i class="fa fa-calendar"></i> Semanas <span data-toggle="tooltip" title="Preencha esse campo com o número de SEMANAS presente no ultrassom ou deixe em branco caso o cálculo seja pela DUM."><i class="fa fa-info-circle text-primary"></i></span></label>
+                                                                    <input class="form-control text-center h1" style="font-size: 22px;" type="number" name="somaSemanas" id="id_somaSemanas" min="0">
+                                                                    <label for="dum"><i class="fa fa-calendar"></i> Dias  <span data-toggle="tooltip" title="Preencha esse campo com o número de DIAS presente no ultrassom ou deixe em branco caso o cálculo seja pela DUM."><i class="fa fa-info-circle text-primary"></i></span></label>
+                                                                    <input class="form-control text-center h1" style="font-size: 22px;" type="number" name="somaDias" id="id_somaDias" min="0" max="7">                                                                    
+                                                                </div>
+                                                                <!-- <div class="col-6">
+                                                                    <label for="idadeGestacional"><i class="fa fa-calendar"></i> Data da IG ultrassom</label>
+                                                                    <input class="form-control" type="date" name="idadeGestacional" id="id_idadeGestacional">
+                                                                </div> -->
+                                                            </div>
+                                                            <div class="row mt-5 mb-3">
+                                                                <div class="col-4 py-3 bg-light rounded border border-info">
+                                                                    <h5>DPP</h5>
+                                                                    <h5 id="id_dpp">00/00/0000</h5>
+                                                                </div>
+                                                                <div class="col-4 py-3 bg-light rounded border border-info">
+                                                                    <h5>IG</h5>
+                                                                    <h5><span id="semanas">0</span> e <span id="dias"> 0</span></h5>
+                                                                </div>
+                                                                <div class="col-4 py-3 bg-light rounded border border-info">
+                                                                    <h5>Trimestre</h5>
+                                                                    <h5 id="trimestre">0º Trim</h5>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                                <!-- <div class="row mt-3">
+                                                    <div class="col-12">
+                                                        <h1>teste</h1>
+                                                        <input type="date" id="dataDum">
+                                                        <button id="calcularGravidez">Calcular</button>
+                                                        
+                                                        <div id="resultado"></div>
+                                                    </div>
+                                                </div> -->
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                {% endfor %}
+                                <div class="row mb-3">
+                                    <div class="col">
+                                        <div class="card">
+                                            <div class="card-header ">
+                                                <h5 class="card-title">Avisos</h5>
+                                                <!-- <p class="card-category">Lista de funcionários</p> -->
+                                            </div>
+                                            <div class="card-body">                                                
+                                                <div class="alert alert-primary" role="alert">
+                                                    <p class="alert-heading"><i class="fa fa-warning"></i> SR(A)S. ADMINISTRATIVOS,</p>
+                                                    <hr>
+                                                    <h6>A abertura de chamados para o T.I da Saúde deixou de ser através do EMAIL. Para solicitar manutenção e atendimento ao T.I da Saúde, deverá preencher o formulário através do menu <strong>"<i class="fa fa-screwdriver-wrench"></i> Informática Saúde"</strong> em seguida clicar na opção <strong>"<i class="fa fa-plus"></i> Abrir um chamado"</strong> ou clique <a href="{% url 'create-chamado-unidade' %}">aqui</a> para acessar o formulário.</h6>
+                                                    <hr>
+                                                    <div class="col-12 px-0 text-center">                                                    
+                                                        <ul class="list-group">
+                                                            <!-- <li class="list-group-item ">
+                                                                Fale com o T.I da Saúde: <br><strong><i class="fa fa-phone"></i> (11) 4034-6700</strong>
+                                                            </li> -->
+                                                            <li class="list-group-item">
+                                                                <strong>Telefone: 4034-7140</strong> <br>Suporte e Manutenção de Informática. <br><small>(Emyle e Lucas)</small> 
+                                                            </li>
+                                                            {% for group in request.user.groups.all %}
+                                                                {% if group.name != 'support' %}
+                                                                    <li class="list-group-item">
+                                                                        <strong>Ramal: 1977</strong> <br> Sistema de Permuta ou Filipeta do Cross. 
+                                                                        <br> Criação de Usuários e alteração de Senha. <br><small> (Vinicius e William)</small> 
+                                                                    </li>
+                                                                {% endif %}
+                                                            {% endfor %}
+
+                                                          </ul>    
+                                                    </div>
+                                                    
+                                                </div>
+                                                {% for group in request.user.groups.all %}
+                                                    {% if group.name != 'support' %}
+                                                        <div class="alert alert-info" role="alert">
+                                                            <p class="alert-heading"><i class="fa fa-warning"></i> ATENÇÃO SR(A)S. ADMINISTRATIVOS,</p>
+                                                            <hr>
+                                                            <h6>O PRAZO MÁXIMO PARA DISPONIBILIZAR AS VAGAS DO AME ATIBAIA E HUSF (SISTEMA CROSS) É DE 72H.</h6>
+                                                            
+                                                        </div>
+                                                        <div class="py-3 text-uppercase">
+                                                            <h6 >Tipos de Inserção errada</h6>
+                                                            <ul class="list-unstyled">
+                                                                <li>
+                                                                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                                                        <strong>Inserção errada/agendado:</strong> foi agendado erroneamente.
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                                                        <strong>Inserção errada/fila:</strong> lançado erroneamente na fila de espera.
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                {% for group in request.user.groups.all %}
+                                    {% if group.name != 'support' %}
+                                        <div class="row mb-3">
+                                            <div class="col-12 col-sm-6 col-xl-2 text-center mb-3">
+                                                <a href="https://esusbp.ddns.net/" target="_blank">
+                                                    <div class="card">
+                                                        <img src="{% static 'img/esus_logo.png' %}" width="200px" height="auto" class="card-img mt-3" alt="...">
+                                                        <div class="card-img-overlay">
+                                                            <h6 class="card-title">Acessar o PEC</h6>
+                                                        </div>
+                                                </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-12 col-sm-6 col-xl-2 text-center mb-3">
+                                                <a href="https://bp.saudecidadedigital.com.br/login.php" target="_blank">
+                                                    <div class="card">
+                                                        <img src="{% static 'img/saudeDigital_logo.png' %}" width="200px" height="auto" class="card-img mt-3" alt="...">
+                                                        <div class="card-img-overlay">
+                                                            <h6 class="card-title">Acessar o Saúde Digital</h6>
+                                                        </div>
+                                                </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-12 col-sm-6 col-xl-2 text-center mb-3">
+                                                <a href="http://200.225.120.236:8011/" target="_blank">
+                                                    <div class="card">
+                                                        <img src="{% static 'img/sisprog_logo.png' %}" width="200px" height="auto" class="card-img mt-3" alt="...">
+                                                        <div class="card-img-overlay">
+                                                            <h6 class="card-title">Filipetas</h6>
+                                                        </div>
+                                                </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-12 col-sm-6 col-xl-2 text-center mb-3">
+                                                <a href="https://sisregiii.saude.gov.br/cgi-bin/index" target="_blank">
+                                                    <div class="card">
+                                                        <img src="{% static 'img/sisreg_logo.png' %}" width="200px" height="auto" class="card-img mt-3" alt="...">
+                                                        <div class="card-img-overlay">
+                                                            <h6 class="card-title">Acessar o SisReg</h6>
+                                                        </div>
+                                                </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-12 col-sm-6 col-xl-2 text-center mb-3">
+                                                <a href="https://siresp.saude.sp.gov.br/" target="_blank">
+                                                    <div class="card">
+                                                        <img src="{% static 'img/siresp_logo.png' %}" width="200px" height="auto" class="card-img mt-3" alt="...">
+                                                        <div class="card-img-overlay">
+                                                            <h6 class="card-title">Acessar o Siresp</h6>
+                                                        </div>
+                                                </div>
+                                                </a>
+                                            </div>
+                                        </div>                                        
+                                    {% endif %}
+                                {% endfor %}                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        {% else %}
+            <!-- ########################## DASHBOARD SEM LOGIN ##############################-->
+            <section class="">
+                <!-- <div class="row mb-3">
+                    <div class="col">
+                        <div class="card">
+                            <div class="card-header ">
+                                <h5 class="card-title">Avisos</h5>
+                                
+                            </div>
+                            <div class="card-body">
+                                <div class="alert alert-info" role="alert">
+                                    <p class="alert-heading"><i class="fa fa-warning"></i> ATENÇÃO SR(A)S. ADMINISTRATIVOS,</p>
+                                    <hr>
+                                    <h6>O PRAZO MÁXIMO PARA DISPONIBILIZAR AS VAGAS DO AME ATIBAIA E HUSF (SISTEMA CROSS) É DE 72H.</h6>                                    
+                                </div>                                
+                            </div>                            
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12 col-sm-6 col-xl-2 text-center mb-3">
+                        <a href="https://esusbp.ddns.net/" target="_blank">
+                            <div class="card">
+                                <img src="{% static 'img/esus_logo.png' %}" width="200px" height="auto" class="card-img mt-3" alt="...">
+                                <div class="card-img-overlay">
+                                    <h6 class="card-title">Acessar o PEC</h6>
+                                </div>
+                          </div>
+                        </a>
+                    </div>
+                    <div class="col-12 col-sm-6 col-xl-2 text-center mb-3">
+                        <a href="https://bp.saudecidadedigital.com.br/login.php" target="_blank">
+                            <div class="card">
+                                <img src="{% static 'img/saudeDigital_logo.png' %}" width="200px" height="auto" class="card-img mt-3" alt="...">
+                                <div class="card-img-overlay">
+                                    <h6 class="card-title">Acessar o Saúde Digital</h6>
+                                </div>
+                          </div>
+                        </a>
+                    </div>
+                    <div class="col-12 col-sm-6 col-xl-2 text-center mb-3">
+                        <a href="http://200.225.120.236:8011/" target="_blank">
+                            <div class="card">
+                                <img src="{% static 'img/sisprog_logo.png' %}" width="200px" height="auto" class="card-img mt-3" alt="...">
+                                <div class="card-img-overlay">
+                                    <h6 class="card-title">Filipetas</h6>
+                                </div>
+                          </div>
+                        </a>
+                    </div>
+                    <div class="col-12 col-sm-6 col-xl-2 text-center mb-3">
+                        <a href="https://sisregiii.saude.gov.br/cgi-bin/index" target="_blank">
+                            <div class="card">
+                                <img src="{% static 'img/sisreg_logo.png' %}" width="200px" height="auto" class="card-img mt-3" alt="...">
+                                <div class="card-img-overlay">
+                                    <h6 class="card-title">Acessar o SisReg</h6>
+                                </div>
+                          </div>
+                        </a>
+                    </div>
+                    <div class="col-12 col-sm-6 col-xl-2 text-center mb-3">
+                        <a href="https://siresp.saude.sp.gov.br/" target="_blank">
+                            <div class="card">
+                                <img src="{% static 'img/siresp_logo.png' %}" width="200px" height="auto" class="card-img mt-3" alt="...">
+                                <div class="card-img-overlay">
+                                    <h6 class="card-title">Acessar o Siresp</h6>
+                                </div>
+                          </div>
+                        </a>
+                    </div>
+                </div> -->
+            </section> 
+        {% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+        $("#calcularGravidez").click(()=>{         
+            const dataDum = new Date(document.getElementById('dataDum').value);
+            if (isNaN(dataDum.getTime())) {
+                document.getElementById('resultado').innerHTML = "Por favor, insira uma data válida.";
+                return;
+            }
+
+            // Calcular a DPP (280 dias após a DUM)
+            const dpp = new Date(dataDum.getTime());
+            dpp.setDate(dataDum.getDate() + 280);
+
+            // Calcular a diferença em semanas e dias
+            const hoje = new Date();
+            const diferenca = hoje - dataDum;
+            const semanas = Math.floor(diferenca / (1000 * 60 * 60 * 24 * 7));
+            const dias = Math.floor((diferenca / (1000 * 60 * 60 * 24)) % 7);
+
+
+            // Determinar o trimestre da gravidez
+            let trimestre;
+            if (semanas < 13) {
+                trimestre = "1º Trimestre";
+            } else if (semanas < 27) {
+                trimestre = "2º Trimestre";
+            } else {
+                trimestre = "3º Trimestre";
+            }
+
+            // Exibir os resultados
+            document.getElementById('resultado').innerHTML =
+                "DPP: " + dpp.toISOString().split('T')[0] +
+                "<br>Semanas de gravidez: " + semanas +
+                "<br>Dias de gravidez: " + dias +
+                "<br>Trimestre da gravidez: " + trimestre;
+        })
+
+
+
+
+
+        const ctx = document.getElementById('graficoEquipamentos');
+        new Chart(ctx, {
+            type: 'pie',  
+            data: {
+                labels: ['computadores', 'impressoras', 'tablets'],
+                datasets: [{          
+                    data: [{{computadores}}, {{impressoras}}, {{tablets}}],
+                    borderWidth: 1
+                }]
+            },
+            options: { 
+                plugins: 
+                { 
+                    legend: 
+                    { 
+                        display: false 
+                    }, 
+                } 
+            },
+        });
+        
+        new Chart(document.getElementById('graficoChamados'), {
+            type: 'pie',  
+            data: {
+                labels: ['Aguardando', 'Em andamento', 'Concluído'],
+                datasets: [{          
+                    data: [{{chamadosAguardando}}, {{chamadosAndamento}}, {{chamadosConcluido}}],
+                    borderWidth: 1
+                }]
+            },
+            options: { 
+                plugins: 
+                { 
+                    legend: 
+                    { 
+                        display: false 
+                    }, 
+                } 
+            },
+        });
+
+
+        // fila gráfico
+        // $.ajax({
+        //     url: 'api/historicoFilaAjax',
+        //     success: function(response){
+                
+        //         let datas = response.map(function(e){
+        //             return e.dataArquivo;
+        //         });
+        //         let totais = response.map(function(e){
+        //             return e.total;
+        //         });
+
+        //         //instancia do grafico
+        //         var ctx = document.getElementById('filaReguladaGrafico').getContext('2d');
+
+        //         //configura opções
+        //         var myoption = {
+        //             tooltips: {
+        //                 enabled: true
+        //             },
+        //             hover: {
+        //                 animationDuration: 1
+        //             },
+                    
+        //             scales: {
+        //                 y: { // defining min and max so hiding the dataset does not change scale range
+        //                     min: 0
+        //                 },                
+        //             }
+        //         };
+
+        //         var config = {
+        //             type: 'line',
+        //             data: {
+        //                 labels: datas,
+        //                 datasets: [{
+        //                     label: 'Fila de Espera',
+        //                     data: totais,
+        //                     // backgroundColor: [
+        //                     //     'rgba(255,99,132,0.2)',
+        //                     //     'rgba(54,162,235,0.2)',
+        //                     // ],
+        //                     // borderColor: [
+        //                     //     'rgba(255,99,132,1)',
+        //                     //     'rgba(54,162,235,1)',
+        //                     // ],
+        //                     // borderWidth: 1
+        //                 }],
+        //             },
+        //             options: myoption,
+        //         }
+
+        //         var grafFila = new Chart(ctx, config);
+
+        //     }
+        // });
+
+        new Chart(document.getElementById('graficoFila'), {
+            type: 'pie',  
+            data: {
+                labels: ['Fila Normal', 'Fila Regulada'],
+                datasets: [
+                    {          
+                        data: [{{totalPessoasFilaSimples}}, {{totalPessoasFilaRegulada}}],
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: { 
+                plugins: 
+                { 
+                    legend: 
+                    { 
+                        display: false 
+                    }, 
+                } 
+            },
+        });
+
+        // Data tables    
+        $(".colaboradoresUnidade").DataTable({
+            responsive: true,
+            // "bSort": false,
+            "aaSorting": [[0, "asc"]],
+            "pageLength": 5,
+            "lengthMenu": [[5, 25, 50, 100], [5, 25, 50, 100]],
+            "language": {
+                "decimal": "",
+                "emptyTable": "Sem dados disponíveis",
+                "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                "infoEmpty": "Mostrando de 0 até 0 de 0 registros",
+                "infoFiltered": "(filtrado de _MAX_ registros no total)",
+                "infoPostFix": "",
+                "thousands": ",",
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "loadingRecords": "A carregar dados...",
+                "processing": "A processar...",
+                "search": "Procurar:",
+                "zeroRecords": "Não foram encontrados resultados",
+                "paginate": {
+                    "first": "Primeiro",
+                    "last": "Último",
+                    "next": "Seguinte",
+                    "previous": "Anterior"
+                },
+                "aria": {
+                    "sortAscending": ": ordem crescente",
+                    "sortDescending": ": ordem decrescente"
+                }
+            }
+        });
+
+    });
+</script>
+{% endblock %}

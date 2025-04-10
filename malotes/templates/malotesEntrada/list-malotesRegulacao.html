@@ -1,0 +1,2213 @@
+{% extends 'paginas/modelo-ifpr.html' %}
+
+{% load static %}
+
+{% block conteudo %}
+
+
+<h4 class="text-center">
+    {{ nomeUnidade }} 
+</h4>
+
+<hr>
+<div class="row justify-content-between">
+    <div class="col-1">
+        <a href="{% url 'list-maloteUnidades' %}"class="btn btn-primary btn-sm float-right"> Voltar</a>
+    </div>
+    <div class="col">
+        <a href="{% url 'create-malote-regulacao' %}" class="btn btn-primary btn-sm float-right">Novo malote</a>
+    </div>
+</div>
+<h5><span class="badge badge-success">Última atualização da regulação : {{horarioUltimaAtualizacao}} </span></h5>
+<hr>
+
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalInformacoes">
+    Informações referentes ao malote
+</button>
+
+<hr>
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" id="recebidos-tab" data-toggle="tab" href="#todos" role="tab"
+            aria-controls="recebidos" aria-selected="true"><b>Todos</b></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="recebidos-tab" data-toggle="tab" href="#recebidos" role="tab"
+            aria-controls="recebidos" aria-selected="true"><b>Recebidos</b></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="medico-tab" data-toggle="tab" href="#medico" role="tab" aria-controls="medico"
+            aria-selected="true"><b>Aguardando regulação</b></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="encaminhamento-tab" data-toggle="tab" href="#encaminhamento" role="tab" aria-controls="encaminhamento"
+            aria-selected="true"><b>Aguardando encaminhamento</b></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="cirurgia-tab" data-toggle="tab" href="#cirurgia" role="tab"
+            aria-controls="cirurgia" aria-selected="true"><b>Cirurgia</b></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="hospitaldeolhos-tab" data-toggle="tab" href="#hospitaldeolhos" role="tab" aria-controls="hospitaldeolhos"
+            aria-selected="true"><b>Hospital de olhos</b></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="altacomplexidade-tab" data-toggle="tab" href="#altacomplexidade" role="tab" aria-controls="altacomplexidade"
+            aria-selected="true"><b>Alta complexidade</b></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="ame-tab" data-toggle="tab" href="#ame" role="tab"
+            aria-controls="ame" aria-selected="true"><b>AME</b></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="bera-tab" data-toggle="tab" href="#bera" role="tab"
+            aria-controls="bera" aria-selected="true"><b>BERA</b></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="biopsia-tab" data-toggle="tab" href="#biopsia" role="tab"
+            aria-controls="biopsia" aria-selected="true"><b>Biópsia</b></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="arquivo-tab" data-toggle="tab" href="#arquivo" role="tab"
+            aria-controls="arquivo" aria-selected="true"><b>Fila de espera</b></a>
+    </li>
+
+</ul>
+
+
+
+  
+
+<div class="tab-content" id="myTabContent">
+
+    <div class="tab-pane fade show active py-5" id="todos" role="tabpanel" aria-labelledby="todos-tab">
+        <div class="table-responsive">
+            <table class="table" id="tabela-todos">
+                    <thead>
+                        <tr>
+
+                            <th>Etapa</th>
+                            <th>Nome</th>
+                            <th>Data de nascimento</th>
+                            <th>Procedimento</th>
+                            <th>Tipo</th>
+                            <th>SUS</th>
+                            <th>Status</th>
+                            <th data-toggle="tooltip" data-placement="left" title="Scanneado"><i class="fas fa-print"></i></th>
+                            <!-- <th>Informações</th> -->
+                            {% for group in request.user.groups.all %}
+                                {% if group.name == "administrator" %}  
+                                    <th>Editar</th>
+                                    <th>Excluir</th>
+                                {%endif%}
+                            {%endfor%}
+
+                        </tr>
+                    </thead>
+                
+                    <tbody>
+                        {% for malote in object_list %}
+                            
+                                {% if malote.statusProcesso == 2%}
+                                <tr class="agendado">
+                                {% elif malote.statusProcesso == 3%}
+                                <tr class="arquivado">
+                                {% elif malote.statusProcesso == 4%}
+                                <tr class="devolvido">
+                                {% elif malote.statusProcesso == 5%}
+                                <tr class="encaminhado">
+                                {% elif malote.statusProcesso == 6%}
+                                <tr class="pendente">
+                                {% elif malote.statusProcesso == 7%}
+                                <tr class="recebido">
+                                {% elif malote.statusProcesso == 8%}
+                                <tr class="naoveionomalote">
+                                {% else %}
+                                <tr>
+                                {%endif%}
+                                    
+                                    {%if malote.etapa == 1 and malote.statusProcesso == 1%}
+                                    <td>Enviado para regulação</td>
+                                    {%elif malote.etapa == 1 and malote.statusProcesso == 2 %}
+                                    <td>Agendado</td>
+                                    {%elif malote.etapa == 1 and malote.statusProcesso == 3 %}
+                                    <td>Arquivado</td>
+                                    {%elif malote.etapa == 1 and malote.statusProcesso == 5 %}
+                                    <td>Encaminhado</td>
+                                    {%elif malote.etapa == 1 and malote.statusProcesso == 6 %}
+                                    <td>Pendente</td>
+                                    {%elif malote.etapa == 1 and malote.statusProcesso == 4 %}
+                                    <td>Devolvido para unidade</td>
+                                    {%elif malote.etapa == 1 and malote.statusProcesso == 7 %}
+                                    <td>Recebido pela regulação</td>
+                                    {%elif malote.etapa == 1 and malote.statusProcesso == 8 %}
+                                    <td>Não veio no malote</td>
+                                    {%elif malote.etapa == 2%}
+                                    <td>Avaliação do médico regulador </td>
+                                    {%elif malote.etapa == 3%}
+                                    <td>Aguardando regulação</td>
+                                    {%elif malote.etapa == 4%}
+                                    <td>Cirurgia</td>
+                                    {%elif malote.etapa == 5%}
+                                    <td>Hospital de olhos</td>
+                                    {%elif malote.etapa == 6%}
+                                    <td>Alta complexidade</td>
+                                    {%elif malote.etapa == 7%}
+                                    <td>AME</td>
+                                    {%elif malote.etapa == 11%}
+                                    <td>BERA</td>
+                                    {%elif malote.etapa == 8%}
+                                    <td>Biópsia</td>
+                                    {%elif malote.etapa == 9%}
+                                    <td>Fila de espera</td>
+                                    {%elif malote.etapa == 10%}
+                                    <td>Malote saída</td>
+                                    {%endif%}
+                                    
+                                    {% if malote.etapa == 1 or malote.etapa == 3%}
+                                        <td data-toggle="tooltip" title="Enviado por: {{malote.createdBy_user}}, em {{malote.created_at}}">
+                                            <a href="{% url 'update-malote-regulacao' malote.pk %}" class="btn" title="Editar" >
+                                            {{malote.nome}}
+                                            </a>
+                                        </td>
+                                    {% else %}
+                                        <td data-toggle="tooltip" title="Enviado por: {{malote.createdBy_user}}, em {{malote.created_at}}">{{malote.nome}}</td>
+                                    {% endif %}
+                    
+                                    {% if malote.dataNascimento == null%}
+                                        <td>Sem registro</td>
+                                    {% else %}
+                                        <td>{{ malote.dataNascimento|date:"d"}}/{{ malote.dataNascimento|date:"m"}}/{{malote.dataNascimento|date:"Y"}}</td>
+                                    {%endif%}
+                                
+                                    <td class="cortar-texto" data-toggle="tooltip" title="{{malote.procedimento}}">{{malote.procedimento}}</td>
+
+                                    {%if malote.tipo == 1%}
+                                        <td>Sem tipo</td>
+                                    {%elif malote.tipo == 2%}
+                                        <td>Cirurgia</td>
+                                    {%elif malote.tipo == 3%}
+                                        <td>Devolução</td>
+                                    {%elif malote.tipo == 4%}
+                                        <td>Remarcação</td>
+                                    {%elif malote.tipo == 5%}
+                                        <td>Retorno</td>
+                                    {%elif malote.tipo == 6%}
+                                        <td>Biópsia</td>
+                                    {% else %}
+                                        <td>Resultado de exame</td>
+                                    {%endif%}
+                        
+                                    <td>{{malote.sus}}</td>
+                    
+                                    {%if malote.statusProcesso == 1%}
+                                    <td>Sem status</td>
+                                    {%elif malote.statusProcesso == 2%}
+                                    <td>Agendado</td>
+                                    {% elif malote.statusProcesso == 3%}
+                                    <td>Arquivado</td>
+                                    {% elif malote.statusProcesso == 4%}
+                                        {%if malote.justificativa == 1%}
+                                            <td>Devolvido</td>
+                                        {%elif malote.justificativa == 2%}
+                                            <td data-toggle="tooltip" title="Faltam Dados/Exames">Devolvido</td>
+                                        {% elif malote.justificativa == 3%}
+                                            <td data-toggle="tooltip" title="Preencher APAC">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 4%}
+                                            <td data-toggle="tooltip" title="Agendamento é realizado pela unidade">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 5%}
+                                            <td data-toggle="tooltip" title="Falta carta de sedação">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 6%}
+                                            <td data-toggle="tooltip" title="Encaminhar para assistente social">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 7%}
+                                            <td data-toggle="tooltip" title="Encaminhar para planejamento familiar">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 8%}
+                                            <td data-toggle="tooltip" title="Encaminhar para ambulatório de especialidades">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 9%}
+                                            <td data-toggle="tooltip" title="Encaminhar/Retorno no HUSF">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 10%}
+                                            <td data-toggle="tooltip" title="Falta autorização para retirada do exame no AME">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 11%}
+                                            <td data-toggle="tooltip" title="Encaminhar para centro de reabilitação(FISIO)">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 12%}
+                                            <td data-toggle="tooltip" title="Guia e cadweb de pacientes diferentes">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 13%}
+                                            <td data-toggle="tooltip" title="Encaminhar para saúde mental infantil">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 14%}
+                                            <td data-toggle="tooltip" title="Inserir no CDR e fila de espera">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 15%}
+                                            <td data-toggle="tooltip" title="Não veio no malote">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 16%}
+                                            <td data-toggle="tooltip" title="Atualização de cadastro">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {%endif%}
+                                    {% elif malote.statusProcesso == 5%}
+                                    <td>Encaminhado</td>
+                                    {% elif malote.statusProcesso == 6%}
+                                    <td>Pendente</td>
+                                    {% elif malote.statusProcesso == 7%}
+                                    <td data-toggle="tooltip" title="{{malote.statusData}} - {{malote.statusUser}}">Recebido</td>
+                                    {% elif malote.statusProcesso == 8%}
+                                    <td>Não veio no malote</td>
+                                    {% else %}
+                                    <td>Retirado SMSA</td>
+                                    {%endif%}
+
+                                    {% if malote.scanner == 0 %}
+                                        <td>
+                                            <input type="checkbox" class="scanner" id="scanner{{malote.id}}" name="scanner" value="{{malote.id}}">
+                                        </td>
+                                    {% elif malote.scanner == 1 %}
+                                        <td data-toggle="tooltip" title="Scanneado dia {{malote.dataScanner}}">
+                                            <input type="checkbox" class="scanner" id="scanner{{malote.id}}" name="scanner" value="{{malote.id}}" checked>
+                                        </td>
+                                    {% endif %}
+                                    <!-- <td>
+                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#pacienteModal" id="malote{{malote.id}}" value="{{malote.id}}">
+                                            <i class="fas fa-info-circle"></i>
+                                        </button>
+                                    </td> -->
+
+                                    {% for group in request.user.groups.all %}
+                                        {% if group.name == "administrator" %}
+                                            <td><a href="{% url 'update-malote-admin' malote.pk %}" class="btn btn-warning" title="Editar"><i class="fa fa-pencil" aria-hidden="true"></i></a></td>
+                                            <td><a href="{% url 'delete-malote-admin' malote.pk %}" class="btn btn-danger" title="Excluir"><i class="fa fa-trash" aria-hidden="true"></i></a></td>
+                                        {%endif%}
+                                    {%endfor%}
+                                    
+                                    
+                                </tr>
+                        {% endfor %}
+                    </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="tab-pane fade py-5" id="recebidos" role="tabpanel" aria-labelledby="recebidos-tab">
+        <div class="table-responsive">
+            <form action="{% url 'update-malote-etapaUmRegulacao' %}" method="POST">
+                {%csrf_token%}
+                <table class="table" id="tabela-recebidos">
+                    <!-- <input type="hidden" name="unidadePk" value="{{ unidadePk }}"> -->
+                    <!-- <div>
+                        <button type="submit" value="2" name="etapa" class="btn btn-primary">Encaminhar</button>
+                    </div> -->
+                    <div class="col-3 input-group">
+                        <select class="custom-select" name="etapa" id="idetapa">
+                            <option value="2" selected>Médico</option>
+                            <option value="8">Biópsia</option>
+                            <option value="11">BERA</option>
+                            <option value="10">Malote de saída</option>
+                        </select>
+                        <input type="hidden" name="unidadePk" value="{{ unidadePk }}">
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-primary">Encaminhar</button>
+                        </div>
+                    </div>
+                <hr>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>#</th>
+                            <th>Nome</th>
+                            <th>Data de nascimento</th>
+                            <th>Procedimento</th>
+                            <th>Tipo</th>
+                            <th>SUS</th>
+                            <th>Status</th>
+                            <th data-toggle="tooltip" data-placement="left" title="Scanneado"><i class="fas fa-print"></i></th>
+                        </tr>
+                    </thead>
+                
+                    <tbody>
+                        {% for malote in object_list %}
+                            {% if malote.etapa == 1 %}
+                                {% if malote.statusProcesso == 2%}
+                                <tr class="agendado">
+                                {% elif malote.statusProcesso == 3%}
+                                <tr class="arquivado">
+                                {% elif malote.statusProcesso == 4%}
+                                <tr class="devolvido">
+                                {% elif malote.statusProcesso == 5%}
+                                <tr class="encaminhado">
+                                {% elif malote.statusProcesso == 6%}
+                                <tr class="pendente">
+                                {% elif malote.statusProcesso == 7%}
+                                <tr class="recebido">
+                                {% elif malote.statusProcesso == 8%}
+                                <tr class="naoveionomalote">
+                                {% else %}
+                                <tr>
+                                {%endif%}
+                                   
+                                    <td>
+                                        <input type="checkbox" id="malotesSelecionados" name="malotesSelecionados" value={{malote.id}}>
+                                    </td>
+                                    <td>
+                                        M00{{ malote.id }}
+                                    </td>
+                                    <td data-toggle="tooltip" title="Enviado por: {{malote.createdBy_user}}, em {{malote.created_at}}">
+                                        <a href="{% url 'update-malote-regulacao' malote.pk %}" class="btn" title="Editar">
+                                        {{malote.nome}}
+                                        </a>
+                                    </td>
+                    
+                                    {% if malote.dataNascimento == null%}
+                                    <td>Sem registro</td>
+                                    {% else %}
+                                    <td>{{ malote.dataNascimento|date:"d"}}/{{ malote.dataNascimento|date:"m"}}/{{malote.dataNascimento|date:"Y"}}</td>
+                                    {%endif%}
+                                
+                                    <td class="cortar-texto" data-toggle="tooltip" title="{{malote.procedimento}}">{{malote.procedimento}}</td>
+
+                                    {%if malote.tipo == 1%}
+                                        <td>Sem tipo</td>
+                                    {%elif malote.tipo == 2%}
+                                        <td>Cirurgia</td>
+                                    {%elif malote.tipo == 3%}
+                                        <td>Devolução</td>
+                                    {%elif malote.tipo == 4%}
+                                        <td>Remarcação</td>
+                                    {%elif malote.tipo == 5%}
+                                        <td>Retorno</td>
+                                    {%elif malote.tipo == 6%}
+                                        <td>Biópsia</td>
+                                    {% else %}
+                                        <td>Resultado de exame</td>
+                                    {%endif%}
+                        
+                                    <td>{{malote.sus}}</td>
+                    
+                                    {%if malote.statusProcesso == 1%}
+                                        <td>Sem status</td>
+                                    {%elif malote.statusProcesso == 2%}
+                                        <td>Agendado</td>
+                                    {% elif malote.statusProcesso == 3%}
+                                        <td>Arquivado</td>
+                                    {% elif malote.statusProcesso == 4%}
+                                        {%if malote.justificativa == 1%}
+                                        <td>Devolvido</td>
+                                        {%elif malote.justificativa == 2%}
+                                            <td data-toggle="tooltip" title="Faltam Dados/Exames">Devolvido</td>
+                                        {% elif malote.justificativa == 3%}
+                                            <td data-toggle="tooltip" title="Preencher APAC">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 4%}
+                                            <td data-toggle="tooltip" title="Agendamento é realizado pela unidade">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 5%}
+                                            <td data-toggle="tooltip" title="Falta carta de sedação">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 6%}
+                                            <td data-toggle="tooltip" title="Encaminhar para assistente social">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 7%}
+                                            <td data-toggle="tooltip" title="Encaminhar para planejamento familiar">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 8%}
+                                            <td data-toggle="tooltip" title="Encaminhar para ambulatório de especialidades">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 9%}
+                                            <td data-toggle="tooltip" title="Encaminhar/Retorno no HUSF">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 10%}
+                                            <td data-toggle="tooltip" title="Falta autorização para retirada do exame no AME">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 11%}
+                                            <td data-toggle="tooltip" title="Encaminhar para centro de reabilitação(FISIO)">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 12%}
+                                            <td data-toggle="tooltip" title="Guia e cadweb de pacientes diferentes">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 13%}
+                                        <td data-toggle="tooltip" title="Encaminhar para saúde mental infantil">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 14%}
+                                            <td data-toggle="tooltip" title="Inserir no CDR e fila de espera">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 15%}
+                                            <td data-toggle="tooltip" title="Não veio no malote">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 16%}
+                                            <td data-toggle="tooltip" title="Atualização de cadastro">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {%endif%}
+                                    {% elif malote.statusProcesso == 5%}
+                                        <td>Encaminhado</td>
+                                    {% elif malote.statusProcesso == 6%}
+                                        <td>Pendente</td>
+                                    {% elif malote.statusProcesso == 7%}
+                                        <td data-toggle="tooltip" title="{{malote.statusData}} - {{malote.statusUser}}">Recebido</td>
+                                    {% elif malote.statusProcesso == 8%}
+                                        <td>Não veio no malote</td>
+                                    {% else %}
+                                        <td>Retirado SMSA</td>
+                                    {%endif%}
+
+                                    {% if malote.scanner == 0 %}
+                                    <td>
+                                        <input type="checkbox" class="scanner" id="scanner{{malote.id}}" name="scanner" value="{{malote.id}}">
+                                    </td>
+                                    {% elif malote.scanner == 1 %}
+                                    <td data-toggle="tooltip" title="Scanneado dia {{malote.dataScanner}}">
+                                        <input type="checkbox" class="scanner" id="scanner{{malote.id}}" name="scanner" value="{{malote.id}}" checked>
+                                    </td>
+                                    {% endif %}                                    
+                                </tr>
+                            {%endif%}
+                        {% endfor %}
+                    </tbody>
+                </form>
+            </table>
+        </div>
+    </div>
+    
+    <div class="tab-pane fade py-5" id="medico" role="tabpanel" aria-labelledby="medico-tab">
+        <div class="table-responsive">
+            <table class="table" id="tabela-medico">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Data de nascimento</th>
+                        <th>Procedimento</th>
+                        <th>Tipo</th>
+                        <th>SUS</th>
+                        <th>Status</th>
+                        <th>Editar</th>
+                    </tr>
+                </thead>
+            
+                <tbody>
+                    {% for malote in object_list %}
+                        {% if malote.etapa == 2 %}
+                            {% if malote.statusProcesso == 2%}
+                            <tr class="agendado">
+                            {% elif malote.statusProcesso == 3%}
+                            <tr class="arquivado">
+                            {% elif malote.statusProcesso == 4%}
+                            <tr class="devolvido">
+                            {% elif malote.statusProcesso == 5%}
+                            <tr class="encaminhado">
+                            {% elif malote.statusProcesso == 6%}
+                            <tr class="pendente">
+                            {% elif malote.statusProcesso == 7%}
+                            <tr class="recebido">
+                            {% elif malote.statusProcesso == 8%}
+                            <tr class="naoveionomalote">
+                            {% else %}
+                            <tr>
+                            {%endif%}
+                    
+                                
+                    
+                                <td data-toggle="tooltip" title="Enviado por: {{malote.createdBy_user}}, em {{malote.created_at}}">{{malote.nome}}</td>
+                    
+                                {% if malote.dataNascimento == null%}
+                                <td>Sem registro</td>
+                                {% else %}
+                                <td>{{ malote.dataNascimento|date:"d"}}/{{ malote.dataNascimento|date:"m"}}/{{malote.dataNascimento|date:"Y"}}</td>
+                                {%endif%}
+                    
+                                <td class="cortar-texto" data-toggle="tooltip" title="{{malote.procedimento}}">{{malote.procedimento}}</td>
+
+                                {%if malote.tipo == 1%}
+                                <td>Sem tipo</td>
+                                {%elif malote.tipo == 2%}
+                                <td>Cirurgia</td>
+                                {%elif malote.tipo == 3%}
+                                <td>Devolução</td>
+                                {%elif malote.tipo == 4%}
+                                <td>Remarcação</td>
+                                {%elif malote.tipo == 5%}
+                                <td>Retorno</td>
+                                {%elif malote.tipo == 6%}
+                                <td>Biópsia</td>
+                                {% else %}
+                                <td>Resultado de exame</td>
+                                {%endif%}
+                    
+                                <td>{{malote.sus}}</td>
+                    
+                                {%if malote.statusProcesso == 1%}
+                                <td>Sem status</td>
+                                {%elif malote.statusProcesso == 2%}
+                                <td>Agendado</td>
+                                {% elif malote.statusProcesso == 3%}
+                                <td>Arquivado</td>
+                                {% elif malote.statusProcesso == 4%}
+                                    {%if malote.justificativa == 1%}
+                                        <td>Devolvido</td>
+                                    {%elif malote.justificativa == 2%}
+                                        <td data-toggle="tooltip" title="Faltam Dados/Exames">Devolvido</td>
+                                    {% elif malote.justificativa == 3%}
+                                        <td data-toggle="tooltip" title="Preencher APAC">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 4%}
+                                        <td data-toggle="tooltip" title="Agendamento é realizado pela unidade">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 5%}
+                                        <td data-toggle="tooltip" title="Falta carta de sedação">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 6%}
+                                        <td data-toggle="tooltip" title="Encaminhar para assistente social">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 7%}
+                                        <td data-toggle="tooltip" title="Encaminhar para planejamento familiar">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 8%}
+                                        <td data-toggle="tooltip" title="Encaminhar para ambulatório de especialidades">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 9%}
+                                        <td data-toggle="tooltip" title="Encaminhar/Retorno no HUSF">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 10%}
+                                        <td data-toggle="tooltip" title="Falta autorização para retirada do exame no AME">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 11%}
+                                        <td data-toggle="tooltip" title="Encaminhar para centro de reabilitação(FISIO)">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 12%}
+                                        <td data-toggle="tooltip" title="Guia e cadweb de pacientes diferentes">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 13%}
+                                        <td data-toggle="tooltip" title="Encaminhar para saúde mental infantil">Devolvido <i class="fas fa-question-circle"></i>    </td>
+                                    {% elif malote.justificativa == 14%}
+                                        <td data-toggle="tooltip" title="Inserir no CDR e fila de espera">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 15%}
+                                        <td data-toggle="tooltip" title="Não veio no malote">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 16%}
+                                        <td data-toggle="tooltip" title="Atualização de cadastro">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {%endif%}
+                                {% elif malote.statusProcesso == 5%}
+                                <td>Encaminhado</td>
+                                {% elif malote.statusProcesso == 6%}
+                                <td>Pendente</td>
+                                {% elif malote.statusProcesso == 7%}
+                                <td data-toggle="tooltip" title="{{malote.statusData}} - {{malote.statusUser}}">Recebido</td>
+                                {% elif malote.statusProcesso == 8%}
+                                <td>Não veio no malote</td>
+                                {% else %}
+                                <td>Retirado SMSA</td>
+                                {%endif%}
+                    
+                                <td>
+                                    <a href="{% url 'update-malote-regulacao' malote.pk %}" class="btn btn-warning btn-sm" title="Editar">
+                                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                                    </a>
+                                </td>
+                            </tr>   
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="tab-pane fade py-5" id="encaminhamento" role="tabpanel" aria-labelledby="encaminhamento-tab">
+        <div class="table-responsive">
+            <form action="{% url 'update-malote-etapaTresRegulacao' %}" method="POST">
+                {%csrf_token%}
+                <table class="table" id="tabela-encaminhamento">
+                <div class="col-3 input-group">
+                    <select class="custom-select" name="etapa" id="idetapa">
+                        <option value="3" selected>Selecione uma opção</option>
+                        <option value="4">Cirurgia</option>
+                        <option value="5">Hospital de olhos</option>
+                        <option value="6">Alta complexidade</option>
+                        <option value="7">AME</option>
+                        <option value="8">Biópsia</option>
+                    </select>
+                    <input type="hidden" name="unidadePk" value="{{ unidadePk }}">
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-primary">Encaminhar</button>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Nome</th>
+                            <th>Data de nascimento</th>
+                            <th>Procedimento</th>
+                            <th>Tipo</th>
+                            <th>SUS</th>
+                            <th>Status</th>
+                            <th data-toggle="tooltip" data-placement="left" title="Scanneado"><i class="fas fa-print"></i></th>
+                            <th>Editar</th>
+                        </tr>
+                    </thead>
+                
+                    <tbody>
+                        {% for malote in object_list %}
+                            {% if malote.etapa == 3 %}
+                                {% if malote.statusProcesso == 2%}
+                                <tr class="agendado">
+                                {% elif malote.statusProcesso == 3%}
+                                <tr class="arquivado">
+                                {% elif malote.statusProcesso == 4%}
+                                <tr class="devolvido">
+                                {% elif malote.statusProcesso == 5%}
+                                <tr class="encaminhado">
+                                {% elif malote.statusProcesso == 6%}
+                                <tr class="pendente">
+                                {% elif malote.statusProcesso == 7%}
+                                <tr class="recebido">
+                                {% elif malote.statusProcesso == 8%}
+                                <tr class="naoveionomalote">
+                                {% else %}
+                                <tr>
+                                {%endif%}
+            
+                                    <td>
+                                        <input type="checkbox" id="malotesSelecionados" name="malotesSelecionados" value={{malote.id}}>
+                                    </td>
+                                    
+                                    <td data-toggle="tooltip" title="Enviado por: {{malote.createdBy_user}}, em {{malote.created_at}}">{{malote.nome}}</td>
+                        
+                                    {% if malote.dataNascimento == null%}
+                                    <td>Sem registro</td>
+                                    {% else %}
+                                    <td>{{ malote.dataNascimento|date:"d"}}/{{ malote.dataNascimento|date:"m"}}/{{malote.dataNascimento|date:"Y"}}</td>
+                                    {%endif%}
+                        
+                                    <td class="cortar-texto" data-toggle="tooltip" title="{{malote.procedimento}}">{{malote.procedimento}}</td>
+                        
+                                    {%if malote.tipo == 1%}
+                                    <td>Sem tipo</td>
+                                    {%elif malote.tipo == 2%}
+                                    <td>Cirurgia</td>
+                                    {%elif malote.tipo == 3%}
+                                    <td>Devolução</td>
+                                    {%elif malote.tipo == 4%}
+                                    <td>Remarcação</td>
+                                    {%elif malote.tipo == 5%}
+                                    <td>Retorno</td>
+                                    {%elif malote.tipo == 6%}
+                                    <td>Biópsia</td>
+                                    {% else %}
+                                    <td>Resultado de exame</td>
+                                    {%endif%}
+                        
+                                    <td>{{malote.sus}}</td>
+                        
+                                    {%if malote.statusProcesso == 1%}
+                                    <td>Sem status</td>
+                                    {%elif malote.statusProcesso == 2%}
+                                    <td>Agendado</td>
+                                    {% elif malote.statusProcesso == 3%}
+                                    <td>Arquivado</td>
+                                    {% elif malote.statusProcesso == 4%}
+                                        {%if malote.justificativa == 1%}
+                                            <td>Devolvido</td>
+                                        {%elif malote.justificativa == 2%}
+                                            <td data-toggle="tooltip" title="Faltam Dados/Exames">Devolvido</td>
+                                        {% elif malote.justificativa == 3%}
+                                            <td data-toggle="tooltip" title="Preencher APAC">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 4%}
+                                            <td data-toggle="tooltip" title="Agendamento é realizado pela unidade">Devolvido <i class="fas fa-question-circle"></i>
+                                            </td>
+                                        {% elif malote.justificativa == 5%}
+                                            <td data-toggle="tooltip" title="Falta carta de sedação">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 6%}
+                                            <td data-toggle="tooltip" title="Encaminhar para assistente social">Devolvido <i class="fas fa-question-circle"></i>
+                                            </td>
+                                        {% elif malote.justificativa == 7%}
+                                            <td data-toggle="tooltip" title="Encaminhar para planejamento familiar">Devolvido <i class="fas fa-question-circle"></i>
+                                            </td>
+                                        {% elif malote.justificativa == 8%}
+                                            <td data-toggle="tooltip" title="Encaminhar para ambulatório de especialidades">Devolvido <i
+                                                    class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 9%}
+                                            <td data-toggle="tooltip" title="Encaminhar/Retorno no HUSF">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 10%}
+                                            <td data-toggle="tooltip" title="Falta autorização para retirada do exame no AME">Devolvido <i
+                                                    class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 11%}
+                                            <td data-toggle="tooltip" title="Encaminhar para centro de reabilitação(FISIO)">Devolvido <i
+                                                    class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 12%}
+                                            <td data-toggle="tooltip" title="Guia e cadweb de pacientes diferentes">Devolvido <i class="fas fa-question-circle"></i>
+                                            </td>
+                                        {% elif malote.justificativa == 13%}
+                                            <td data-toggle="tooltip" title="Encaminhar para saúde mental infantil">Devolvido <i class="fas fa-question-circle"></i>
+                                            </td>
+                                        {% elif malote.justificativa == 14%}
+                                            <td data-toggle="tooltip" title="Inserir no CDR e fila de espera">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 15%}
+                                            <td data-toggle="tooltip" title="Não veio no malote">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 16%}
+                                            <td data-toggle="tooltip" title="Atualização de cadastro">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {%endif%}
+                                    {% elif malote.statusProcesso == 5%}
+                                    <td>Encaminhado</td>
+                                    {% elif malote.statusProcesso == 6%}
+                                    <td>Pendente</td>
+                                    {% elif malote.statusProcesso == 7%}
+                                    <td data-toggle="tooltip" title="{{malote.statusData}} - {{malote.statusUser}}">Recebido</td>
+                                    {% elif malote.statusProcesso == 8%}
+                                    <td>Não veio no malote</td>
+                                    {% else %}
+                                    <td>Retirado SMSA</td>
+                                    {%endif%}
+
+                                    {% if malote.scanner == 0 %}
+                                    <td>
+                                        <input type="checkbox" class="scanner" id="scanner{{malote.id}}" name="scanner" value="{{malote.id}}">
+                                    </td>
+                                    {% elif malote.scanner == 1 %}
+                                    <td data-toggle="tooltip" title="Scanneado dia {{malote.dataScanner}}">
+                                        <input type="checkbox" class="scanner" id="scanner{{malote.id}}" name="scanner" value="{{malote.id}}" checked>
+                                    </td>
+                                    {% endif %}
+
+                                    <td>
+                                        <a href="{% url 'update-malote-regulacao' malote.pk %}" class="btn btn-warning btn-sm" title="Editar">
+                                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+
+    <div class="tab-pane fade py-5" id="cirurgia" role="tabpanel" aria-labelledby="cirurgia-tab">
+        <div class="table-responsive">
+            <table class="table" id="tabela-cirurgia">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Data de nascimento</th>
+                        <th>Procedimento</th>
+                        <th>Tipo</th>
+                        <th>SUS</th>
+                        <th>Status</th>
+                        <th data-toggle="tooltip" data-placement="left" title="Scanneado"><i class="fas fa-print"></i></th>
+                        <th>Editar</th>
+                    </tr>
+                </thead>
+            
+                <tbody>
+                    {% for malote in object_list %}
+                        {% if malote.etapa == 4 %}
+                            {% if malote.statusProcesso == 2%}
+                            <tr class="agendado">
+                            {% elif malote.statusProcesso == 3%}
+                            <tr class="arquivado">
+                            {% elif malote.statusProcesso == 4%}
+                            <tr class="devolvido">
+                            {% elif malote.statusProcesso == 5%}
+                            <tr class="encaminhado">
+                            {% elif malote.statusProcesso == 6%}
+                            <tr class="pendente">
+                            {% elif malote.statusProcesso == 7%}
+                            <tr class="recebido">
+                            {% elif malote.statusProcesso == 8%}
+                            <tr class="naoveionomalote">
+                            {% else %}
+                            <tr>
+                            {%endif%}
+                    
+                                <td data-toggle="tooltip" title="Enviado por: {{malote.createdBy_user}}, em {{malote.created_at}}">{{malote.nome}}</td>
+                    
+                                {% if malote.dataNascimento == null%}
+                                <td>Sem registro</td>
+                                {% else %}
+                                <td>{{ malote.dataNascimento|date:"d"}}/{{ malote.dataNascimento|date:"m"}}/{{malote.dataNascimento|date:"Y"}}</td>
+                                {%endif%}
+                    
+                                <td class="cortar-texto" data-toggle="tooltip" title="{{malote.procedimento}}">{{malote.procedimento}}</td>
+
+                                {%if malote.tipo == 1%}
+                                <td>Sem tipo</td>
+                                {%elif malote.tipo == 2%}
+                                <td>Cirurgia</td>
+                                {%elif malote.tipo == 3%}
+                                <td>Devolução</td>
+                                {%elif malote.tipo == 4%}
+                                <td>Remarcação</td>
+                                {%elif malote.tipo == 5%}
+                                <td>Retorno</td>
+                                {%elif malote.tipo == 6%}
+                                <td>Biópsia</td>
+                                {% else %}
+                                <td>Resultado de exame</td>
+                                {%endif%}
+                    
+                                <td>{{malote.sus}}</td>
+                    
+                                {%if malote.statusProcesso == 1%}
+                                <td>Sem status</td>
+                                {%elif malote.statusProcesso == 2%}
+                                <td>Agendado</td>
+                                {% elif malote.statusProcesso == 3%}
+                                <td>Arquivado</td>
+                                {% elif malote.statusProcesso == 4%}
+                                    {%if malote.justificativa == 1%}
+                                        <td>Devolvido</td>
+                                    {%elif malote.justificativa == 2%}
+                                        <td data-toggle="tooltip" title="Faltam Dados/Exames">Devolvido</td>
+                                    {% elif malote.justificativa == 3%}
+                                        <td data-toggle="tooltip" title="Preencher APAC">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 4%}
+                                        <td data-toggle="tooltip" title="Agendamento é realizado pela unidade">Devolvido <i class="fas fa-question-circle"></i>
+                                        </td>
+                                    {% elif malote.justificativa == 5%}
+                                        <td data-toggle="tooltip" title="Falta carta de sedação">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 6%}
+                                        <td data-toggle="tooltip" title="Encaminhar para assistente social">Devolvido <i class="fas fa-question-circle"></i>
+                                        </td>
+                                    {% elif malote.justificativa == 7%}
+                                        <td data-toggle="tooltip" title="Encaminhar para planejamento familiar">Devolvido <i class="fas fa-question-circle"></i>
+                                        </td>
+                                    {% elif malote.justificativa == 8%}
+                                        <td data-toggle="tooltip" title="Encaminhar para ambulatório de especialidades">Devolvido <i
+                                                class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 9%}
+                                        <td data-toggle="tooltip" title="Encaminhar/Retorno no HUSF">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 10%}
+                                        <td data-toggle="tooltip" title="Falta autorização para retirada do exame no AME">Devolvido <i
+                                                class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 11%}
+                                        <td data-toggle="tooltip" title="Encaminhar para centro de reabilitação(FISIO)">Devolvido <i
+                                                class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 12%}
+                                        <td data-toggle="tooltip" title="Guia e cadweb de pacientes diferentes">Devolvido <i class="fas fa-question-circle"></i>
+                                        </td>
+                                    {% elif malote.justificativa == 13%}
+                                        <td data-toggle="tooltip" title="Encaminhar para saúde mental infantil">Devolvido <i class="fas fa-question-circle"></i>
+                                        </td>
+                                    {% elif malote.justificativa == 14%}
+                                        <td data-toggle="tooltip" title="Inserir no CDR e fila de espera">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 15%}
+                                        <td data-toggle="tooltip" title="Não veio no malote">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 16%}
+                                        <td data-toggle="tooltip" title="Atualização de cadastro">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {%endif%}
+                                {% elif malote.statusProcesso == 5%}
+                                <td>Encaminhado</td>
+                                {% elif malote.statusProcesso == 6%}
+                                <td>Pendente</td>
+                                {% elif malote.statusProcesso == 7%}
+                                <td data-toggle="tooltip" title="{{malote.statusData}} - {{malote.statusUser}}">Recebido</td>
+                                {% elif malote.statusProcesso == 8%}
+                                <td>Não veio no malote</td>
+                                {% else %}
+                                <td>Retirado SMSA</td>
+                                {%endif%}
+                                
+                                <td data-toggle="tooltip" title="Scanneado dia {{malote.dataScanner}}"><i class="fa-solid fa-circle-check"></i></td>
+
+                                <td>
+                                    <a href="{% url 'update-malote-regulacao' malote.pk %}" class="btn btn-warning btn-sm" title="Editar">
+                                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="tab-pane fade py-5" id="hospitaldeolhos" role="tabpanel" aria-labelledby="hospitaldeolhos-tab">
+        <div class="table-responsive">
+            <table class="table" id="tabela-hospitaldeolhos">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Data de nascimento</th>
+                        <th>Procedimento</th>
+                        <th>Tipo</th>
+                        <th>SUS</th>
+                        <th>Status</th>
+                        <th data-toggle="tooltip" data-placement="left" title="Scanneado"><i class="fas fa-print"></i></th>
+                        <th>Editar</th>
+                    </tr>
+                </thead>
+            
+                <tbody>
+                    {% for malote in object_list %}
+                        {% if malote.etapa == 5 %}
+                                {% if malote.statusProcesso == 2%}
+                                <tr class="agendado">
+                                {% elif malote.statusProcesso == 3%}
+                                <tr class="arquivado">
+                                {% elif malote.statusProcesso == 4%}
+                                <tr class="devolvido">
+                                {% elif malote.statusProcesso == 5%}
+                                <tr class="encaminhado">
+                                {% elif malote.statusProcesso == 6%}
+                                <tr class="pendente">
+                                {% elif malote.statusProcesso == 7%}
+                                <tr class="recebido">
+                                {% elif malote.statusProcesso == 8%}
+                                <tr class="naoveionomalote">
+                                {% else %}
+                                <tr>
+                                {%endif%}
+            
+                        
+                                    <td data-toggle="tooltip" title="Enviado por: {{malote.createdBy_user}}, em {{malote.created_at}}">{{malote.nome}}</td>
+                        
+                                    {% if malote.dataNascimento == null%}
+                                    <td>Sem registro</td>
+                                    {% else %}
+                                    <td>{{ malote.dataNascimento|date:"d"}}/{{ malote.dataNascimento|date:"m"}}/{{malote.dataNascimento|date:"Y"}}</td>
+                                    {%endif%}
+                        
+                                    <td class="cortar-texto" data-toggle="tooltip" title="{{malote.procedimento}}">{{malote.procedimento}}</td>
+                        
+                                    {%if malote.tipo == 1%}
+                                    <td>Sem tipo</td>
+                                    {%elif malote.tipo == 2%}
+                                    <td>Cirurgia</td>
+                                    {%elif malote.tipo == 3%}
+                                    <td>Devolução</td>
+                                    {%elif malote.tipo == 4%}
+                                    <td>Remarcação</td>
+                                    {%elif malote.tipo == 5%}
+                                    <td>Retorno</td>
+                                    {%elif malote.tipo == 6%}
+                                    <td>Biópsia</td>
+                                    {% else %}
+                                    <td>Resultado de exame</td>
+                                    {%endif%}
+                        
+                                    <td>{{malote.sus}}</td>
+                        
+                                    {%if malote.statusProcesso == 1%}
+                                    <td>Sem status</td>
+                                    {%elif malote.statusProcesso == 2%}
+                                    <td>Agendado</td>
+                                    {% elif malote.statusProcesso == 3%}
+                                    <td>Arquivado</td>
+                                    {% elif malote.statusProcesso == 4%}
+                                        {%if malote.justificativa == 1%}
+                                            <td>Devolvido</td>
+                                        {%elif malote.justificativa == 2%}
+                                            <td data-toggle="tooltip" title="Faltam Dados/Exames">Devolvido</td>
+                                        {% elif malote.justificativa == 3%}
+                                            <td data-toggle="tooltip" title="Preencher APAC">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 4%}
+                                            <td data-toggle="tooltip" title="Agendamento é realizado pela unidade">Devolvido <i class="fas fa-question-circle"></i>
+                                            </td>
+                                        {% elif malote.justificativa == 5%}
+                                            <td data-toggle="tooltip" title="Falta carta de sedação">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 6%}
+                                            <td data-toggle="tooltip" title="Encaminhar para assistente social">Devolvido <i class="fas fa-question-circle"></i>
+                                            </td>
+                                        {% elif malote.justificativa == 7%}
+                                            <td data-toggle="tooltip" title="Encaminhar para planejamento familiar">Devolvido <i class="fas fa-question-circle"></i>
+                                            </td>
+                                        {% elif malote.justificativa == 8%}
+                                            <td data-toggle="tooltip" title="Encaminhar para ambulatório de especialidades">Devolvido <i
+                                                    class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 9%}
+                                            <td data-toggle="tooltip" title="Encaminhar/Retorno no HUSF">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 10%}
+                                            <td data-toggle="tooltip" title="Falta autorização para retirada do exame no AME">Devolvido <i
+                                                    class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 11%}
+                                            <td data-toggle="tooltip" title="Encaminhar para centro de reabilitação(FISIO)">Devolvido <i
+                                                    class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 12%}
+                                            <td data-toggle="tooltip" title="Guia e cadweb de pacientes diferentes">Devolvido <i class="fas fa-question-circle"></i>
+                                            </td>
+                                        {% elif malote.justificativa == 13%}
+                                            <td data-toggle="tooltip" title="Encaminhar para saúde mental infantil">Devolvido <i class="fas fa-question-circle"></i>
+                                            </td>
+                                        {% elif malote.justificativa == 14%}
+                                            <td data-toggle="tooltip" title="Inserir no CDR e fila de espera">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 15%}
+                                            <td data-toggle="tooltip" title="Não veio no malote">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {% elif malote.justificativa == 16%}
+                                            <td data-toggle="tooltip" title="Atualização de cadastro">Devolvido <i class="fas fa-question-circle"></i></td>
+                                        {%endif%}
+                                    {% elif malote.statusProcesso == 5%}
+                                    <td>Encaminhado</td>
+                                    {% elif malote.statusProcesso == 6%}
+                                    <td>Pendente</td>
+                                    {% elif malote.statusProcesso == 7%}
+                                    <td data-toggle="tooltip" title="{{malote.statusData}} - {{malote.statusUser}}">Recebido</td>
+                                    {% elif malote.statusProcesso == 8%}
+                                    <td>Não veio no malote</td>
+                                    {% else %}
+                                    <td>Retirado SMSA</td>
+                                    {%endif%}
+                                    
+                                    <td data-toggle="tooltip" title="Scanneado dia {{malote.dataScanner}}"><i class="fa-solid fa-circle-check"></i></td>
+
+                                    <td>
+                                        <a href="{% url 'update-malote-regulacao' malote.pk %}" class="btn btn-warning btn-sm" title="Editar">
+                                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="tab-pane fade py-5" id="altacomplexidade" role="tabpanel" aria-labelledby="altacomplexidade-tab">
+        <div class="table-responsive">
+            <table class="table" id="tabela-altacomplexidade">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Data de nascimento</th>
+                        <th>Procedimento</th>
+                        <th>Tipo</th>
+                        <th>SUS</th>
+                        <th>Status</th>
+                        <th data-toggle="tooltip" data-placement="left" title="Scanneado"><i class="fas fa-print"></i></th>
+                        <th>Editar</th>
+                    </tr>
+                </thead>
+            
+                <tbody>
+                    {% for malote in object_list %}
+                        {% if malote.etapa == 6 %}
+                            {% if malote.statusProcesso == 2%}
+                            <tr class="agendado">
+                            {% elif malote.statusProcesso == 3%}
+                            <tr class="arquivado">
+                            {% elif malote.statusProcesso == 4%}
+                            <tr class="devolvido">
+                            {% elif malote.statusProcesso == 5%}
+                            <tr class="encaminhado">
+                            {% elif malote.statusProcesso == 6%}
+                            <tr class="pendente">
+                            {% elif malote.statusProcesso == 7%}
+                            <tr class="recebido">
+                            {% elif malote.statusProcesso == 8%}
+                            <tr class="naoveionomalote">
+                            {% else %}
+                            <tr>
+                            {%endif%}
+                    
+                                <td data-toggle="tooltip" title="Enviado por: {{malote.createdBy_user}}, em {{malote.created_at}}">{{malote.nome}}</td>
+                    
+                                {% if malote.dataNascimento == null%}
+                                <td>Sem registro</td>
+                                {% else %}
+                                <td>{{ malote.dataNascimento|date:"d"}}/{{ malote.dataNascimento|date:"m"}}/{{malote.dataNascimento|date:"Y"}}</td>
+                                {%endif%}
+                    
+                                <td class="cortar-texto" data-toggle="tooltip" title="{{malote.procedimento}}">{{malote.procedimento}}</td>
+                    
+                                {%if malote.tipo == 1%}
+                                <td>Sem tipo</td>
+                                {%elif malote.tipo == 2%}
+                                <td>Cirurgia</td>
+                                {%elif malote.tipo == 3%}
+                                <td>Devolução</td>
+                                {%elif malote.tipo == 4%}
+                                <td>Remarcação</td>
+                                {%elif malote.tipo == 5%}
+                                <td>Retorno</td>
+                                {%elif malote.tipo == 6%}
+                                <td>Biópsia</td>
+                                {% else %}
+                                <td>Resultado de exame</td>
+                                {%endif%}
+                    
+                                <td>{{malote.sus}}</td>
+                    
+                                {%if malote.statusProcesso == 1%}
+                                <td>Sem status</td>
+                                {%elif malote.statusProcesso == 2%}
+                                <td>Agendado</td>
+                                {% elif malote.statusProcesso == 3%}
+                                <td>Arquivado</td>
+                                {% elif malote.statusProcesso == 4%}
+                                    {%if malote.justificativa == 1%}
+                                        <td>Devolvido</td>
+                                    {%elif malote.justificativa == 2%}
+                                        <td data-toggle="tooltip" title="Faltam Dados/Exames">Devolvido</td>
+                                    {% elif malote.justificativa == 3%}
+                                        <td data-toggle="tooltip" title="Preencher APAC">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 4%}
+                                        <td data-toggle="tooltip" title="Agendamento é realizado pela unidade">Devolvido <i class="fas fa-question-circle"></i>
+                                        </td>
+                                    {% elif malote.justificativa == 5%}
+                                        <td data-toggle="tooltip" title="Falta carta de sedação">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 6%}
+                                        <td data-toggle="tooltip" title="Encaminhar para assistente social">Devolvido <i class="fas fa-question-circle"></i>
+                                        </td>
+                                    {% elif malote.justificativa == 7%}
+                                        <td data-toggle="tooltip" title="Encaminhar para planejamento familiar">Devolvido <i class="fas fa-question-circle"></i>
+                                        </td>
+                                    {% elif malote.justificativa == 8%}
+                                        <td data-toggle="tooltip" title="Encaminhar para ambulatório de especialidades">Devolvido <i
+                                                class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 9%}
+                                        <td data-toggle="tooltip" title="Encaminhar/Retorno no HUSF">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 10%}
+                                        <td data-toggle="tooltip" title="Falta autorização para retirada do exame no AME">Devolvido <i
+                                                class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 11%}
+                                        <td data-toggle="tooltip" title="Encaminhar para centro de reabilitação(FISIO)">Devolvido <i
+                                                class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 12%}
+                                        <td data-toggle="tooltip" title="Guia e cadweb de pacientes diferentes">Devolvido <i class="fas fa-question-circle"></i>
+                                        </td>
+                                    {% elif malote.justificativa == 13%}
+                                        <td data-toggle="tooltip" title="Encaminhar para saúde mental infantil">Devolvido <i class="fas fa-question-circle"></i>
+                                        </td>
+                                    {% elif malote.justificativa == 14%}
+                                        <td data-toggle="tooltip" title="Inserir no CDR e fila de espera">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 15%}
+                                        <td data-toggle="tooltip" title="Não veio no malote">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 16%}
+                                        <td data-toggle="tooltip" title="Atualização de cadastro">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {%endif%}
+                                {% elif malote.statusProcesso == 5%}
+                                <td>Encaminhado</td>
+                                {% elif malote.statusProcesso == 6%}
+                                <td>Pendente</td>
+                                {% elif malote.statusProcesso == 7%}
+                                <td data-toggle="tooltip" title="{{malote.statusData}} - {{malote.statusUser}}">Recebido</td>
+                                {% elif malote.statusProcesso == 8%}
+                                <td>Não veio no malote</td>
+                                {% else %}
+                                <td>Retirado SMSA</td>
+                                {%endif%}
+                    
+                                                            <td data-toggle="tooltip" title="Scanneado dia {{malote.dataScanner}}"><i class="fa-solid fa-circle-check"></i></td>
+
+                                <td>
+                                    <a href="{% url 'update-malote-regulacao' malote.pk %}" class="btn btn-warning btn-sm" title="Editar">
+                                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="tab-pane fade py-5" id="ame" role="tabpanel" aria-labelledby="ame-tab">
+        <div class="table-responsive">
+            <table class="table" id="tabela-ame">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Data de nascimento</th>
+                        <th>Procedimento</th>
+                        <th>Tipo</th>
+                        <th>SUS</th>
+                        <th>Status</th>
+                        <th data-toggle="tooltip" data-placement="left" title="Scanneado"><i class="fas fa-print"></i></th>
+                        <th>Editar</th>
+                    </tr>
+                </thead>
+            
+                <tbody>
+                    {% for malote in object_list %}
+                        {% if malote.etapa == 7 %}
+                            {% if malote.statusProcesso == 2%}
+                            <tr class="agendado">
+                            {% elif malote.statusProcesso == 3%}
+                            <tr class="arquivado">
+                            {% elif malote.statusProcesso == 4%}
+                            <tr class="devolvido">
+                            {% elif malote.statusProcesso == 5%}
+                            <tr class="encaminhado">
+                            {% elif malote.statusProcesso == 6%}
+                            <tr class="pendente">
+                            {% elif malote.statusProcesso == 7%}
+                            <tr class="recebido">
+                            {% elif malote.statusProcesso == 8%}
+                            <tr class="naoveionomalote">
+                            {% else %}
+                            <tr>
+                            {%endif%}
+                    
+                                <td data-toggle="tooltip" title="Enviado por: {{malote.createdBy_user}}, em {{malote.created_at}}">{{malote.nome}}</td>
+                    
+                                {% if malote.dataNascimento == null%}
+                                <td>Sem registro</td>
+                                {% else %}
+                                <td>{{ malote.dataNascimento|date:"d"}}/{{ malote.dataNascimento|date:"m"}}/{{malote.dataNascimento|date:"Y"}}</td>
+                                {%endif%}
+                    
+                                <td class="cortar-texto" data-toggle="tooltip" title="{{malote.procedimento}}">{{malote.procedimento}}</td>
+                    
+                                {%if malote.tipo == 1%}
+                                <td>Sem tipo</td>
+                                {%elif malote.tipo == 2%}
+                                <td>Cirurgia</td>
+                                {%elif malote.tipo == 3%}
+                                <td>Devolução</td>
+                                {%elif malote.tipo == 4%}
+                                <td>Remarcação</td>
+                                {%elif malote.tipo == 5%}
+                                <td>Retorno</td>
+                                {%elif malote.tipo == 6%}
+                                <td>Biópsia</td>
+                                {% else %}
+                                <td>Resultado de exame</td>
+                                {%endif%}
+                    
+                                <td>{{malote.sus}}</td>
+                    
+                                {%if malote.statusProcesso == 1%}
+                                <td>Sem status</td>
+                                {%elif malote.statusProcesso == 2%}
+                                <td>Agendado</td>
+                                {% elif malote.statusProcesso == 3%}
+                                <td>Arquivado</td>
+                                {% elif malote.statusProcesso == 4%}
+                                    {%if malote.justificativa == 1%}
+                                        <td>Devolvido</td>
+                                    {%elif malote.justificativa == 2%}
+                                        <td data-toggle="tooltip" title="Faltam Dados/Exames">Devolvido</td>
+                                    {% elif malote.justificativa == 3%}
+                                        <td data-toggle="tooltip" title="Preencher APAC">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 4%}
+                                        <td data-toggle="tooltip" title="Agendamento é realizado pela unidade">Devolvido <i class="fas fa-question-circle"></i>
+                                        </td>
+                                    {% elif malote.justificativa == 5%}
+                                        <td data-toggle="tooltip" title="Falta carta de sedação">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 6%}
+                                        <td data-toggle="tooltip" title="Encaminhar para assistente social">Devolvido <i class="fas fa-question-circle"></i>
+                                        </td>
+                                    {% elif malote.justificativa == 7%}
+                                        <td data-toggle="tooltip" title="Encaminhar para planejamento familiar">Devolvido <i class="fas fa-question-circle"></i>
+                                        </td>
+                                    {% elif malote.justificativa == 8%}
+                                        <td data-toggle="tooltip" title="Encaminhar para ambulatório de especialidades">Devolvido <i
+                                                class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 9%}
+                                        <td data-toggle="tooltip" title="Encaminhar/Retorno no HUSF">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 10%}
+                                        <td data-toggle="tooltip" title="Falta autorização para retirada do exame no AME">Devolvido <i
+                                                class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 11%}
+                                        <td data-toggle="tooltip" title="Encaminhar para centro de reabilitação(FISIO)">Devolvido <i
+                                                class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 12%}
+                                        <td data-toggle="tooltip" title="Guia e cadweb de pacientes diferentes">Devolvido <i class="fas fa-question-circle"></i>
+                                        </td>
+                                    {% elif malote.justificativa == 13%}
+                                        <td data-toggle="tooltip" title="Encaminhar para saúde mental infantil">Devolvido <i class="fas fa-question-circle"></i>
+                                        </td>
+                                    {% elif malote.justificativa == 14%}
+                                        <td data-toggle="tooltip" title="Inserir no CDR e fila de espera">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 15%}
+                                        <td data-toggle="tooltip" title="Não veio no malote">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 16%}
+                                        <td data-toggle="tooltip" title="Atualização de cadastro">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {%endif%}
+                                {% elif malote.statusProcesso == 5%}
+                                <td>Encaminhado</td>
+                                {% elif malote.statusProcesso == 6%}
+                                <td>Pendente</td>
+                                {% elif malote.statusProcesso == 7%}
+                                <td data-toggle="tooltip" title="{{malote.statusData}} - {{malote.statusUser}}">Recebido</td>
+                                {% elif malote.statusProcesso == 8%}
+                                <td>Não veio no malote</td>
+                                {% else %}
+                                <td>Retirado SMSA</td>
+                                {%endif%}
+                    
+                                <td data-toggle="tooltip" title="Scanneado dia {{malote.dataScanner}}"><i class="fa-solid fa-circle-check"></i></td>
+
+                                <td>
+                                    <a href="{% url 'update-malote-regulacao' malote.pk %}" class="btn btn-warning btn-sm" title="Editar">
+                                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="tab-pane fade py-5" id="bera" role="tabpanel" aria-labelledby="bera-tab">
+        <div class="table-responsive">
+            <table class="table" id="tabela-bera">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Data de nascimento</th>
+                        <th>Procedimento</th>
+                        <th>Tipo</th>
+                        <th>SUS</th>
+                        <th>Status</th>
+                        <th data-toggle="tooltip" data-placement="left" title="Scanneado"><i class="fas fa-print"></i></th>
+                        <th>Editar</th>
+                    </tr>
+                </thead>
+            
+                <tbody>
+                    {% for malote in object_list %}
+                        {% if malote.etapa == 11 %}
+                            {% if malote.statusProcesso == 2%}
+                            <tr class="agendado">
+                            {% elif malote.statusProcesso == 3%}
+                            <tr class="arquivado">
+                            {% elif malote.statusProcesso == 4%}
+                            <tr class="devolvido">
+                            {% elif malote.statusProcesso == 5%}
+                            <tr class="encaminhado">
+                            {% elif malote.statusProcesso == 6%}
+                            <tr class="pendente">
+                            {% elif malote.statusProcesso == 7%}
+                            <tr class="recebido">
+                            {% elif malote.statusProcesso == 8%}
+                            <tr class="naoveionomalote">
+                            {% else %}
+                            <tr>
+                            {%endif%}
+                    
+                                <td data-toggle="tooltip" title="Enviado por: {{malote.createdBy_user}}, em {{malote.created_at}}">{{malote.nome}}</td>
+                    
+                                {% if malote.dataNascimento == null%}
+                                <td>Sem registro</td>
+                                {% else %}
+                                <td>{{ malote.dataNascimento|date:"d"}}/{{ malote.dataNascimento|date:"m"}}/{{malote.dataNascimento|date:"Y"}}</td>
+                                {%endif%}
+                    
+                                <td class="cortar-texto" data-toggle="tooltip" title="{{malote.procedimento}}">{{malote.procedimento}}</td>
+                    
+                                {%if malote.tipo == 1%}
+                                <td>Sem tipo</td>
+                                {%elif malote.tipo == 2%}
+                                <td>Cirurgia</td>
+                                {%elif malote.tipo == 3%}
+                                <td>Devolução</td>
+                                {%elif malote.tipo == 4%}
+                                <td>Remarcação</td>
+                                {%elif malote.tipo == 5%}
+                                <td>Retorno</td>
+                                {%elif malote.tipo == 6%}
+                                <td>Biópsia</td>
+                                {% else %}
+                                <td>Resultado de exame</td>
+                                {%endif%}
+                    
+                                <td>{{malote.sus}}</td>
+                    
+                                {%if malote.statusProcesso == 1%}
+                                <td>Sem status</td>
+                                {%elif malote.statusProcesso == 2%}
+                                <td>Agendado</td>
+                                {% elif malote.statusProcesso == 3%}
+                                <td>Arquivado</td>
+                                {% elif malote.statusProcesso == 4%}
+                                    {%if malote.justificativa == 1%}
+                                        <td>Devolvido</td>
+                                    {%elif malote.justificativa == 2%}
+                                        <td data-toggle="tooltip" title="Faltam Dados/Exames">Devolvido</td>
+                                    {% elif malote.justificativa == 3%}
+                                        <td data-toggle="tooltip" title="Preencher APAC">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 4%}
+                                        <td data-toggle="tooltip" title="Agendamento é realizado pela unidade">Devolvido <i class="fas fa-question-circle"></i>
+                                        </td>
+                                    {% elif malote.justificativa == 5%}
+                                        <td data-toggle="tooltip" title="Falta carta de sedação">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 6%}
+                                        <td data-toggle="tooltip" title="Encaminhar para assistente social">Devolvido <i class="fas fa-question-circle"></i>
+                                        </td>
+                                    {% elif malote.justificativa == 7%}
+                                        <td data-toggle="tooltip" title="Encaminhar para planejamento familiar">Devolvido <i class="fas fa-question-circle"></i>
+                                        </td>
+                                    {% elif malote.justificativa == 8%}
+                                        <td data-toggle="tooltip" title="Encaminhar para ambulatório de especialidades">Devolvido <i
+                                                class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 9%}
+                                        <td data-toggle="tooltip" title="Encaminhar/Retorno no HUSF">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 10%}
+                                        <td data-toggle="tooltip" title="Falta autorização para retirada do exame no AME">Devolvido <i
+                                                class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 11%}
+                                        <td data-toggle="tooltip" title="Encaminhar para centro de reabilitação(FISIO)">Devolvido <i
+                                                class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 12%}
+                                        <td data-toggle="tooltip" title="Guia e cadweb de pacientes diferentes">Devolvido <i class="fas fa-question-circle"></i>
+                                        </td>
+                                    {% elif malote.justificativa == 13%}
+                                        <td data-toggle="tooltip" title="Encaminhar para saúde mental infantil">Devolvido <i class="fas fa-question-circle"></i>
+                                        </td>
+                                    {% elif malote.justificativa == 14%}
+                                        <td data-toggle="tooltip" title="Inserir no CDR e fila de espera">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 15%}
+                                        <td data-toggle="tooltip" title="Não veio no malote">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 16%}
+                                        <td data-toggle="tooltip" title="Atualização de cadastro">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {%endif%}
+                                {% elif malote.statusProcesso == 5%}
+                                <td>Encaminhado</td>
+                                {% elif malote.statusProcesso == 6%}
+                                <td>Pendente</td>
+                                {% elif malote.statusProcesso == 7%}
+                                <td data-toggle="tooltip" title="{{malote.statusData}} - {{malote.statusUser}}">Recebido</td>
+                                {% elif malote.statusProcesso == 8%}
+                                <td>Não veio no malote</td>
+                                {% else %}
+                                <td>Retirado SMSA</td>
+                                {%endif%}
+                    
+                                <td data-toggle="tooltip" title="Scanneado dia {{malote.dataScanner}}"><i class="fa-solid fa-circle-check"></i></td>
+
+                                <td>
+                                    <a href="{% url 'update-malote-regulacao' malote.pk %}" class="btn btn-warning btn-sm" title="Editar">
+                                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="tab-pane fade py-5" id="biopsia" role="tabpanel" aria-labelledby="biopsia-tab">
+        <div class="table-responsive">
+            <table class="table" id="tabela-biopsia">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Data de nascimento</th>
+                        <th>Procedimento</th>
+                        <th>Tipo</th>
+                        <th>SUS</th>
+                        <th>Status</th>
+                        <th data-toggle="tooltip" data-placement="left" title="Scanneado"><i class="fas fa-print"></i></th>
+                    </tr>
+                </thead>
+    
+                <tbody>
+                    {% for malote in object_list %}
+                        {% if malote.etapa == 8 %}
+                            {% if malote.statusProcesso == 2%}
+                                <tr class="agendado">
+                            {% elif malote.statusProcesso == 3%}    
+                                <tr class="arquivado">
+                            {% elif malote.statusProcesso == 4%}
+                                <tr class="devolvido">
+                            {% elif malote.statusProcesso == 5%}        
+                                <tr class="encaminhado">
+                            {% elif malote.statusProcesso == 6%}
+                                <tr class="pendente">
+                            {% elif malote.statusProcesso == 7%}
+                                <tr class="recebido">
+                            {% elif malote.statusProcesso == 8%}    
+                                <tr class="naoveionomalote">
+                            {% else %}
+                                <tr>
+                            {%endif%}
+    
+                            <td data-toggle="tooltip" title="Enviado por: {{malote.createdBy_user}}, em {{malote.created_at}}">{{malote.nome}}</td>
+    
+                            {% if malote.dataNascimento == null%}
+                                <td>Sem registro</td>
+                            {% else %}
+                                <td>{{ malote.dataNascimento|date:"d"}}/{{malote.dataNascimento|date:"m"}}/{{malote.dataNascimento|date:"Y"}}</td>
+                            {%endif%}
+    
+                            <td class="cortar-texto" data-toggle="tooltip" title="{{malote.procedimento}}">{{malote.procedimento}}</td>
+    
+                            {%if malote.tipo == 1%}
+                                <td>Sem tipo</td>
+                            {%elif malote.tipo == 2%}
+                                <td>Cirurgia</td>
+                            {%elif malote.tipo == 3%}
+                                <td>Devolução</td>
+                            {%elif malote.tipo == 4%}
+                                <td>Remarcação</td>
+                            {%elif malote.tipo == 5%}
+                                <td>Retorno</td>
+                            {%elif malote.tipo == 6%}
+                                <td>Biópsia</td>
+                            {% else %}
+                                <td>Resultado de exame</td>
+                            {%endif%}
+    
+                            <td>{{malote.sus}}</td>
+    
+                            {%if malote.statusProcesso == 1%}
+                            <td>Sem status</td>
+                            {%elif malote.statusProcesso == 2%}
+                            <td>Agendado</td>
+                            {% elif malote.statusProcesso == 3%}
+                            <td>Arquivado</td>
+                            {% elif malote.statusProcesso == 4%}
+                                {%if malote.justificativa == 1%}
+                                    <td>Devolvido</td>
+                                {%elif malote.justificativa == 2%}
+                                    <td data-toggle="tooltip" title="Faltam Dados/Exames">Devolvido</td>
+                                {% elif malote.justificativa == 3%}
+                                    <td data-toggle="tooltip" title="Preencher APAC">Devolvido <i class="fas fa-question-circle"></i></td>
+                                {% elif malote.justificativa == 4%}
+                                    <td data-toggle="tooltip" title="Agendamento é realizado pela unidade">Devolvido <i class="fas fa-question-circle"></i>
+                                    </td>
+                                {% elif malote.justificativa == 5%}
+                                    <td data-toggle="tooltip" title="Falta carta de sedação">Devolvido <i class="fas fa-question-circle"></i></td>
+                                {% elif malote.justificativa == 6%}
+                                    <td data-toggle="tooltip" title="Encaminhar para assistente social">Devolvido <i class="fas fa-question-circle"></i>
+                                    </td>
+                                {% elif malote.justificativa == 7%}
+                                    <td data-toggle="tooltip" title="Encaminhar para planejamento familiar">Devolvido <i class="fas fa-question-circle"></i>
+                                    </td>
+                                {% elif malote.justificativa == 8%}
+                                    <td data-toggle="tooltip" title="Encaminhar para ambulatório de especialidades">Devolvido <i
+                                            class="fas fa-question-circle"></i></td>
+                                {% elif malote.justificativa == 9%}
+                                    <td data-toggle="tooltip" title="Encaminhar/Retorno no HUSF">Devolvido <i class="fas fa-question-circle"></i></td>
+                                {% elif malote.justificativa == 10%}
+                                    <td data-toggle="tooltip" title="Falta autorização para retirada do exame no AME">Devolvido <i
+                                            class="fas fa-question-circle"></i></td>
+                                {% elif malote.justificativa == 11%}
+                                    <td data-toggle="tooltip" title="Encaminhar para centro de reabilitação(FISIO)">Devolvido <i
+                                            class="fas fa-question-circle"></i></td>
+                                {% elif malote.justificativa == 12%}
+                                    <td data-toggle="tooltip" title="Guia e cadweb de pacientes diferentes">Devolvido <i class="fas fa-question-circle"></i>
+                                    </td>
+                                {% elif malote.justificativa == 13%}
+                                    <td data-toggle="tooltip" title="Encaminhar para saúde mental infantil">Devolvido <i class="fas fa-question-circle"></i>
+                                    </td>
+                                {% elif malote.justificativa == 14%}
+                                    <td data-toggle="tooltip" title="Inserir no CDR e fila de espera">Devolvido <i class="fas fa-question-circle"></i></td>
+                                {% elif malote.justificativa == 15%}
+                                    <td data-toggle="tooltip" title="Não veio no malote">Devolvido <i class="fas fa-question-circle"></i></td>
+                                {% elif malote.justificativa == 16%}
+                                    <td data-toggle="tooltip" title="Atualização de cadastro">Devolvido <i class="fas fa-question-circle"></i></td>
+                                {%endif%}
+                            {% elif malote.statusProcesso == 5%}
+                            <td>Encaminhado</td>
+                            {% elif malote.statusProcesso == 6%}
+                            <td>Pendente</td>
+                            {% elif malote.statusProcesso == 7%}
+                            <td data-toggle="tooltip" title="{{malote.statusData}} - {{malote.statusUser}}">Recebido</td>
+                            {% elif malote.statusProcesso == 8%}
+                            <td>Não veio no malote</td>
+                            {% else %}
+                            <td>Retirado SMSA</td>
+                            {%endif%}
+
+                            <td data-toggle="tooltip" title="Scanneado dia {{malote.dataScanner}}"><i class="fa-solid fa-circle-check"></i></td>
+     
+                        </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="tab-pane fade py-5" id="arquivo" role="tabpanel" aria-labelledby="arquivo-tab">
+        <div class="table-responsive">
+            <table class="table" id="tabela-arquivo">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Data de nascimento</th>
+                        <th>Procedimento</th>
+                        <th>Tipo</th>
+                        <th>SUS</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+            
+                <tbody>
+                    {% for malote in object_list %}
+                        {% if malote.etapa == 9 %}
+                            {% if malote.statusProcesso == 2%}
+                            <tr class="agendado">
+                            {% elif malote.statusProcesso == 3%}
+                            <tr class="arquivado">
+                            {% elif malote.statusProcesso == 4%}
+                            <tr class="devolvido">
+                            {% elif malote.statusProcesso == 5%}
+                            <tr class="encaminhado">
+                            {% elif malote.statusProcesso == 6%}
+                            <tr class="pendente">
+                            {% elif malote.statusProcesso == 7%}
+                            <tr class="recebido">
+                            {% elif malote.statusProcesso == 8%}
+                            <tr class="naoveionomalote">
+                            {% else %}
+                            <tr>
+                            {%endif%}
+                    
+                                <td data-toggle="tooltip" title="Enviado por: {{malote.createdBy_user}}, em {{malote.created_at}}">{{malote.nome}}</td>
+                    
+                                {% if malote.dataNascimento == null%}
+                                <td>Sem registro</td>
+                                {% else %}
+                                <td>{{ malote.dataNascimento|date:"d"}}/{{ malote.dataNascimento|date:"m"}}/{{malote.dataNascimento|date:"Y"}}</td>
+                                {%endif%}
+                    
+                                <td class="cortar-texto" data-toggle="tooltip" title="{{malote.procedimento}}">{{malote.procedimento}}</td>
+
+                    
+                                {%if malote.tipo == 1%}
+                                    <td>Sem tipo</td>
+                                {%elif malote.tipo == 2%}
+                                    <td>Cirurgia</td>
+                                {%elif malote.tipo == 3%}
+                                    <td>Devolução</td>
+                                {%elif malote.tipo == 4%}
+                                    <td>Remarcação</td>
+                                {%elif malote.tipo == 5%}
+                                    <td>Retorno</td>
+                                {%elif malote.tipo == 6%}
+                                    <td>Biópsia</td>
+                                {% else %}
+                                    <td>Resultado de exame</td>
+                                {%endif%}
+                    
+                                <td>{{malote.sus}}</td>
+                    
+                                {%if malote.statusProcesso == 1%}
+                                <td>Sem status</td>
+                                {%elif malote.statusProcesso == 2%}
+                                <td>Agendado</td>
+                                {% elif malote.statusProcesso == 3%}
+                                <td>Arquivado</td>
+                                {% elif malote.statusProcesso == 4%}
+                                    {%if malote.justificativa == 1%}
+                                        <td>Devolvido</td>
+                                    {%elif malote.justificativa == 2%}
+                                        <td data-toggle="tooltip" title="Faltam Dados/Exames">Devolvido</td>
+                                    {% elif malote.justificativa == 3%}
+                                        <td data-toggle="tooltip" title="Preencher APAC">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 4%}
+                                        <td data-toggle="tooltip" title="Agendamento é realizado pela unidade">Devolvido <i class="fas fa-question-circle"></i>
+                                        </td>
+                                    {% elif malote.justificativa == 5%}
+                                        <td data-toggle="tooltip" title="Falta carta de sedação">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 6%}
+                                        <td data-toggle="tooltip" title="Encaminhar para assistente social">Devolvido <i class="fas fa-question-circle"></i>
+                                        </td>
+                                    {% elif malote.justificativa == 7%}
+                                        <td data-toggle="tooltip" title="Encaminhar para planejamento familiar">Devolvido <i class="fas fa-question-circle"></i>
+                                        </td>
+                                    {% elif malote.justificativa == 8%}
+                                        <td data-toggle="tooltip" title="Encaminhar para ambulatório de especialidades">Devolvido <i
+                                                class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 9%}
+                                        <td data-toggle="tooltip" title="Encaminhar/Retorno no HUSF">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 10%}
+                                        <td data-toggle="tooltip" title="Falta autorização para retirada do exame no AME">Devolvido <i
+                                                class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 11%}
+                                        <td data-toggle="tooltip" title="Encaminhar para centro de reabilitação(FISIO)">Devolvido <i
+                                                class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 12%}
+                                        <td data-toggle="tooltip" title="Guia e cadweb de pacientes diferentes">Devolvido <i class="fas fa-question-circle"></i>
+                                        </td>
+                                    {% elif malote.justificativa == 13%}
+                                        <td data-toggle="tooltip" title="Encaminhar para saúde mental infantil">Devolvido <i class="fas fa-question-circle"></i>
+                                        </td>
+                                    {% elif malote.justificativa == 14%}
+                                        <td data-toggle="tooltip" title="Inserir no CDR e fila de espera">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 15%}
+                                        <td data-toggle="tooltip" title="Não veio no malote">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {% elif malote.justificativa == 16%}
+                                        <td data-toggle="tooltip" title="Atualização de cadastro">Devolvido <i class="fas fa-question-circle"></i></td>
+                                    {%endif%}
+                                {% elif malote.statusProcesso == 5%}
+                                <td>Encaminhado</td>
+                                {% elif malote.statusProcesso == 6%}
+                                <td>Pendente</td>
+                                {% elif malote.statusProcesso == 7%}
+                                <td data-toggle="tooltip" title="{{malote.updated_at}} - {{malote.updatedBy_user}}">Recebido</td>
+                                {% elif malote.statusProcesso == 8%}
+                                <td>Não veio no malote</td>
+                                {% else %}
+                                <td>Retirado SMSA</td>
+                                {%endif%}
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<div class="modal fade" id="modalInformacoes" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Informações referentes a inserção de procedimentos</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="divDeInformacoes" >
+                <input type="text" class="col-10" id="pesquisaInformacoes" onkeyup="PesquisaModalInformacoes()">
+                <hr>
+                <li>
+                    <a href="#" aria-disabled="true" style="color: #000; text-decoration:none ">
+                    REGULAÇÃO - Responsabilidade de agendamento é da Central de Regulação. A solicitação deve
+                    ser enviada por malote com os exames pertinentes ao caso, pois se trata de procedimento
+                    de alta complexidade
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" style="color: #000;  text-decoration:none">
+                        PESO OBRIGATÓRIO - Para alguns exames o peso deve ser inserido no ato do agendamento,
+                        o peso deve ser colocado no campo de observação do SISREG e CROSS
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" style="color: #000;  text-decoration:none">
+
+                        TOMOGRAFIA - Se com sedação ou paciente acima de 120kg, enviar para regulação. Caso seja solicitado com
+                        sedação, enviar com carta em anexo. Demais são inseridas pela unidade.
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" style="color: #000;  text-decoration:none">
+
+                        RM (RESSONANCIA MAGNETICA) - Se com sedação ou paciente acima de 120kg, enviar para regulação. Caso seja solicitado
+                        com
+                        sedação, enviar com carta em anexo. Demais são inseridas pela unidade.
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" style="color: #000;  text-decoration:none">
+
+                        Procedimentos que devem ser agendados sem necessidade de inserção em fila - Raio-x / Eletrocardiograma
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" style="color: #000;  text-decoration:none">
+
+                        OFTALMO ORTOCLIN - Servem para primeira consulta e casos simples, onde o paciente necessita apenas de receita
+                        para óculos, caso seja solicitado exames, mesmo que na guia de referência e contrarreferência, mandar para a
+                        Central de regulação.
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" style="color: #000;  text-decoration:none">
+
+                        PRICK TEST - Inserir na fila de espera. Nomenclatura: TESTES CUTANEOS DE LEITURA IMEDIATA- PRICK.
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" style="color: #000;  text-decoration:none">
+
+                        EXAMES LABORATORIAIS - Caso esteja em dúvida se faz ou não o exame pelo SUS, entrar em contato
+                        com a auditoria via telefone ou e-mail.
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" style="color: #000;  text-decoration:none">
+
+                        EDA SOLICITADO PELO CLÍNICO DA UNIDADE - Podem ser solicitados, contanto que nas observações
+                        dos sistemas seja inserido a justificativa para solicitação.
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" style="color: #000;  text-decoration:none">
+
+                        BIÓPSIA/ PAAF DE MAMA - Devem ser encaminhadas para a regulação com a
+                        documentação. Mama: USG das mamas e mamografia.(obs: paciente com idade menor que 40 anos não é necessario a
+                        mamografia). Próstata: hemograma, coagulograma (TP/TTPA), PSA, urina I, ultrassom de prostata
+                        e receita médica para ciprofloxacina.
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" style="color: #000;  text-decoration:none">
+
+                        PAAF DE TIREOIDE- usg de tireoide
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" style="color: #000;  text-decoration:none">
+
+                        TC OU RM DE CORAÇÃO, MAMA OU PRÓSTATA - enviar para regulação
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" style="color: #000;  text-decoration:none">
+
+                        EXAMES DA ALTA COMPLEXIDADE - Todas as Autorizações de Procedimento de Alto Custo (APAC), contendo peso, altura e
+                        deverão ser enviadas para a regulação com os exames, por exemplo: exames laboratoriais, USG, TC, dentre
+                        outros em anexo. Caso paciente não tenha exames anteriores, colocar apenas um bilhete na solicitação
+                        dizendo isso.
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" style="color: #000;  text-decoration:none">
+
+                        ESPECIALIDADES DA ALTA COMPLEXIDADE (enviar para regulação) - cirurgia plástica,
+                        cirúrgia tóracica, fisiatria, cardiologia (quando já referenciado pelo médico do Especialidades), cirurgia
+                        vascular, bariátrica, cirurgia de cabeça e pescoço. Em caso de dúvidas,
+                        verifique o protocolo de especialidades Alta Complexidade com a enfermeira.
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" style="color: #000;  text-decoration:none">
+
+                        CIRURGIA SANTA CASA - Encaminhamento já são enviados para o prestador, entregar apenas a filipeta.
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" style="color: #000;  text-decoration:none">
+
+                        CATETERISMO E CIRURGIA VASCULAR SANTA CASA - O Serviço Social da Santa Casa irá entrar em
+                        contato com o paciente para passar a data correta, a data da filipeta não deve ser considerada, pois serve
+                        apenas para dar baixa no sistema.
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" style="color: #000;  text-decoration:none">
+
+                        RETORNO 30 DIAS NO ESPECIALIDADES - O médico deixa o paciente com uma carta de retorno, nesses
+                        casos, basta que o mesmo procure o Ambulatório de Especialidades com a carta para marcar.
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" style="color: #000;  text-decoration:none">
+
+                        REFERÊNCIA E CONTRA REFERÊNCIA - Quando o paciente passar com o médico e o mesmo referenciar para
+                        outro da mesma especialidade, o encaminhamento deve ser enviado para a regulação. Por exemplo:
+                        oftalmologista encaminha para outro oftalmologista.
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" style="color: #000;  text-decoration:none">
+
+                        ENCAMINHAMENTOS - solicitacões de médicos da unidade (generalistas), devem ser inseridos para avaliação do
+                        especialista.Enviar para a regulação somente solicitações de especialistas para especialistas. Exemplo de urologista
+                        para urologista.
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" style="color: #000;  text-decoration:none">
+
+                        CANCELAMENTO DE AGENDA OU SAÍDA DE PROFISSIONAL - Quando houver cancelamento de consultas
+                        no Especialidades, iremos orientar os pacientes a procurarem a unidade para serem inseridos novamente,
+                        nos casos que já deixarmos os agendamentos prontos, iremos avisar. Se for o caso de saída de profissional,
+                        poderá ser inserido na nomenclatura de outro profissional.
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" style="color: #000;  text-decoration:none">
+
+                        RM SEM CREM OU DADOS INCOMPLETOS - Pode receber sem o CREM e se tiver dados incompletos,
+                        o administrativo pode completar as informações.
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" style="color: #000;  text-decoration:none">
+
+                        USF MORFO E TN - Inserir a idade gestacional correta na planilha online
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" style="color: #000;  text-decoration:none">
+
+                        INSERÇÃO DE USG (GERAL) - Inserção na fila de espera deve ser exatamente o que está no pedido.
+                        O pedido médico deve corresponder com a filipeta gerada.
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" style="color: #000;  text-decoration:none">
+
+                        ACOLHIMENTO DO PACIENTE - É de competência da unidade o cadastramento de novos
+                        pacientes, abertura do cadastro no CROSS e no SISREG e atualização dos mesmos.
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" style="color: #000;  text-decoration:none">
+
+                        COLONOSCOPIA - Verifique corretamente o que está sendo solicitado no pedido (simples, mucosectomia,
+                        internado), em caso de dúvidas, consulte o protocolo de colono.
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" style="color: #000;  text-decoration:none">
+
+                        INSERÇÃO DE EXAMES - Basear-se pela planilha de nomenclatura. Se o pedido solicitar algo especifico,
+                        orientar-se pela área do corpo mais próxima disponível para inserção. Por exemplo: RM de pé, não tem nessa
+                        inserção, inserir então como RM de MMII, o prestador fará o que está sendo solicitado. Ver com enfermeiro ou
+                        médico da unidade em caso de dúvidas. Caso ainda sim não localize a nomenclatura, entre em contato com
+                        a regulação.
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" style="color: #000;  text-decoration:none">
+
+                        AGENDAMENTOS-Caso precise de algum agendamento, por favor, já mande com o SUS e o que será necessário para facilitar o
+                        atendimento. Lembrando que a inserção já deve ter sido feita no sistema para solicitar.AA"
+                        USG DE REGIÃO DE NÓDULOS - inserir como USG partes moles
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" style="color: #000;  text-decoration:none">
+
+                        RETORNO HOSPITAL DE OLHOS - deve ser solicitado via e-mail centralderegulacaosms@yahoo.com.br com nome e
+                        SUS do paciente e com nome do médico que precisa retornar.
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" style="color: #000;  text-decoration:none">
+
+                        PSIQUIATRA INFANTIL E OU TERAPIA OCUPACIONAL- encaminhar para saude mental infantil.Endereço: Tv. Carlos Gomes, 67 -
+                        Jardim Nova Braganca, Bragança Paulista - SP, 12914-380
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" style="color: #000;  text-decoration:none">
+
+                        UROFLUXOMETRIA- enviar para regulação.
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" style="color: #000;  text-decoration:none">
+
+                        MAMOGRAFIA- Acima de 40 anos tem que realizar mamografia e depois usg de mamas. Abaixo de 40 anos ou com prótese de
+                        silicone deve realizar o usg de mamas.
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" style="color: #000;  text-decoration:none">
+
+                        CONSULTA OFTALMO (MAPEAMENTO DE RETINA)- Inserir em CDR e FILA DE ESPERA.
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" style="color: #000;  text-decoration:none">
+
+                        Na nomenclatura CONSULTA EM OFTALMOLOGIA- UEEI, na unidade excutante selecionar o AMBULATORIO DE ESPECIALIDADES.
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" style="color: #000;  text-decoration:none">
+
+                        TESTE DE CAMINHADA DE 6 MINUTOS- Encaminhar/orientar o paciente a procurar o centro de fisioterapia da
+                        USF(Universidade
+                        São Francisco).
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" style="color: #000;  text-decoration:none">
+                        CARIÓTIPO DE BANDAS E PESQUISA X FRÁGIL- Conforme fluxo estabelecido, as guias de exames laboratoriais sem cobertura
+                        SUS (ou que não estejam contemplados no Protocolo Municipal)
+                        não necessitam ser enviadas à Secretaria de Saúde.
+                        <br>
+                        Elas devem permanecer na unidade de saúde de origem do paciente, sendo a própria unidade de saúde a responsável por
+                        realizar o agendamento do exame via SISREG ou por email (lab.enf@santacasabraganca.com.br) para exames que requerem coleta diretamente no laboratório da Santa Casa, seja por
+                        instabilidade da amostra (no caso dos exames genéticos) ou necessidade de preenchimento de questionário.
+                        <br>
+                        Posteriormente, o laboratório notificará a Auditoria sobre a necessidade de análise/autorização para realização do exame e pagamento.
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" style="color: #000;  text-decoration:none">
+                        GASOMETRIA ARTERIAL- Encaminhar paciente para o laboratório da Santa Casa das 07:00 às 09:00 hrs, de segunda à
+                        sexta.
+                        Não é necessario jejum.
+                    </a>
+                </li>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="pacienteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalMaloteNome"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <li data-nome="{{malote.dataNascimento}}" data-dataNascimento="modalMaloteDataDeNascimento"></li>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+
+
+
+
+
+{% block scripts %}
+<script>
+
+    $(document).ready(function () {
+        $('#id_statusProcesso').change(function () {
+            if ($('#id_statusProcesso').val() == '7') {
+                $('#id_justificativa').val(17);
+            } else {
+                $('#id_justificativa').val(1);
+            }
+        });
+    }); 
+
+    $('#id_paciente').select2();
+
+    $(".table").DataTable({
+        responsive: true,
+        // "bSort": false,
+        "aaSorting": [],
+        "pageLength": 100,
+        "language": {
+            "decimal": "",
+            "emptyTable": "Sem dados disponíveis",
+            "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+            "infoEmpty": "Mostrando de 0 até 0 de 0 registros",
+            "infoFiltered": "(filtrado de _MAX_ registros no total)",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "loadingRecords": "A carregar dados...",
+            "processing": "A processar...",
+            "search": "Procurar:",
+            "zeroRecords": "Não foram encontrados resultados",
+            "paginate": {
+                "first": "Primeiro",
+                "last": "Último",
+                "next": "Seguinte",
+                "previous": "Anterior"
+            },
+            "aria": {
+                "sortAscending": ": ordem crescente",
+                "sortDescending": ": ordem decrescente"
+            }
+        }
+    });
+
+
+    $('.scanner').click(function() {
+        var maloteId = $(this).val()
+
+        var token = $('[name="csrfmiddlewaretoken"]').val();
+        // console.log($this)
+        $.ajax({
+            url: "{% url 'update-malote-scanner' %}",
+            type: 'post',
+            data: {
+                'id': maloteId,
+                'csrfmiddlewaretoken': token,
+            },
+            success: function (response){
+                if (response.status == false){
+                    $('.scanner', response.id).prop('checked', false);
+                } else if(response.status == true){
+                    $('.scanner',response.id).prop('checked', true);
+                }
+            },
+            error: function (response) {
+                console.log("Você não tem permissão para essa ação.")
+            }
+        });
+    });
+
+    $(document).ready(function () {
+            $("#input_carteira").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#id_carteira li").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+
+    function PesquisaModalInformacoes() {
+        var input, filter, ul, li, a, i, txtValue, hr;
+        input = document.getElementById("pesquisaInformacoes");
+        filter = input.value.toUpperCase();
+        ul = document.getElementById("divDeInformacoes");
+        li = ul.getElementsByTagName("li");
+        hr = ul.getElementsByTagName("hr");
+        for (i = 0; i < li.length; i++) {
+            a = li[i].getElementsByTagName("a")[0];
+            txtValue = a.textContent || a.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                li[i].style.display = "";
+            } else {
+                li[i].style.display = "none";
+                hr[i].style.display = "none";
+            }
+        }
+    };
+
+    $('.modalMalote').click(function() {
+        // var maloteId = $(this).val()
+        console.log($this)
+        $.ajax({
+            url: "{% url 'update-malote-scanner' %}",
+            type: 'post',
+            data: {
+                'id': maloteId,
+                'csrfmiddlewaretoken': token,
+            },
+            success: function (response){
+                if (response.status == false){
+                    $('.scanner', response.id).prop('checked', false);
+                } else if(response.status == true){
+                    $('.scanner',response.id).prop('checked', true);
+                }
+            },
+            error: function (response) {
+                console.log("Você não tem permissão para essa ação.")
+            }
+        });
+    });
+
+
+    function openMyModal(event) {
+        var modal = initModalDialog(event, '#modal_generic');
+        var url = $(event.target).data('action');
+        $.ajax({
+            type: "GET",
+            url: url
+        }).done(function (data, textStatus, jqXHR) {
+            modal.find('.modal-body').html(data);
+            modal.modal('show');
+        })
+    };
+
+
+</script>
+{% endblock %}
+
+{% block rodape-links %}
+
+{% endblock %}

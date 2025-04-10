@@ -1,0 +1,386 @@
+{% extends 'paginas/modelo-ifpr.html' %}
+
+{% load static %}
+
+{% block conteudo %}
+<h4 class="text-center">
+    Malotes
+</h4>
+<hr>
+<h5><span class="badge badge-success">Última atualização da regulação : {{horarioUltimaAtualizacao}} </span></h5>
+<hr>
+
+<div class="table-responsive">
+    <form action="{% url 'update-malote-etapaMedico' %}" method="POST">
+        {%csrf_token%}
+        <table class="table" id="tabela-medico">
+            <div class="input-group-append">
+                <button type="submit" value="3" name="etapa" class="btn btn-primary">Encaminhar</button>
+            </div>
+
+
+            <hr>
+
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Nome</th>
+                    <th>Data de nascimento</th>
+                    <th>Procedimento</th>
+                    <th>Sigtap</th>
+                    <th>Cid.</th>
+                    <th>Tipo</th>
+                    <th>Classificação</th>
+                    <th>Cross</th>
+                    <th>SUS</th>
+                    <th>Status</th>
+                    <th>Justificativa</th>
+                    <th>Editar <i class="fas fa-ellipsis-v"></i></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for malote in object_list %}
+                {% if malote.etapa == 2 %}
+                {% if malote.statusProcesso == 2%}
+                <tr class="agendado">
+                    {% elif malote.statusProcesso == 3%}
+                <tr class="arquivado">
+                    {% elif malote.statusProcesso == 4%}
+                <tr class="devolvido">
+                    {% elif malote.statusProcesso == 5%}
+                <tr class="encaminhado">
+                    {% elif malote.statusProcesso == 6%}
+                <tr class="pendente">
+                    {% elif malote.statusProcesso == 7%}
+                <tr class="recebido">
+                    {% elif malote.statusProcesso == 8%}
+                <tr class="naoveionomalote">
+                    {% else %}
+                <tr>
+                    {%endif%}
+
+                    <td>
+                        <input type="checkbox" id="malotesSelecionados" name="malotesSelecionados" value={{malote.id}}>
+                    </td>
+
+                    <td>{{malote.nome}}</td>
+
+                    {% if malote.dataNascimento == null%}
+                    <td>Sem registro</td>
+                    {% else %}
+                    <td>{{ malote.dataNascimento|date:"d"}}/{{malote.dataNascimento|date:"m"}}/{{malote.dataNascimento|date:"Y"}}</td>
+                    {%endif%}
+
+                    <td class="cortar-texto" data-toggle="tooltip" title="{{malote.procedimento}}">{{malote.procedimento}}</td>
+
+                    <td> {{malote.sigtap}} </td>
+
+                    <td> {{malote.cid}} </td>
+
+                    {%if malote.tipo == 1%}
+                    <td>Sem tipo</td>
+                    {%elif malote.tipo == 2%}
+                    <td>Cirurgia</td>
+                    {%elif malote.tipo == 3%}
+                    <td>Devolução</td>
+                    {%elif malote.tipo == 4%}
+                    <td>Remarcação</td>
+                    {%elif malote.tipo == 5%}
+                    <td>Retorno</td>
+                    {%elif malote.tipo == 6%}
+                    <td>Biópsia</td>
+                    {% else %}
+                    <td>Resultado de exame</td>
+                    {%endif%}
+
+
+                    {%if malote.classificacao == 1%}
+                    <td>Sem classificação</td>
+                    {%elif malote.classificacao == 2%}
+                    <td>Urgente</td>
+                    {% else %}
+                    <td>Prioridade</td>
+                    {%endif%}
+
+                    {% if malote.cross == null%}
+                    <td>Sem registro</td>
+                    {% else %}
+                    <td>{{malote.cross}}</td>
+                    {%endif%}
+
+                    <td>{{malote.sus}}</td>
+
+                    {%if malote.statusProcesso == 1%}
+                    <td>Sem status</td>
+                    {%elif malote.statusProcesso == 2%}
+                    <td>Agendado</td>
+                    {% elif malote.statusProcesso == 3%}
+                    <td>Arquivado</td>
+                    {% elif malote.statusProcesso == 4%}
+                    <td>Devolvido</td>
+                    {% elif malote.statusProcesso == 5%}
+                    <td>Encaminhado</td>
+                    {% elif malote.statusProcesso == 6%}
+                    <td>Pendente</td>
+                    {% elif malote.statusProcesso == 7%}
+                    <td data-toggle="tooltip" title="{{malote.statusData}} - {{malote.statusUser}}">Recebido</td>
+                    {% elif malote.statusProcesso == 8%}
+                    <td>Não veio no malote</td>
+                    {% else %}
+                    <td>Retirado SMSA</td>
+                    {%endif%}
+
+                    {%if malote.justificativa == 1%}
+                    <td>Sem justificativa</td>
+                    {%elif malote.justificativa == 2%}
+                    <td>Faltam Dados/Exames</td>
+                    {% elif malote.justificativa == 3%}
+                    <td>Preencher APAC</td>
+                    {% elif malote.justificativa == 4%}
+                    <td>Agendamento é realizado pela unidade</td>
+                    {% elif malote.justificativa == 5%}
+                    <td>Falta carta de sedação</td>
+                    {% elif malote.justificativa == 6%}
+                    <td>Encaminhar para assistente social</td>
+                    {% elif malote.justificativa == 7%}
+                    <td>Encaminhar para planejamento familiar</td>
+                    {% elif malote.justificativa == 8%}
+                    <td>Encaminhar para ambulatório de especialidades</td>
+                    {% elif malote.justificativa == 9%}
+                    <td>Encaminhar/Retorno no HUSF</td>
+                    {% elif malote.justificativa == 10%}
+                    <td>Falta autorização para retirada do exame no AME</td>
+                    {% elif malote.justificativa == 11%}
+                    <td>Encaminhar para centro de reabilitação(FISIO)</td>
+                    {% elif malote.justificativa == 12%}
+                    <td>Guia e cadweb de pacientes diferentes</td>
+                    {% elif malote.justificativa == 13%}
+                    <td>Encaminhar para saúde mental infantil</td>
+                    {% elif malote.justificativa == 14%}
+                    <td>Inserir no CDR e fila de espera</td>
+                    {% elif malote.justificativa == 15%}
+                    <td>Não veio no malote</td>
+                    {% elif malote.justificativa == 16%}
+                    <td>Atualização de cadastro</td>
+                    {% else %}
+                    <td>Aguardando regulação</td>
+                    {%endif%}
+                    <td>
+                        <a href="{% url 'update-malote-medico' malote.pk %}" class="btn btn-warning btn-sm"
+                            title="Editar">
+                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                        </a>
+                    </td>
+                </tr>
+                {%endif%}
+                {% endfor %}
+            </tbody>
+        </table>
+    </form>
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+{% block scripts %}
+<script>
+
+    $('#id_paciente').select2();
+
+    $("#tabela-medico").DataTable({
+        responsive: true,
+        // "bSort": false,
+        "aaSorting": [],
+        "pageLength": 100,
+        "language": {
+            "decimal": "",
+            "emptyTable": "Sem dados disponíveis",
+            "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+            "infoEmpty": "Mostrando de 0 até 0 de 0 registros",
+            "infoFiltered": "(filtrado de _MAX_ registros no total)",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "loadingRecords": "A carregar dados...",
+            "processing": "A processar...",
+            "search": "Procurar:",
+            "zeroRecords": "Não foram encontrados resultados",
+            "paginate": {
+                "first": "Primeiro",
+                "last": "Último",
+                "next": "Seguinte",
+                "previous": "Anterior"
+            },
+            "aria": {
+                "sortAscending": ": ordem crescente",
+                "sortDescending": ": ordem decrescente"
+            }
+        }
+    });
+
+    $("#tabela-cirurgia").DataTable({
+        responsive: true,
+        // "bSort": false,
+        "aaSorting": [],
+        "pageLength": 100,
+        "language": {
+            "decimal": "",
+            "emptyTable": "Sem dados disponíveis",
+            "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+            "infoEmpty": "Mostrando de 0 até 0 de 0 registros",
+            "infoFiltered": "(filtrado de _MAX_ registros no total)",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "loadingRecords": "A carregar dados...",
+            "processing": "A processar...",
+            "search": "Procurar:",
+            "zeroRecords": "Não foram encontrados resultados",
+            "paginate": {
+                "first": "Primeiro",
+                "last": "Último",
+                "next": "Seguinte",
+                "previous": "Anterior"
+            },
+            "aria": {
+                "sortAscending": ": ordem crescente",
+                "sortDescending": ": ordem decrescente"
+            }
+        }
+    });
+
+    $("#tabela-hospitaldeolhos").DataTable({
+        responsive: true,
+        // "bSort": false,
+        "aaSorting": [],
+        "pageLength": 100,
+        "language": {
+            "decimal": "",
+            "emptyTable": "Sem dados disponíveis",
+            "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+            "infoEmpty": "Mostrando de 0 até 0 de 0 registros",
+            "infoFiltered": "(filtrado de _MAX_ registros no total)",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "loadingRecords": "A carregar dados...",
+            "processing": "A processar...",
+            "search": "Procurar:",
+            "zeroRecords": "Não foram encontrados resultados",
+            "paginate": {
+                "first": "Primeiro",
+                "last": "Último",
+                "next": "Seguinte",
+                "previous": "Anterior"
+            },
+            "aria": {
+                "sortAscending": ": ordem crescente",
+                "sortDescending": ": ordem decrescente"
+            }
+        }
+    });
+
+    $("#tabela-altacomplexidade").DataTable({
+        responsive: true,
+        // "bSort": false,
+        "aaSorting": [],
+        "pageLength": 100,
+        "language": {
+            "decimal": "",
+            "emptyTable": "Sem dados disponíveis",
+            "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+            "infoEmpty": "Mostrando de 0 até 0 de 0 registros",
+            "infoFiltered": "(filtrado de _MAX_ registros no total)",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "loadingRecords": "A carregar dados...",
+            "processing": "A processar...",
+            "search": "Procurar:",
+            "zeroRecords": "Não foram encontrados resultados",
+            "paginate": {
+                "first": "Primeiro",
+                "last": "Último",
+                "next": "Seguinte",
+                "previous": "Anterior"
+            },
+            "aria": {
+                "sortAscending": ": ordem crescente",
+                "sortDescending": ": ordem decrescente"
+            }
+        }
+    });
+
+    $("#tabela-ame").DataTable({
+        responsive: true,
+        // "bSort": false,
+        "aaSorting": [],
+        "pageLength": 100,
+        "language": {
+            "decimal": "",
+            "emptyTable": "Sem dados disponíveis",
+            "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+            "infoEmpty": "Mostrando de 0 até 0 de 0 registros",
+            "infoFiltered": "(filtrado de _MAX_ registros no total)",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "loadingRecords": "A carregar dados...",
+            "processing": "A processar...",
+            "search": "Procurar:",
+            "zeroRecords": "Não foram encontrados resultados",
+            "paginate": {
+                "first": "Primeiro",
+                "last": "Último",
+                "next": "Seguinte",
+                "previous": "Anterior"
+            },
+            "aria": {
+                "sortAscending": ": ordem crescente",
+                "sortDescending": ": ordem decrescente"
+            }
+        }
+    });
+
+    $("#tabela-arquivo").DataTable({
+        responsive: true,
+        // "bSort": false,
+        "aaSorting": [],
+        "pageLength": 100,
+        "language": {
+            "decimal": "",
+            "emptyTable": "Sem dados disponíveis",
+            "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+            "infoEmpty": "Mostrando de 0 até 0 de 0 registros",
+            "infoFiltered": "(filtrado de _MAX_ registros no total)",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "loadingRecords": "A carregar dados...",
+            "processing": "A processar...",
+            "search": "Procurar:",
+            "zeroRecords": "Não foram encontrados resultados",
+            "paginate": {
+                "first": "Primeiro",
+                "last": "Último",
+                "next": "Seguinte",
+                "previous": "Anterior"
+            },
+            "aria": {
+                "sortAscending": ": ordem crescente",
+                "sortDescending": ": ordem decrescente"
+            }
+        }
+    });
+
+</script>
+{% endblock %}
+
+{% block rodape-links %}
+
+{% endblock %}

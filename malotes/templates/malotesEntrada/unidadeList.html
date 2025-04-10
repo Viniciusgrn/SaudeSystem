@@ -1,0 +1,946 @@
+{% extends 'paginas/modelo-ifpr.html' %}
+
+{% load static %}
+
+{% block conteudo %}
+<h4 class="text-center">
+    Malotes
+</h4>
+<hr>
+<div class="row justify-content-between">
+    <div class="col">
+        <a href="{% url 'unidadeCreate' %}" class="btn btn-primary btn-sm float-right">Novo malote</a>
+    </div>
+</div>
+<h5><span class="badge badge-success">Última atualização da regulação : {{horarioUltimaAtualizacao}} </span></h5>
+<hr>
+
+<!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalInformacoes">
+    Informações referentes ao malote
+</button> -->
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" id="pendentes-tab" data-toggle="tab" href="#pendentes" role="tab"
+            aria-controls="pendentes" aria-selected="true">Pendentes ({{totalPendentes}})</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="enviados-tab" data-toggle="tab" href="#enviados" role="tab" aria-controls="enviados"
+            aria-selected="true">Enviados ({{totalEnviados}})</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="recebidos-tab" data-toggle="tab" href="#recebidos" role="tab" aria-controls="recebidos"
+            aria-selected="false">Recebidos ({{totalRecebidos}})</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="devolvidos-tab" data-toggle="tab" href="#devolvidos" role="tab"
+            aria-controls="devolvidos" aria-selected="false">Devolvidos({{totalDevolvidos}})</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="chegou-tab" data-toggle="tab" href="#chegou" role="tab"
+            aria-controls="chegou" aria-selected="false">Chegou({{totalDevolvidos}})</a>
+    </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active mt-3" id="pendentes" role="tabpanel" aria-labelledby="pendentes-tab">        
+        {% for malote in malotesOrigem %}
+        {% if malote.status == 1 %}
+            <div class="accordion" id="accordionExample">
+                <div class="card">
+                    <!-- cabeçalho do acordeon -->
+                    <div class="card-header" id="headingOne">
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <h2 class="mb-0">
+                                    <button class="btn btn-link" type="button" data-toggle="collapse"
+                                        data-target="#collapse{{malote.id}}" aria-expanded="true"
+                                        aria-controls="collapseOne">
+                                        {{ malote.created_at|date:"d/m/Y" }} - Guias
+                                    </button>
+                                </h2>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <form action="{% url 'enviarMaloteDestino' %}" id="enviarMaloteDestino{{malote.pk}}" name="malote{{malote.pk}}" class="m-0 p-0" method="POST">
+                                    {% csrf_token %}
+                                    <input name="malote_id" type="hidden" class="form-control" value="{{malote.id}}">
+                                    <div class="input-group">
+                                        <label for="basic-url">Enviar malote para:&nbsp;&nbsp;</label>
+                                        <select name="unidadeDestino" class="form-control form-control-sm" id="unidadeDestino">
+                                            {% for unidade in unidades %}
+                                            {% if unidade.pk == 34 %}
+                                            <option value="{{unidade.pk}}" selected>{{ unidade.nome }}</option>
+                                            {% else %}
+                                            <option value="{{unidade.pk}}">{{ unidade.nome }}</option>
+                                            {% endif%}
+                                            {% endfor %}
+                                        </select>
+                                        <div class="input-group-append">
+                                            <button class="btn btn-primary btn-sm" type="submit">Confirmar</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- conteúdo do acordeon -->
+                    <div id="collapse{{malote.id}}" class="collapse" aria-labelledby="headingOne"
+                        data-parent="#accordionExample">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table tabela-listar">
+                                    <thead>
+                                        <tr>
+                                            <th>Paciente</th>
+                                            <th>Data de nascimento</th>
+                                            <th>SUS</th>
+                                            <th>Cross</th>
+                                            <th>Procedimento</th>
+                                            <th>Tipo</th>
+                                            <th>Classificacao</th>
+                                            <th>Observação</th>
+                                            <th><i class="fa fa-cog"></i></th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        {% for guia in guias %}
+                                        {% if guia.malote_id == malote.id %}
+                                        <tr>
+                                            <td data-toggle="tooltip" title="{{malote.nome}}" class="cortar-texto">{{ guia.nome }}</td>
+                                            <td>{{ guia.dataNascimento|date:"d/m/Y" }}</td>
+                                            <td>{{ guia.sus }}</td>
+                                            <td>{{ guia.cross|default_if_none:"-" }}</td>
+                                            <td class="cortar-texto" data-toggle="tooltip" title="{{guia.procedimento}}">{{ guia.procedimento }}</td>
+                                            <td>{{ guia.tipo }}</td>
+                                            <td>{{ guia.classificacao }}</td>
+                                            <td class="cortar-texto" title="{{ guia.observacaoUnidade|default_if_none:'-' }}"
+                                                data-toggle="tooltip">{{ guia.observacaoUnidade|default_if_none:'-' }}</td>
+                                            <td>
+                                                <a href="{% url 'update-malote-unidade' guia.pk %}"
+                                                    class="btn btn-warning btn-sm" title="Editar"><i class="fa fa-pencil"
+                                                        aria-hidden="true"></i></a>
+                                            </td>
+                                        </tr>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif%}
+        {% endfor %}
+    </div>
+    <div class="tab-pane fade mt-3" id="enviados" role="tabpanel" aria-labelledby="enviados-tab">
+        {% for malote in malotesOrigem %}
+        {% if malote.status == 2 %}
+            <div class="accordion" id="accordionExample">
+                <div class="card">
+                    <!-- cabeçalho do acordeon -->
+                    <div class="card-header" id="headingOne">
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <h2 class="mb-0">
+                                    <button class="btn btn-link" type="button" data-toggle="collapse"
+                                        data-target="#collapse{{malote.id}}" aria-expanded="true"
+                                        aria-controls="collapseOne">
+                                        {{ malote.created_at|date:"d/m/Y" }} - Guias
+                                    </button>
+                                </h2>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <form action="{% url 'enviarMaloteDestino' %}" id="enviarMaloteDestino" class="m-0 p-0" method="POST">
+                                    {% csrf_token %}
+                                    <input name="malote_id" type="hidden" class="form-control" value="{{malote.id}}">
+                                    <div class="input-group">
+                                        <label for="basic-url">Enviar malote para:&nbsp;&nbsp;</label>
+                                        <select name="unidadeDestino" class="form-control form-control-sm" id="unidadeDestino">
+                                            {% for unidade in unidades %}
+                                            {% if unidade.pk == 34 %}
+                                            <option value="{{unidade.pk}}" selected>{{ unidade.nome }}</option>
+                                            {% else %}
+                                            <option value="{{unidade.pk}}">{{ unidade.nome }}</option>
+                                            {% endif%}
+                                            {% endfor %}
+                                        </select>
+                                        <div class="input-group-append">
+                                            <button class="btn btn-primary btn-sm" type="submit">Confirmar</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- conteúdo do acordeon -->
+                    <div id="collapse{{malote.id}}" class="collapse" aria-labelledby="headingOne"
+                        data-parent="#accordionExample">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table tabela-listar">
+                                    <thead>
+                                        <tr>
+                                            <th>Paciente</th>
+                                            <th>Data de nascimento</th>
+                                            <th>SUS</th>
+                                            <th>Cross</th>
+                                            <th>Procedimento</th>
+                                            <th>Tipo</th>
+                                            <th>Classificacao</th>
+                                            <th>Observação</th>
+                                            <th><i class="fa fa-cog"></i></th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        {% for guia in guias %}
+                                        {% if guia.malote_id == malote.id %}
+                                        <tr>
+                                            <td data-toggle="tooltip" title="{{malote.nome}}" class="cortar-texto">{{ guia.nome }}</td>
+                                            <td>{{ guia.dataNascimento|date:"d/m/Y" }}</td>
+                                            <td>{{ guia.sus }}</td>
+                                            <td>{{ guia.cross|default_if_none:"-" }}</td>
+                                            <td class="cortar-texto" data-toggle="tooltip" title="{{guia.procedimento}}">{{ guia.procedimento }}</td>
+                                            <td>{{ guia.tipo }}</td>
+                                            <td>{{ guia.classificacao }}</td>
+                                            <td class="cortar-texto" title="{{ guia.observacaoUnidade|default_if_none:'-' }}"
+                                                data-toggle="tooltip">{{ guia.observacaoUnidade|default_if_none:'-' }}</td>
+                                            <td>
+                                                <a href="{% url 'update-malote-unidade' guia.pk %}"
+                                                    class="btn btn-warning btn-sm" title="Editar"><i class="fa fa-pencil"
+                                                        aria-hidden="true"></i></a>
+                                            </td>
+                                        </tr>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif%}
+        {% endfor %}
+    </div>
+        <div class="tab-pane fade mt-3" id="recebidos" role="tabpanel" aria-labelledby="recebidos-tab">
+            {% for malote in malotesOrigem %}
+        {% if malote.status == 3 %}
+            <div class="accordion" id="accordionExample">
+                <div class="card">
+                    <!-- cabeçalho do acordeon -->
+                    <div class="card-header" id="headingOne">
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <h2 class="mb-0">
+                                    <button class="btn btn-link" type="button" data-toggle="collapse"
+                                        data-target="#collapse{{malote.id}}" aria-expanded="true"
+                                        aria-controls="collapseOne">
+                                        {{ malote.created_at|date:"d/m/Y" }} - Guias
+                                    </button>
+                                </h2>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <form action="{% url 'enviarMaloteDestino' %}" id="enviarMaloteDestino" class="m-0 p-0" method="POST">
+                                    {% csrf_token %}
+                                    <input name="malote_id" type="hidden" class="form-control" value="{{malote.id}}">
+                                    <div class="input-group">
+                                        <label for="basic-url">Enviar malote para:&nbsp;&nbsp;</label>
+                                        <select name="unidadeDestino" class="form-control form-control-sm" id="unidadeDestino">
+                                            {% for unidade in unidades %}
+                                            {% if unidade.pk == 34 %}
+                                            <option value="{{unidade.pk}}" selected>{{ unidade.nome }}</option>
+                                            {% else %}
+                                            <option value="{{unidade.pk}}">{{ unidade.nome }}</option>
+                                            {% endif%}
+                                            {% endfor %}
+                                        </select>
+                                        <div class="input-group-append">
+                                            <button class="btn btn-primary btn-sm" type="submit">Confirmar</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- conteúdo do acordeon -->
+                    <div id="collapse{{malote.id}}" class="collapse" aria-labelledby="headingOne"
+                        data-parent="#accordionExample">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table tabela-listar">
+                                    <thead>
+                                        <tr>
+                                            <th>Paciente</th>
+                                            <th>Data de nascimento</th>
+                                            <th>SUS</th>
+                                            <th>Cross</th>
+                                            <th>Procedimento</th>
+                                            <th>Tipo</th>
+                                            <th>Classificacao</th>
+                                            <th>Observação</th>
+                                            <th><i class="fa fa-cog"></i></th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        {% for guia in guias %}
+                                        {% if guia.malote_id == malote.id %}
+                                        <tr>
+                                            <td data-toggle="tooltip" title="{{malote.nome}}" class="cortar-texto">{{ guia.nome }}</td>
+                                            <td>{{ guia.dataNascimento|date:"d/m/Y" }}</td>
+                                            <td>{{ guia.sus }}</td>
+                                            <td>{{ guia.cross|default_if_none:"-" }}</td>
+                                            <td class="cortar-texto" data-toggle="tooltip" title="{{guia.procedimento}}">{{ guia.procedimento }}</td>
+                                            <td>{{ guia.tipo }}</td>
+                                            <td>{{ guia.classificacao }}</td>
+                                            <td class="cortar-texto" title="{{ guia.observacaoUnidade|default_if_none:'-' }}"
+                                                data-toggle="tooltip">{{ guia.observacaoUnidade|default_if_none:'-' }}</td>
+                                            <td>
+                                                <a href="{% url 'update-malote-unidade' guia.pk %}"
+                                                    class="btn btn-warning btn-sm" title="Editar"><i class="fa fa-pencil"
+                                                        aria-hidden="true"></i></a>
+                                            </td>
+                                        </tr>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif%}
+        {% endfor %}
+        </div>
+        <div class="tab-pane fade mt-3" id="devolvidos" role="tabpanel" aria-labelledby="devolvidos-tab">
+            {% for malote in malotesOrigem %}
+            {% if malote.status == 4 %}
+            <div class="accordion" id="accordionExample">
+                <div class="card">
+                    <!-- cabeçalho do acordeon -->
+                    <div class="card-header" id="headingOne">
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <h2 class="mb-0">
+                                    <button class="btn btn-link" type="button" data-toggle="collapse"
+                                        data-target="#collapse{{malote.id}}" aria-expanded="true"
+                                        aria-controls="collapseOne">
+                                        {{ malote.created_at|date:"d/m/Y" }} - Guias
+                                    </button>
+                                </h2>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <form action="{% url 'enviarMaloteDestino' %}" id="enviarMaloteDestino" class="m-0 p-0" method="POST">
+                                    {% csrf_token %}
+                                    <input name="malote_id" type="hidden" class="form-control" value="{{malote.id}}">
+                                    <div class="input-group">
+                                        <label for="basic-url">Enviar malote para:&nbsp;&nbsp;</label>
+                                        <select name="unidadeDestino" class="form-control form-control-sm" id="unidadeDestino">
+                                            {% for unidade in unidades %}
+                                            {% if unidade.pk == 34 %}
+                                            <option value="{{unidade.pk}}" selected>{{ unidade.nome }}</option>
+                                            {% else %}
+                                            <option value="{{unidade.pk}}">{{ unidade.nome }}</option>
+                                            {% endif%}
+                                            {% endfor %}
+                                        </select>
+                                        <div class="input-group-append">
+                                            <button class="btn btn-primary btn-sm" type="submit">Confirmar</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- conteúdo do acordeon -->
+                    <div id="collapse{{malote.id}}" class="collapse" aria-labelledby="headingOne"
+                        data-parent="#accordionExample">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table tabela-listar">
+                                    <thead>
+                                        <tr>
+                                            <th>Paciente</th>
+                                            <th>Data de nascimento</th>
+                                            <th>SUS</th>
+                                            <th>Cross</th>
+                                            <th>Procedimento</th>
+                                            <th>Tipo</th>
+                                            <th>Classificacao</th>
+                                            <th>Observação</th>
+                                            <th><i class="fa fa-cog"></i></th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        {% for guia in guias %}
+                                        {% if guia.malote_id == malote.id %}
+                                        <tr>
+                                            <td data-toggle="tooltip" title="{{malote.nome}}" class="cortar-texto">{{ guia.nome }}</td>
+                                            <td>{{ guia.dataNascimento|date:"d/m/Y" }}</td>
+                                            <td>{{ guia.sus }}</td>
+                                            <td>{{ guia.cross|default_if_none:"-" }}</td>
+                                            <td class="cortar-texto" data-toggle="tooltip" title="{{guia.procedimento}}">{{ guia.procedimento }}</td>
+                                            <td>{{ guia.tipo }}</td>
+                                            <td>{{ guia.classificacao }}</td>
+                                            <td class="cortar-texto" title="{{ guia.observacaoUnidade|default_if_none:'-' }}"
+                                                data-toggle="tooltip">{{ guia.observacaoUnidade|default_if_none:'-' }}</td>
+                                            <td>
+                                                <a href="{% url 'update-malote-unidade' guia.pk %}"
+                                                    class="btn btn-warning btn-sm" title="Editar"><i class="fa fa-pencil"
+                                                        aria-hidden="true"></i></a>
+                                            </td>
+                                        </tr>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif%}
+        {% endfor %}
+        </div>
+        <div class="tab-pane fade mt-3" id="chegou" role="tabpanel" aria-labelledby="chegou-tab">
+            {% for malote in malotesDestino %}
+            {% if malote.status == 4 %}
+            <div class="accordion" id="accordionExample">
+                <div class="card">
+                    <!-- cabeçalho do acordeon -->
+                    <div class="card-header" id="headingOne">
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <h2 class="mb-0">
+                                    <button class="btn btn-link" type="button" data-toggle="collapse"
+                                        data-target="#collapse{{malote.id}}" aria-expanded="true"
+                                        aria-controls="collapseOne">
+                                        {{ malote.created_at|date:"d/m/Y" }} - Guias
+                                    </button>
+                                </h2>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <form action="{% url 'enviarMaloteDestino' %}" id="enviarMaloteDestino" class="m-0 p-0" method="POST">
+                                    {% csrf_token %}
+                                    <input name="malote_id" type="hidden" class="form-control" value="{{malote.id}}">
+                                    <div class="input-group">
+                                        <label for="basic-url">Enviar malote para:&nbsp;&nbsp;</label>
+                                        <select name="unidadeDestino" class="form-control form-control-sm" id="unidadeDestino">
+                                            {% for unidade in unidades %}
+                                            {% if unidade.pk == 34 %}
+                                            <option value="{{unidade.pk}}" selected>{{ unidade.nome }}</option>
+                                            {% else %}
+                                            <option value="{{unidade.pk}}">{{ unidade.nome }}</option>
+                                            {% endif%}
+                                            {% endfor %}
+                                        </select>
+                                        <div class="input-group-append">
+                                            <button class="btn btn-primary btn-sm" type="submit">Confirmar</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- conteúdo do acordeon -->
+                    <div id="collapse{{malote.id}}" class="collapse" aria-labelledby="headingOne"
+                        data-parent="#accordionExample">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table tabela-listar">
+                                    <thead>
+                                        <tr>
+                                            <th>Paciente</th>
+                                            <th>Data de nascimento</th>
+                                            <th>SUS</th>
+                                            <th>Cross</th>
+                                            <th>Procedimento</th>
+                                            <th>Tipo</th>
+                                            <th>Classificacao</th>
+                                            <th>Observação</th>
+                                            <th><i class="fa fa-cog"></i></th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        {% for guia in guias %}
+                                        {% if guia.malote_id == malote.id %}
+                                        <tr>
+                                            <td data-toggle="tooltip" title="{{malote.nome}}" class="cortar-texto">{{ guia.nome }}</td>
+                                            <td>{{ guia.dataNascimento|date:"d/m/Y" }}</td>
+                                            <td>{{ guia.sus }}</td>
+                                            <td>{{ guia.cross|default_if_none:"-" }}</td>
+                                            <td class="cortar-texto" data-toggle="tooltip" title="{{guia.procedimento}}">{{ guia.procedimento }}</td>
+                                            <td>{{ guia.tipo }}</td>
+                                            <td>{{ guia.classificacao }}</td>
+                                            <td class="cortar-texto" title="{{ guia.observacaoUnidade|default_if_none:'-' }}"
+                                                data-toggle="tooltip">{{ guia.observacaoUnidade|default_if_none:'-' }}</td>
+                                            <td>
+                                                <a href="{% url 'update-malote-unidade' guia.pk %}"
+                                                    class="btn btn-warning btn-sm" title="Editar"><i class="fa fa-pencil"
+                                                        aria-hidden="true"></i></a>
+                                            </td>
+                                        </tr>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif%}
+        {% endfor %}
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="modalInformacoes" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Informações referentes a inserção de procedimentos
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="divDeInformacoes">
+                    <input type="text" class="col-10" id="pesquisaInformacoes" onkeyup="PesquisaModalInformacoes()">
+                    <hr>
+                    <li>
+                        <a href="#" aria-disabled="true" style="color: #000; text-decoration:none ">
+                            REGULAÇÃO - Responsabilidade de agendamento é da Central de Regulação. A solicitação deve
+                            ser enviada por malote com os exames pertinentes ao caso, pois se trata de procedimento
+                            de alta complexidade
+                        </a>
+                    </li>
+                    <hr>
+                    <li>
+                        <a href="#" style="color: #000;  text-decoration:none">
+                            PESO OBRIGATÓRIO - Para alguns exames o peso deve ser inserido no ato do agendamento,
+                            o peso deve ser colocado no campo de observação do SISREG e CROSS
+                        </a>
+                    </li>
+                    <hr>
+                    <li>
+                        <a href="#" style="color: #000;  text-decoration:none">
+
+                            TOMOGRAFIA - Se com sedação ou paciente acima de 120kg, enviar para regulação. Caso seja
+                            solicitado com
+                            sedação, enviar com carta em anexo. Demais são inseridas pela unidade.
+                        </a>
+                    </li>
+                    <hr>
+                    <li>
+                        <a href="#" style="color: #000;  text-decoration:none">
+
+                            RM (RESSONANCIA MAGNETICA) - Se com sedação ou paciente acima de 120kg, enviar para
+                            regulação.
+                            Caso seja solicitado
+                            com
+                            sedação, enviar com carta em anexo. Demais são inseridas pela unidade.
+                        </a>
+                    </li>
+                    <hr>
+                    <li>
+                        <a href="#" style="color: #000;  text-decoration:none">
+
+                            Procedimentos que devem ser agendados sem necessidade de inserção em fila - Raio-x /
+                            Eletrocardiograma
+                        </a>
+                    </li>
+                    <hr>
+                    <li>
+                        <a href="#" style="color: #000;  text-decoration:none">
+
+                            OFTALMO ORTOCLIN - Servem para primeira consulta e casos simples, onde o paciente necessita
+                            apenas de receita
+                            para óculos, caso seja solicitado exames, mesmo que na guia de referência e
+                            contrarreferência,
+                            mandar para a
+                            Central de regulação.
+                        </a>
+                    </li>
+                    <hr>
+                    <li>
+                        <a href="#" style="color: #000;  text-decoration:none">
+
+                            PRICK TEST - Inserir na fila de espera. Nomenclatura: TESTES CUTANEOS DE LEITURA IMEDIATA-
+                            PRICK.
+                        </a>
+                    </li>
+                    <hr>
+                    <li>
+                        <a href="#" style="color: #000;  text-decoration:none">
+
+                            EXAMES LABORATORIAIS - Caso esteja em dúvida se faz ou não o exame pelo SUS, entrar em
+                            contato
+                            com a auditoria via telefone ou e-mail.
+                        </a>
+                    </li>
+                    <hr>
+                    <li>
+                        <a href="#" style="color: #000;  text-decoration:none">
+
+                            EDA SOLICITADO PELO CLÍNICO DA UNIDADE - Podem ser solicitados, contanto que nas observações
+                            dos sistemas seja inserido a justificativa para solicitação.
+                        </a>
+                    </li>
+                    <hr>
+                    <li>
+                        <a href="#" style="color: #000;  text-decoration:none">
+
+                            BIÓPSIA/ PAAF DE MAMA - Devem ser encaminhadas para a regulação com a
+                            documentação. Mama: USG das mamas e mamografia.(obs: paciente com idade menor que 40 anos
+                            não é
+                            necessario a
+                            mamografia). Próstata: hemograma, coagulograma (TP/TTPA), PSA, urina I, ultrassom de
+                            prostata
+                            e receita médica para ciprofloxacina.
+                        </a>
+                    </li>
+                    <hr>
+                    <li>
+                        <a href="#" style="color: #000;  text-decoration:none">
+
+                            PAAF DE TIREOIDE- usg de tireoide
+                        </a>
+                    </li>
+                    <hr>
+                    <li>
+                        <a href="#" style="color: #000;  text-decoration:none">
+
+                            TC OU RM DE CORAÇÃO, MAMA OU PRÓSTATA - enviar para regulação
+                        </a>
+                    </li>
+                    <hr>
+                    <li>
+                        <a href="#" style="color: #000;  text-decoration:none">
+
+                            EXAMES DA ALTA COMPLEXIDADE - Todas as Autorizações de Procedimento de Alto Custo (APAC),
+                            contendo peso, altura e
+                            deverão ser enviadas para a regulação com os exames, por exemplo: exames laboratoriais, USG,
+                            TC,
+                            dentre
+                            outros em anexo. Caso paciente não tenha exames anteriores, colocar apenas um bilhete na
+                            solicitação
+                            dizendo isso.
+                        </a>
+                    </li>
+                    <hr>
+                    <li>
+                        <a href="#" style="color: #000;  text-decoration:none">
+
+                            ESPECIALIDADES DA ALTA COMPLEXIDADE (enviar para regulação) - cirurgia plástica,
+                            cirúrgia tóracica, fisiatria, cardiologia (quando já referenciado pelo médico do
+                            Especialidades), cirurgia
+                            vascular, bariátrica, cirurgia de cabeça e pescoço. Em caso de dúvidas,
+                            verifique o protocolo de especialidades Alta Complexidade com a enfermeira.
+                        </a>
+                    </li>
+                    <hr>
+                    <li>
+                        <a href="#" style="color: #000;  text-decoration:none">
+
+                            CIRURGIA SANTA CASA - Encaminhamento já são enviados para o prestador, entregar apenas a
+                            filipeta.
+                        </a>
+                    </li>
+                    <hr>
+                    <li>
+                        <a href="#" style="color: #000;  text-decoration:none">
+
+                            CATETERISMO E CIRURGIA VASCULAR SANTA CASA - O Serviço Social da Santa Casa irá entrar em
+                            contato com o paciente para passar a data correta, a data da filipeta não deve ser
+                            considerada,
+                            pois serve
+                            apenas para dar baixa no sistema.
+                        </a>
+                    </li>
+                    <hr>
+                    <li>
+                        <a href="#" style="color: #000;  text-decoration:none">
+
+                            RETORNO 30 DIAS NO ESPECIALIDADES - O médico deixa o paciente com uma carta de retorno,
+                            nesses
+                            casos, basta que o mesmo procure o Ambulatório de Especialidades com a carta para marcar.
+                        </a>
+                    </li>
+                    <hr>
+                    <li>
+                        <a href="#" style="color: #000;  text-decoration:none">
+
+                            REFERÊNCIA E CONTRA REFERÊNCIA - Quando o paciente passar com o médico e o mesmo referenciar
+                            para
+                            outro da mesma especialidade, o encaminhamento deve ser enviado para a regulação. Por
+                            exemplo:
+                            oftalmologista encaminha para outro oftalmologista.
+                        </a>
+                    </li>
+                    <hr>
+                    <li>
+                        <a href="#" style="color: #000;  text-decoration:none">
+
+                            ENCAMINHAMENTOS - solicitacões de médicos da unidade (generalistas), devem ser inseridos
+                            para
+                            avaliação do
+                            especialista.Enviar para a regulação somente solicitações de especialistas para
+                            especialistas.
+                            Exemplo de urologista
+                            para urologista.
+                        </a>
+                    </li>
+                    <hr>
+                    <li>
+                        <a href="#" style="color: #000;  text-decoration:none">
+
+                            CANCELAMENTO DE AGENDA OU SAÍDA DE PROFISSIONAL - Quando houver cancelamento de consultas
+                            no Especialidades, iremos orientar os pacientes a procurarem a unidade para serem inseridos
+                            novamente,
+                            nos casos que já deixarmos os agendamentos prontos, iremos avisar. Se for o caso de saída de
+                            profissional,
+                            poderá ser inserido na nomenclatura de outro profissional.
+                        </a>
+                    </li>
+                    <hr>
+                    <li>
+                        <a href="#" style="color: #000;  text-decoration:none">
+
+                            RM SEM CREM OU DADOS INCOMPLETOS - Pode receber sem o CREM e se tiver dados incompletos,
+                            o administrativo pode completar as informações.
+                        </a>
+                    </li>
+                    <hr>
+                    <li>
+                        <a href="#" style="color: #000;  text-decoration:none">
+
+                            USF MORFO E TN - Inserir a idade gestacional correta na planilha online
+                        </a>
+                    </li>
+                    <hr>
+                    <li>
+                        <a href="#" style="color: #000;  text-decoration:none">
+
+                            INSERÇÃO DE USG (GERAL) - Inserção na fila de espera deve ser exatamente o que está no
+                            pedido.
+                            O pedido médico deve corresponder com a filipeta gerada.
+                        </a>
+                    </li>
+                    <hr>
+                    <li>
+                        <a href="#" style="color: #000;  text-decoration:none">
+
+                            ACOLHIMENTO DO PACIENTE - É de competência da unidade o cadastramento de novos
+                            pacientes, abertura do cadastro no CROSS e no SISREG e atualização dos mesmos.
+                        </a>
+                    </li>
+                    <hr>
+                    <li>
+                        <a href="#" style="color: #000;  text-decoration:none">
+
+                            COLONOSCOPIA - Verifique corretamente o que está sendo solicitado no pedido (simples,
+                            mucosectomia,
+                            internado), em caso de dúvidas, consulte o protocolo de colono.
+                        </a>
+                    </li>
+                    <hr>
+                    <li>
+                        <a href="#" style="color: #000;  text-decoration:none">
+
+                            INSERÇÃO DE EXAMES - Basear-se pela planilha de nomenclatura. Se o pedido solicitar algo
+                            especifico,
+                            orientar-se pela área do corpo mais próxima disponível para inserção. Por exemplo: RM de pé,
+                            não
+                            tem nessa
+                            inserção, inserir então como RM de MMII, o prestador fará o que está sendo solicitado. Ver
+                            com
+                            enfermeiro ou
+                            médico da unidade em caso de dúvidas. Caso ainda sim não localize a nomenclatura, entre em
+                            contato com
+                            a regulação.
+                        </a>
+                    </li>
+                    <hr>
+                    <li>
+                        <a href="#" style="color: #000;  text-decoration:none">
+
+                            AGENDAMENTOS-Caso precise de algum agendamento, por favor, já mande com o SUS e o que será
+                            necessário para facilitar o
+                            atendimento. Lembrando que a inserção já deve ter sido feita no sistema para solicitar.AA"
+                            USG DE REGIÃO DE NÓDULOS - inserir como USG partes moles
+                        </a>
+                    </li>
+                    <hr>
+                    <li>
+                        <a href="#" style="color: #000;  text-decoration:none">
+
+                            RETORNO HOSPITAL DE OLHOS - deve ser solicitado via e-mail
+                            centralderegulacaosms@yahoo.com.br
+                            com nome e
+                            SUS do paciente e com nome do médico que precisa retornar.
+                        </a>
+                    </li>
+                    <hr>
+                    <li>
+                        <a href="#" style="color: #000;  text-decoration:none">
+
+                            PSIQUIATRA INFANTIL E OU TERAPIA OCUPACIONAL- encaminhar para saude mental
+                            infantil.Endereço:
+                            Tv. Carlos Gomes, 67 -
+                            Jardim Nova Braganca, Bragança Paulista - SP, 12914-380
+                        </a>
+                    </li>
+                    <hr>
+                    <li>
+                        <a href="#" style="color: #000;  text-decoration:none">
+
+                            UROFLUXOMETRIA- enviar para regulação.
+                        </a>
+                    </li>
+                    <hr>
+                    <li>
+                        <a href="#" style="color: #000;  text-decoration:none">
+
+                            MAMOGRAFIA- Acima de 40 anos tem que realizar mamografia e depois usg de mamas. Abaixo de 40
+                            anos ou com prótese de
+                            silicone deve realizar o usg de mamas.
+                        </a>
+                    </li>
+                    <hr>
+                    <li>
+                        <a href="#" style="color: #000;  text-decoration:none">
+
+                            CONSULTA OFTALMO (MAPEAMENTO DE RETINA)- Inserir em CDR e FILA DE ESPERA.
+                        </a>
+                    </li>
+                    <hr>
+                    <li>
+                        <a href="#" style="color: #000;  text-decoration:none">
+
+                            Na nomenclatura CONSULTA EM OFTALMOLOGIA- UEEI, na unidade excutante selecionar o
+                            AMBULATORIO DE
+                            ESPECIALIDADES.
+                        </a>
+                    </li>
+                    <hr>
+                    <li>
+                        <a href="#" style="color: #000;  text-decoration:none">
+
+                            TESTE DE CAMINHADA DE 6 MINUTOS- Encaminhar/orientar o paciente a procurar o centro de
+                            fisioterapia da
+                            USF(Universidade
+                            São Francisco).
+                        </a>
+                    </li>
+                    <hr>
+                    <li>
+                        <a href="#" style="color: #000;  text-decoration:none">
+                            CARIÓTIPO DE BANDAS E PESQUISA X FRÁGIL- Conforme fluxo estabelecido, as guias de exames
+                            laboratoriais sem cobertura
+                            SUS (ou que não estejam contemplados no Protocolo Municipal)
+                            não necessitam ser enviadas à Secretaria de Saúde.
+                            <br>
+                            Elas devem permanecer na unidade de saúde de origem do paciente, sendo a própria unidade de
+                            saúde a responsável por
+                            realizar o agendamento do exame via SISREG ou por email (lab.enf@santacasabraganca.com.br)
+                            para
+                            exames que requerem coleta diretamente no laboratório da Santa Casa, seja por
+                            instabilidade da amostra (no caso dos exames genéticos) ou necessidade de preenchimento de
+                            questionário.
+                            <br>
+                            Posteriormente, o laboratório notificará a Auditoria sobre a necessidade de
+                            análise/autorização
+                            para realização do exame e pagamento.
+                        </a>
+                    </li>
+                    <hr>
+                    <li>
+                        <a href="#" style="color: #000;  text-decoration:none">
+                            GASOMETRIA ARTERIAL- Encaminhar paciente para o laboratório da Santa Casa das 07:00 às 09:00
+                            hrs, de segunda à
+                            sexta.
+                            Não é necessario jejum.
+                        </a>
+                    </li>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+
+
+
+
+
+
+
+    {% block scripts %}
+    <script>
+
+        $('#id_paciente').select2();
+
+        $(".tabela-listar").DataTable({
+            responsive: true,
+            // "bSort": false,
+            "aaSorting": [],
+            "pageLength": 100,
+            "language": {
+                "decimal": "",
+                "emptyTable": "Sem dados disponíveis",
+                "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                "infoEmpty": "Mostrando de 0 até 0 de 0 registros",
+                "infoFiltered": "(filtrado de _MAX_ registros no total)",
+                "infoPostFix": "",
+                "thousands": ",",
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "loadingRecords": "A carregar dados...",
+                "processing": "A processar...",
+                "search": "Procurar:",
+                "zeroRecords": "Não foram encontrados resultados",
+                "paginate": {
+                    "first": "Primeiro",
+                    "last": "Último",
+                    "next": "Seguinte",
+                    "previous": "Anterior"
+                },
+                "aria": {
+                    "sortAscending": ": ordem crescente",
+                    "sortDescending": ": ordem decrescente"
+                }
+            }
+        });
+
+        function PesquisaModalInformacoes() {
+            var input, filter, ul, li, a, i, txtValue, hr;
+            input = document.getElementById("pesquisaInformacoes");
+            filter = input.value.toUpperCase();
+            ul = document.getElementById("divDeInformacoes");
+            li = ul.getElementsByTagName("li");
+            hr = ul.getElementsByTagName("hr");
+            for (i = 0; i < li.length; i++) {
+                a = li[i].getElementsByTagName("a")[0];
+                txtValue = a.textContent || a.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    li[i].style.display = "";
+                } else {
+                    li[i].style.display = "none";
+                    hr[i].style.display = "none";
+                }
+            }
+        };    
+    </script>
+    {% endblock %}
+
+    {% block rodape-links %}
+
+    {% endblock %}

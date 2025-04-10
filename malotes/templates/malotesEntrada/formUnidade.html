@@ -1,0 +1,82 @@
+{% extends 'paginas/modelo-ifpr.html' %}
+
+{% load static %}
+
+{% load crispy_forms_tags%}
+
+{% block conteudo %}
+<h3>Novo malote</h3>
+
+<div class="col-12">
+    <a href="javascript:history.back()" class="btn btn-primary btn-sm float-right"> Voltar</a>
+</div>
+
+<p class="lead">
+    Preencher todos os campos obrigatorios.
+</p>
+
+<hr>
+
+<form action="" method="POST">
+
+    {% csrf_token %}
+
+    {{ form|crispy }}
+    {% if userUnidade == False %}
+    <span class="d-inline-block" data-toggle="tooltip"
+        title="É necessário estar vinculado a uma unidade. Contate o T.I da saúde">
+        <input type="button" class="btn btn-primary disabled" value="Salvar">
+    </span>
+    {% else %}
+    <input type="hidden" name="next" value="javascript:history.back()">
+    <button type="submit" class="btn btn-primary">Salvar</button>
+    {% endif %}
+
+</form>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+    $(document).ready(function () {
+            $('#id_procedimento').select2();
+        });
+
+
+    var now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    var dataNascimento = document.getElementById("id_dataNascimento").value;
+    if (dataNascimento == undefined || dataNascimento == "") {
+        document.getElementById("id_dataNascimento").type = "date";
+    }
+    else {
+        var dateFormat = dataNascimento.replace(/(\d\d)\/(\d\d)\/(\d{4})/, "$3-$2-$1");
+        document.getElementById("id_dataNascimento").value = dateFormat;
+        document.getElementById("id_dataNascimento").type = "date";
+    };
+
+
+    tinymce.init({
+            selector: '#id_observacaoUnidade',
+            plugins: [
+                'a11ychecker', 'advlist', 'advcode', 'advtable', 'autolink', 'checklist', 'export',
+                'lists', 'link', 'image', 'charmap', 'preview', 'anchor', 'searchreplace', 'visualblocks',
+                'powerpaste', 'fullscreen', 'formatpainter', 'insertdatetime', 'media', 'table', 'help', 'wordcount'
+            ],
+            toolbar: 'undo redo | formatpainter casechange blocks | bold italic backcolor | ' +
+                'alignleft aligncenter alignright alignjustify | ' +
+                'bullist numlist checklist outdent indent | removeformat | a11ycheck code table help'
+        });   
+
+</script>
+
+{% endblock %}
+
+{% block rodape-links %}
+    
+{% endblock %}
+
+
+   

@@ -1,0 +1,176 @@
+{% extends 'paginas/modelo-ifpr.html' %}
+
+{% load static %}
+
+{% block conteudo %}
+<h4 class="text-center">
+    Cirurgia - Malotes
+</h4>
+<hr>
+<h5><span class="badge badge-success">Última atualização da regulação : {{horarioUltimaAtualizacao}} </span></h5>
+<hr>
+
+<div class="table-responsive">
+    <form action="{% url 'update-malote-Cirurgia' %}" method="POST">
+        {%csrf_token%}
+        <table class="table" id="tabela-cirurgia">
+            <div class="col-3 input-group">
+                <select class="custom-select" name="etapa" id="idetapa">
+                    <option value="9" selected>Arquivo</option>
+                    <option value="10">Malote de saída</option>
+                </select>
+                <input type="hidden" name="unidadePk" value="{{ unidadePk }}">
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-primary">Encaminhar</button>
+                </div>
+            </div>
+
+            <hr>
+
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Nome</th>
+                    <th>Data de nascimento</th>
+                    <th>Procedimento</th>
+                    <th>Sigtap</th>
+                    <th>Cid.</th>
+                    <th>Tipo</th>
+                    <th>Classificação</th>
+                    <th>Cross</th>
+                    <th>SUS</th>
+                    <th>Devolver</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for malote in object_list %}
+                {% if malote.etapa == 4 %}
+                {% if malote.statusProcesso == 2%}
+                <tr class="agendado">
+                    {% elif malote.statusProcesso == 3%}
+                <tr class="arquivado">
+                    {% elif malote.statusProcesso == 4%}
+                <tr class="devolvido">
+                    {% elif malote.statusProcesso == 5%}
+                <tr class="encaminhado">
+                    {% elif malote.statusProcesso == 6%}
+                <tr class="pendente">
+                    {% elif malote.statusProcesso == 7%}
+                <tr class="recebido">
+                    {% elif malote.statusProcesso == 8%}
+                <tr class="naoveionomalote">
+                    {% else %}
+                <tr>
+                    {%endif%}
+
+                    <td>
+                        <input type="checkbox" id="malotesSelecionados" name="malotesSelecionados" value={{malote.id}}>
+                    </td>
+
+                    <td>{{malote.nome}}</td>
+
+                    {% if malote.dataNascimento == null%}
+                    <td>Sem registro</td>
+                    {% else %}
+                    <td>{{ malote.dataNascimento|date:"d"}}/{{malote.dataNascimento|date:"m"}}/{{malote.dataNascimento|date:"Y"}}</td>
+                    {%endif%}
+
+                    <td class="cortar-texto" data-toggle="tooltip" title="{{malote.procedimento}}">{{malote.procedimento}}</td>
+
+                    <td> {{malote.sigtap}} </td>
+
+                    <td> {{malote.cid}} </td>
+
+                    {%if malote.tipo == 1%}
+                    <td>Sem tipo</td>
+                    {%elif malote.tipo == 2%}
+                    <td>Cirurgia</td>
+                    {%elif malote.tipo == 3%}
+                    <td>Devolução</td>
+                    {%elif malote.tipo == 4%}
+                    <td>Remarcação</td>
+                    {%elif malote.tipo == 5%}
+                    <td>Retorno</td>
+                    {%elif malote.tipo == 6%}
+                    <td>Biópsia</td>
+                    {% else %}
+                    <td>Resultado de exame</td>
+                    {%endif%}
+
+
+                    {%if malote.classificacao == 1%}
+                    <td>Sem classificação</td>
+                    {%elif malote.classificacao == 2%}
+                    <td>Urgente</td>
+                    {% else %}
+                    <td>Prioridade</td>
+                    {%endif%}
+
+                    {% if malote.cross == null%}
+                    <td>Sem registro</td>
+                    {% else %}
+                    <td>{{malote.cross}}</td>
+                    {%endif%}
+
+                    <td>{{malote.sus}}</td>
+
+                    <td><a href="{% url 'update-malote-devolucao' malote.pk %}" class="btn btn-info" title="Excluir"><i class="fas fa-exchange-alt"></i></a></td>
+
+                </tr>
+                {%endif%}
+                {% endfor %}
+            </tbody>
+        </table>
+    </form>
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+{% block scripts %}
+<script>
+
+    $('#id_paciente').select2();
+
+    $(".table").DataTable({
+        responsive: true,
+        // "bSort": false,
+        "aaSorting": [],
+        "pageLength": 100,
+        "language": {
+            "decimal": "",
+            "emptyTable": "Sem dados disponíveis",
+            "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+            "infoEmpty": "Mostrando de 0 até 0 de 0 registros",
+            "infoFiltered": "(filtrado de _MAX_ registros no total)",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "loadingRecords": "A carregar dados...",
+            "processing": "A processar...",
+            "search": "Procurar:",
+            "zeroRecords": "Não foram encontrados resultados",
+            "paginate": {
+                "first": "Primeiro",
+                "last": "Último",
+                "next": "Seguinte",
+                "previous": "Anterior"
+            },
+            "aria": {
+                "sortAscending": ": ordem crescente",
+                "sortDescending": ": ordem decrescente"
+            }
+        }
+    });
+
+</script>
+{% endblock %}
+
+{% block rodape-links %}
+
+{% endblock %}

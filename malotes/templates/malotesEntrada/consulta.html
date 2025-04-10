@@ -1,0 +1,127 @@
+{% extends 'paginas/modelo-ifpr.html' %}
+
+{% load static %}
+
+{% block titulo %} Listar malotes {% endblock %}
+
+{% block conteudo %}
+<h4 class="text-center">
+    Listar todos os malotes
+</h4>
+<hr>
+<label for="pesquisa">Pesquisar</label>
+<form action="?" method="GET" class="mb-3">
+    <div class="input-group">
+        <input type="" name="s" id="s" value="{{request.GET.s}}" class="p-1 border">
+        <div class="input-group-append">
+            <button type="submit" class="btn btn-primary" title="Pesquisar"><i class="fa-solid fa-magnifying-glass"></i></button>
+            <a href="{% url 'list-malotes-consulta' %}" class="btn btn-secondary" title="Limpar pesquisa"><i class="fa-solid fa-x"></i></a>
+        </div>    
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-striped" id="tabela-listar">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Cartão Sus</th>
+                <th>Registrado em</th>
+                <th>Ultima movimentação</th>
+                <th>Etapa</th>
+                <th>Mais informações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for malote in object_list %}
+            <tr>
+
+                <td>{{ malote.nome }}</td>
+                <td>{{ malote.sus }}</td>
+                <td>{{ malote.created_at|date:"d"}}/{{ malote.created_at|date:"m"}}/{{ malote.created_at|date:"Y"}}</td>
+                <td>{{ malote.updated_at|date:"d"}}/{{ malote.updated_at|date:"m"}}/{{ malote.updated_at|date:"Y"}}</td>
+
+                {%if malote.etapa == 1 and malote.statusProcesso == 1%}
+                    <td>Enviado para regulação</td>
+                {%elif malote.etapa == 1 and malote.statusProcesso == 4 %}
+                    <td>Devolvido para unidade</td>
+                {%elif malote.etapa == 1 and malote.statusProcesso == 7 %}
+                    <td>Recebido pela regulação</td>
+                {%elif malote.etapa == 1 and malote.statusProcesso == 8 %}
+                    <td>Não veio no malote</td>
+                {%elif malote.etapa == 2%}        
+                    <td>Avaliação do médico regulador </td>
+                {%elif malote.etapa == 3%}        
+                    <td>Aguardando regulação</td>
+                {%elif malote.etapa == 4%}        
+                    <td>Cirurgia</td>
+                {%elif malote.etapa == 5%}        
+                    <td>Hospital de olhos</td>
+                {%elif malote.etapa == 6%}        
+                    <td>Alta complexidade</td>
+                {%elif malote.etapa == 7%}        
+                    <td>AME</td>
+                {%elif malote.etapa == 8%}        
+                    <td>Fila de espera</td>
+                {%elif malote.etapa == 9%}        
+                    <td>Malote saída</td>
+                {%endif%}
+                <td>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#informacoesModal">
+                        <i class="fa-solid fa-circle-info"></i>
+                    </button>
+                    
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">Nenhuma malote registrado.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% include 'paginas/componentes/filtro.html' %}    
+    <div class="modal fade" id="informacoesModal" tabindex="-1" role="dialog" aria-labelledby="informacoesModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="informacoesModalLabel">Informações de {{ malote.nome }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Nome : {{ malote.nome }}<br>
+                    Data de nascimento : {{ malote.dataNascimento|date:"d"}}/{{ malote.dataNascimento|date:"m"}}/{{
+                    malote.dataNascimento|date:"Y"}}<br>
+                    Cartão sus : {{ malote.sus }}<br>
+                    Procedimento : {{ malote.procedimento }}<br>
+                    Registrado em: {{ malote.created_at|date:"d"}}/{{ malote.created_at|date:"m"}}/{{
+                    malote.created_at|date:"Y"}} por {{malote.createdBy_user_id}}<br>
+                    {%if malote.statusUser_id != NULL%}
+                    Recebido em: {{ malote.statusData|date:"d"}}/{{ malote.statusData|date:"m"}}/{{
+                    malote.statusData|date:"Y"}} por {{malote.statusUser_id}}<br>
+                    {%else%}
+                    Não foi recebido<br>
+                    {%endif%}
+                    Ultima movimentação: {{ malote.updated_at|date:"d"}}/{{ malote.updated_at|date:"m"}}/{{malote.updated_at|date:"Y"}} por {{malote.updatedBy_user_id}}<br>
+                    Unidade solicitante: {{ malote.unidadeSolicitante}}<br>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+{% block scripts %}
+
+
+
+{% endblock %}
+{% block rodape-links %}
+{% endblock %}

@@ -1,0 +1,124 @@
+{% extends 'paginas/modelo-ifpr.html' %}
+
+{% load static %}
+
+{% load crispy_forms_tags%}
+
+{% block conteudo %}
+<h3>Malote</h3>
+
+<div class="col-12">
+    <a href="javascript:history.back()" class="btn btn-primary btn-sm float-right"> Voltar</a>
+</div>
+
+<p class="lead">
+    Preencher todos os campos obrigatorios.
+</p>
+
+<hr>
+
+    <form action="" method="POST">
+
+        {% csrf_token %}
+
+        {{ form|crispy }}
+        {% if userUnidade == False %}
+        <span class="d-inline-block" data-toggle="tooltip"
+            title="É necessário estar vinculado a uma unidade. Contate o T.I da saúde">
+            <input type="button" class="btn btn-primary disabled" value="Salvar">
+        </span>
+        {% else %}
+        
+        <hr>
+        <button type="submit" class="btn btn-primary" href="javascript:history.back()">Salvar</button>
+        {% endif %}            
+    </form>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+    $(document).ready(function () {
+        $('#id_malote').select2();
+        $('#id_unidadeExecutante').select2();
+        $('#id_procedimento').select2();
+        $('#id_unidadeSolicitante').select2();
+        });
+
+    $(document).ready(function () {
+            $('#div_id_justificativa').hide();
+            $('#id_statusProcesso').change(function () {
+                if ($('#id_statusProcesso').val() == '4') {
+                    $('#div_id_justificativa').show();
+                } else {
+                    $('#div_id_justificativa').hide();
+                }
+            });
+        }); 
+
+    $(document).ready(function () {
+            $('#id_statusProcesso').change(function () {
+                if ($('#id_statusProcesso').val() == '7') {
+                    $('#id_justificativa').val(17);
+                } else {
+                    $('#id_justificativa').val(1);
+                }
+            });
+        }); 
+
+    var now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+
+    var agendamentoData = document.getElementById("id_agendamentoData").value;
+    if (agendamentoData == undefined || agendamentoData == "") {
+        document.getElementById("id_agendamentoData").type = "date";
+    }
+    else {
+        var dateFormat = agendamentoData.replace(/(\d\d)\/(\d\d)\/(\d{4})/, "$3-$2-$1");
+        document.getElementById("id_agendamentoData").value = dateFormat;
+        document.getElementById("id_agendamentoData").type = "date";
+    };
+
+    tinymce.init({
+            selector: '#id_observacaoRegulacao',
+            plugins: [
+                'a11ychecker', 'advlist', 'advcode', 'advtable', 'autolink', 'checklist', 'export',
+                'lists', 'charmap', 'preview', 'searchreplace', 'visualblocks',
+                'powerpaste', 'formatpainter', 'insertdatetime', 'wordcount'
+            ],
+            toolbar: 'undo redo | formatpainter casechange blocks | bold italic backcolor | ' +
+                'alignleft aligncenter alignright alignjustify | ' +
+                'bullist numlist checklist outdent indent | removeformat '
+    });    
+      
+    var idProcedimento = $('#select2-id_procedimento-container').find(':selected');
+    
+    $('#div_id_procedimento').on("focusout",function () {
+        console.log(idProcedimento)
+        });
+
+    var formLine = 1;
+        function addInput(divName) {
+            var newdiv = document.createElement('div');
+            newdiv.innerHTML = '[' + formLine + ']';
+            newdiv.innerHTML += '<input type="text" name="text' + formLine + '_1" id="text' + formLine + '_1">';
+            newdiv.innerHTML += '<input type="text" name="text' + formLine + '_2" id="text' + formLine + '_2">';
+            document.getElementById(divName).appendChild(newdiv);
+            formLine++;
+        }
+
+        addInput('lines');
+
+
+</script>
+   
+{% endblock %}
+
+{% block rodape-links %}
+    
+{% endblock %}
+
+
+   

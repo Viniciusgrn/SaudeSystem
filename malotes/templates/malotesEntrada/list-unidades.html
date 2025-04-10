@@ -1,0 +1,101 @@
+{% extends 'paginas/modelo-ifpr.html' %}
+
+{% load static %}
+
+{% block conteudo %}
+<h4 class="text-center">
+    Unidades - Malote
+</h4>
+<hr>
+
+<a href="{% url 'list-malotes-all' %}" class="btn btn-primary btn-sm float-right">Todos os malotes</a>
+
+<div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active py-5" id="home" role="tabpanel" aria-labelledby="home-tab">
+        <div class="table-responsive">
+            <table class="table table-striped" id="tabela-listar">
+                <thead>
+                    <tr>
+                        <th class="m-1 p-1 text-center">Unidade</th>
+                        <th class="m-1 p-1 text-center">Quantidade de malotes</th>
+                        <th class="m-1 p-1 text-center">Recebidos</th>
+                        <th class="m-1 p-1 text-center">Aguardando encaminhamento</th>
+                        <th class="m-1 p-1 text-center">Data da última inserção</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for unidade in unidades %}
+                        <tr>
+                            <td class="m-1 p-1 text-center"><a href="{% url 'list-malotes-regulacao' unidade.pk%}" class="m-1 p-1 text-center" style="color:black;">{{unidade.nome}}</a></td>
+                            <td class="m-1 p-1 text-center">{{unidade.quantidade}}</td>
+                            
+                            {% if unidade.Recebidos == 0 %}
+                                <td class="m-1 p-1 text-center">Sem malotes recebidos</td>
+                            {% else %}
+                                <td class="m-1 p-1 text-center">{{unidade.Recebidos}}</td>
+                            {%endif%}
+
+                            {% if unidade.aguardandoEncaminhamento == 0 %}
+                                <td class="m-1 p-1 text-center">Sem malotes para encaminhar</td>
+                            {% else %}
+                                <td class="m-1 p-1 text-center">{{unidade.aguardandoEncaminhamento}}</td>
+                            {%endif%}
+                            <td class="m-1 p-1 text-center">{{unidade.ultimaInsercao|date:"d"}}/{{unidade.ultimaInsercao|date:"m"}}/{{unidade.ultimaInsercao|date:"Y"}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+{% block scripts %}
+<script>
+
+    $('#id_paciente').select2();
+
+    $("#tabela-listar").DataTable({
+        responsive: true,
+        // "bSort": false,
+        "aaSorting": [],
+        "pageLength": 100,
+        "language": {
+            "decimal": "",
+            "emptyTable": "Sem dados disponíveis",
+            "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+            "infoEmpty": "Mostrando de 0 até 0 de 0 registros",
+            "infoFiltered": "(filtrado de _MAX_ registros no total)",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "loadingRecords": "A carregar dados...",
+            "processing": "A processar...",
+            "search": "Procurar:",
+            "zeroRecords": "Não foram encontrados resultados",
+            "paginate": {
+                "first": "Primeiro",
+                "last": "Último",
+                "next": "Seguinte",
+                "previous": "Anterior"
+            },
+            "aria": {
+                "sortAscending": ": ordem crescente",
+                "sortDescending": ": ordem decrescente"
+            }
+        }
+    });
+
+</script>
+{% endblock %}
+
+{% block rodape-links %}
+
+{% endblock %}

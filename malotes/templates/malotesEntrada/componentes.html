@@ -1,0 +1,71 @@
+{% for group in request.user.groups.all %}
+{% if group.name == "malote" %}
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownMenuLink" role="button"
+        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-suitcase"></i>
+        Malote
+    </a>
+    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+        <a class="dropdown-item" href="{%  url 'list-maloteUnidades' %}"><i class="fas fa-file-import"></i> Entrada</a>
+    </div>
+</li>
+{% endif %}
+
+{% if group.name == "medicos"%}
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownMenuLink" role="button"
+        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-suitcase"></i>
+        Malote
+    </a>
+    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+        <a class="dropdown-item" href="{%  url 'list-malotes-medico'  %}"><i class="fas fa-file-import"></i> Entrada</a>
+    </div>
+</li>
+{% endif %}
+
+{% if group.name == "administrativo" %}
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownMenuLink" role="button"
+        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-suitcase"></i>
+        Malote
+    </a>
+    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+        <a class="dropdown-item" href="{%  url 'list-malotes-unidade' %}"><i class="fas fa-file-import"></i> Entrada</a>
+    </div>
+</li>
+{% endif %}
+
+{% if group.name == "altaComplexidade" or group.name == "biopsia" or group.name == "hospitalDeOlhos" or group.name ==
+"ame" or group.name == "cirurgia"%}
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownMenuLink" role="button"
+        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-suitcase"></i>
+        Malote
+    </a>
+    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+        {% if group.name == "altaComplexidade"}
+        <a class="dropdown-item" href="{%  url 'list-malotes-AltaComplexidade' %}"><i class="fas fa-file-import"></i>
+            Alta complexidade</a>
+        {% endif %}
+        {% if group.name == "biopsia"%}
+        <a class="dropdown-item" href="{%  url 'list-malotes-Biopsia' %}"><i class="fas fa-file-import"></i> Biópsia</a>
+        {% endif %}
+        {% if group.name == "hospitalDeOlhos"%}
+        <a class="dropdown-item" href="{%  url 'list-malotes-HospitalDeOlhos' %}"><i class="fas fa-file-import"></i>
+            Hospital de olhos</a>
+        {% endif %}
+        {% if group.name == "ame"%}
+        <a class="dropdown-item" href="{%  url 'list-malotes-Ame' %}"><i class="fas fa-file-import"></i> Entrada</a>
+        {% endif %}
+        {% if group.name == "cirurgia"%}
+        <a class="dropdown-item" href="{%  url 'list-malotes-Cirurgia' %}"><i class="fas fa-file-import"></i>
+            Entrada</a>
+        {% endif %}
+    </div>
+</li>
+{% endif %}
+{% endfor %}
