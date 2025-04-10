@@ -1,0 +1,217 @@
+{% extends 'paginas/modelo-ifpr.html' %}
+
+{% load static %}
+
+{% load crispy_forms_tags %}
+
+{% block conteudo %}
+<div class="container">
+    <div class="row">
+        <div class="col-12 mx-3">
+            <h3> Classificação de Risco </h3>
+            <p class="lead">
+                Analise o pedido de mudança de classificação de risco.
+            </p>
+        </div>
+    </div>
+
+    <!--<hr>-->
+
+    <form id="formClassificacaoRisco" action="" method="POST">
+        {% csrf_token %}
+    <!--    <div class="form-group">        -->
+    <!--        <label for="listaPacientes">Selecione um Paciente:</label>-->
+    <!--        <select id="listaPacientes" name="nomePacienteAgendado" class="form-control" placeholder="Enter email">-->
+    <!--            {% for paciente in pacientes %}-->
+    <!--                <option value="{{ paciente.id }}">{{ paciente.nome}}</option>-->
+    <!--            {% endfor %}-->
+    <!--        </select>-->
+    <!--    </div>-->
+    <!--    <div id="alertCns" class="alert alert-primary alert-dismissible fade show" role="alert" style="display:none">-->
+    <!--        <div class="row">-->
+    <!--            <div class="col-6"><i class="fas fa-user"></i> Paciente selecionado: <strong><span id="nomePaciente"></span></strong></div>-->
+    <!--            <div class="col-6"><i class="fas fa-id-card-alt"></i> Cartão SUS: <strong><span id="numeroCns" class="numeroCns"></span></strong></div>-->
+
+    <!--        </div>-->
+
+    <!--    </div>-->
+    <!--    <hr>-->
+        <div class="d-none">
+            <div class="form-group">
+                <label for="vaga"></label>
+                <input type="hidden" class="form-control" id="vaga" name="vaga" value="{{ classificacaoRisco.id }}">
+            </div>
+            <div class="form-group">
+                <label for="nomePacienteOfertado"></label>
+                <input type="hidden" class="form-control" id="nomePacienteOfertado" name="nomePacienteOfertado" value="{{ classificacaoRisco.paciente.id }}">
+            </div>
+            <div class="form-group">
+                <label for="procedimento"></label>
+                <input type="hidden" class="form-control" id="procedimento" name="procedimento" value="{{ classificacaoRisco.procedimento.id }}">
+            </div>
+            <div class="form-group">
+                <label for="data_vagaOfertada"></label>
+                <input type="hidden" class="form-control" id="data_vagaOfertada" name="data_vagaOfertada" value="{{ classificacaoRisco.data_vagaOfertada  | date:'Y-m-d' }}">
+            </div>
+            <div class="form-group">
+                <label for="hora_vagaOfertada"></label>
+                <input type="hidden" class="form-control" id="hora_vagaOfertada" name="hora_vagaOfertada" value="{{ classificacaoRisco.hora_vagaOfertada }}">
+            </div>
+            <div class="form-group">
+                <label for="unidadeExecutante"></label>
+                <input type="hidden" class="form-control" id="unidadeExecutante" name="unidadeExecutante" value="{{ classificacaoRisco.unidadeExecutante.id }}">
+            </div>
+            <div class="form-group">
+                <label for="file"></label>
+                <input type="hidden" class="form-control" id="file" name="file" value="{{ classificacaoRisco.file }}">
+            </div>
+            <div class="form-group">
+                <label for="status"></label>
+                <input type="hidden" class="form-control" id="status" name="status" value="">
+            </div>
+            <div class="form-group">
+                <label for="comment"></label>
+                <input type="hidden" class="form-control" id="comment" name="comment" value="">
+            </div>
+        </div>
+        <div class="col-12 mb-3">
+            <!-- <div class="card" style="width: 40rem;"> -->
+            <div class="card text-center">
+                <div class="card-body">
+                    <small class="text-muted"></small>
+                    <h5 class="card-title"><strong class="text-muted">Paciente:</strong> {{ classificacaoRisco.paciente }} </h5>
+                    <p class="p-0"><strong class="text-muted">CNS:</strong> {{ classificacaoRisco.paciente.cns }} </p>
+                    <h6 class="p-0"><strong class="text-muted">Procedimento:</strong> {{ classificacaoRisco.procedimento }}</h6>
+                    <p class="card-text p-0"><strong class="text-muted">Cod. Solicitação:</strong> {{ classificacaoRisco.codSolicitacao }} </p>
+                    <p class="card-text p-0"><strong class="text-muted">Unidade:</strong> {{ classificacaoRisco.unidadeExecutante }}</p>
+    <!--                <p class="card-text"><strong>Data do Procedimento:</strong> {{ classificacaoRisco.data_vagaOfertada }} </p>-->
+    <!--                <p class="card-text"><strong>Hora:</strong> {{ classificacaoRisco.hora_vagaOfertada }}</p>-->
+    <!--                <p class="card-text"><strong>Motivo:</strong> {{ classificacaoRisco.motivo }}</p>-->
+                    <a href= "{{ classificacaoRisco.file.url }}" class="btn btn-sm btn-primary" target="_blank">
+                                    <i class="fa fa-paperclip" aria-hidden="true"></i> Visualizar anexo
+                                </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <!-- <div class="card" style="width: 40rem;"> -->
+            <div class="card">
+                <div class="card-body text-center">
+    <!--                <h5 class="card-title mb-3">{{ classificacaoRisco.paciente }} <span data-toggle="tooltip" data-placement="top" title="Vaga ofertada em: {{ classificacaoRisco.created_at|date:'d/m/Y' }}"><i class="fa fa-info-circle text-primary"></i></span></h5>-->
+    <!--                <h6 class="card-subtitle mb-2 text-muted"><strong>Procedimento:</strong> {{ classificacaoRisco.procedimento }}</h6>-->
+    <!--                <p class="card-text"><strong>Cod. Solicitação:</strong> {{ classificacaoRisco.codSolicitacao }} </p>-->
+    <!--                <p class="card-text"><strong>Cns:</strong> {{ classificacaoRisco.paciente.cns }} </p>-->
+    <!--                <p class="card-text"><strong>Data do Procedimento:</strong> {{ classificacaoRisco.data_vagaOfertada }} </p>-->
+    <!--                <p class="card-text"><strong>Hora:</strong> {{ classificacaoRisco.hora_vagaOfertada }}</p>-->
+    <!--                <p class="card-text"><strong>Unidade:</strong> {{ classificacaoRisco.unidadeExecutante }}</p>-->
+                    <p class="card-text text-muted"><strong>Após analise, selecione uma das opções abaixo.</strong></p>
+                    <a href="#" id="aceitarPedido" class="btn btn-outline-primary"><i class="fa fa-exchange"></i> Aceitar Pedido</a>
+                    <a href="#" id="rejeitarPedido" class="btn btn-outline-danger"><i class="fa fa-exchange"></i> Rejeitar Pedido</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function(){
+       $("#listaPacientes").select2();
+    });
+
+    $('#listaPacientes').on('change', function() {
+        var id = $(this).find(":checked").val();
+        var token = $('[name="csrfmiddlewaretoken"]').val();
+        $.ajax({
+            url: "{% url 'busca-cartao-sus' %}",
+            type: 'post',
+            data: {
+                'id': id,
+                'csrfmiddlewaretoken': token,
+            },
+            success: function (response){
+                $('#nomePaciente').text(response.nome);
+                $("#numeroCns").replaceWith("<span id='numeroCns' class='numeroCns'>" + response.cartaoSus + "</span>");
+                $('#alertCns').css("display", "block");
+                applyUserConfiguration();
+            },
+            error: function (response) {
+                console.log("Você não tem permissão para essa ação.")
+            }
+        });
+    });
+    
+    function applyUserConfiguration(){
+        var cnsChecked = `{{ request.user.configuration.cnsMask }}` == "True";        
+        if(cnsChecked == true){
+            $('#numeroCns').mask("000.0000.0000.0000");
+        }
+    }
+
+    $('#rejeitarPedido').click(()=>{
+        Swal.fire({
+          title: 'Rejeitar solicitação?',
+          icon: 'error',
+          input: 'textarea',
+          inputLabel: 'Informe o movivo:',
+          inputPlaceholder: 'Descreva sua mensagem...',
+          inputAttributes: { 'aria-label': 'Type your message here', 'required':'required', 'name':'comment'},
+          showCancelButton: true,
+          confirmButtonColor: '#007bff',
+          cancelButtonColor: '#6c757d',
+          confirmButtonText: 'Salvar',
+          cancelButtonText: 'Fechar'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            Swal.fire(
+                {
+                  title: 'Solicitação rejeitada!',
+                  icon: 'success',
+                  confirmButtonColor: '#007bff',
+                  confirmButtonText: 'Fechar',
+                }).then(()=>{
+                    $('#status').val(3);
+                    $('#comment').val(result.value);
+                    $('#formClassificacaoRisco').submit();
+                })
+          }
+        })
+    });
+
+
+    $('#aceitarPedido').click(()=>{
+        Swal.fire({
+          title: 'Confirmar a mudança?',
+
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#007bff',
+          cancelButtonColor: '#6c757d',
+          confirmButtonText: 'Sim',
+          cancelButtonText: 'Cancelar'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            Swal.fire(
+                {
+                  title: 'Mudança realizada com sucesso!',
+                  icon: 'success',
+                  confirmButtonColor: '#007bff',
+                  confirmButtonText: 'Fechar',
+                }).then(()=>{
+                    $('#status').val(2);
+                    $('#formClassificacaoRisco').submit();
+                })
+          }
+        })
+    });
+
+
+</script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{% endblock %}
+
+
+{% block rodape-links %}
+
+{% endblock %}

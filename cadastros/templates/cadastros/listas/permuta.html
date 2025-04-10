@@ -1,0 +1,57 @@
+{% extends 'paginas/modelo-ifpr.html' %}
+
+{% load static %}
+
+{% block conteudo %}
+<h3 class="text-center">
+    Lista de vagas a ser ofertadas    
+    <a href="{% url 'cadastrar-vagaofertada' %}" class="btn btn-primary btn-sm float-right">Adicionar</a>    
+</h3>
+
+<hr>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <tr>
+            <th>Data</th>
+            <th>Hora</th>
+            <th>Procedimento</th>
+            <th>Unidade Executante</th>
+            <th>Opção</th>
+        </tr>        
+        {% for vaga in object_list %}
+           
+        <tr>
+            <td>{{ vaga.data_vagaOfertada|date:"d"}}/{{ vaga.data_vagaOfertada|date:"m"}}/{{ vaga.data_vagaOfertada|date:"Y"}}</td>
+            <td>{{ vaga.hora_vagaOfertada }}</td>
+            <td>{{ vaga.procedimento }}</td>
+            <td>{{ vaga.unidadeExecutante }}</td>
+       
+         
+            
+            <td>
+                <a href= "{% url 'editar-vagaofertada' vaga.pk %}" class="btn btn-warning btn-sm" title="Editar">
+                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                </a> 
+                <a href="{% url 'excluir-vagaofertada' vaga.pk %}" class="btn btn-danger btn-sm" title="Excluir">
+                    <i class="fa fa-trash" aria-hidden="true"></i>
+
+                <a href="{% url 'excluir-vagaofertada' vaga.pk %}" class="btn btn-warning btn-sm" title="Permutar">
+                    <i class="fa fa-eye" aria-hidden="true"></i>
+                               
+                </a> 
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5">Nenhum campo registrado.</td>
+        </tr>
+        {% endfor %}
+    
+    </table>
+</div>
+{% endblock %}
+
+{% block rodape-links %}
+
+{% endblock %}

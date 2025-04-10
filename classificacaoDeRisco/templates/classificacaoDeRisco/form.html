@@ -1,0 +1,59 @@
+{% extends 'paginas/modelo-ifpr.html' %}
+
+{% load static %}
+
+{% load crispy_forms_tags %}
+
+{% block conteudo %}
+<h1 class="text-center"> Cadastrar Pedido de Mudança de Classificação  </h1>
+<p class="lead">
+    Preencha todos os campos obrigatórios.
+</p>
+
+<hr>
+<form action="" method="POST" enctype="multipart/form-data">
+    
+    {% csrf_token %}
+    
+    {{ form|crispy }}
+    {% if userUnidade == False %}
+    <span class="d-inline-block" data-toggle="tooltip" title="É necessário estar vinculado a uma unidade. Contate o T.I da saúde">
+        <input type="button" class="btn btn-primary disabled" value="Salvar">
+    </span>
+    {% else %}
+    <button id="salvar" type="submit" class="btn btn-primary" disabled>Salvar</button>
+    {% endif %}
+</form>
+
+
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+    $(document).ready(function(){
+        $('#id_paciente').select2();
+        $('#id_procedimento').select2();
+        $('#id_data_vagaOfertada').attr('type', 'date');
+        $('#id_hora_vagaOfertada').attr('type', 'time');
+    });
+
+    document.getElementById("id_file").addEventListener('change', ()=>{
+            console.log('entrou')
+            if(document.getElementById("id_file").files.length > 0){
+                document.getElementById("salvar").removeAttribute('disabled');
+            }else{
+                document.getElementById("salvar").setAttribute('disabled', true);
+            }
+        });
+
+</script>
+
+{% endblock %}
+
+
+
+{% block rodape-links %}
+
+{% endblock %}
+

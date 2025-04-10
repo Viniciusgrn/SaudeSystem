@@ -1,0 +1,119 @@
+{% extends 'paginas/modelo-ifpr.html' %}
+
+{% load static %}
+
+{% block conteudo %}
+
+{% if message %}
+    <div class="alert alert-primary">{{ message }}</div>
+{% endif %}
+
+<h3 class="text-center">
+    <i class="fa fa-exchange"></i> 
+    Listar os Procedimentos a Permutar
+    <a href="{% url 'cadastrar-vagaofertada' %}" class="btn btn-primary btn-sm float-right"><i class="fa fa-plus"></i> Adicionar</a>
+</h3>
+
+<hr>
+
+<div class="table-responsive">
+    <table class="table table-striped" id="listar_permutas">
+        <thead>
+            <tr>
+                <th>Unidade</th>
+                <!-- <th>Data de Inclusão</th> -->
+                <th>Cód. Solicitação</th>
+                <th>Tipo</th>
+                <th>Data</th>
+                <th>Hora</th>
+                <th>Procedimento</th>
+                <th>Motivo</th>
+                <th>Unidade Executante</th>                
+                <th>Opção</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for vaga in vagas %}
+                {% if vaga.status == False %}
+                    <tr>
+                        <td><span data-toggle="tooltip" data-html="true" title="Ofertada na: <br> {{ vaga.created_at|date:'D d/m' }} às {{ vaga.created_at|date:'H:m'}} <br> Por: {{ vaga.createdBy_user.first_name }} {{ vaga.createdBy_user.last_name }}  ">{{ vaga.unidadeSolicitante }}</span></td>
+                        <!-- <td>{{ vaga.created_at|date:"d/m/Y" }}</td> -->
+                        <td>{{ vaga.codSolicitacao }}</td>
+                        {% if vaga.tipo == "INSERÇÃO ERRADA/AGENDADO" or vaga.tipo == "INSERÇÃO ERRADA/FILA" or vaga.tipo == "INSERÇÃO ERRADA FILA" %}
+                            <td><i class="fas fa-exclamation-circle text-danger"></i> {{ vaga.tipo }}</td>
+                        {% else %}
+                            <td >{{ vaga.tipo }}</td>
+                        {% endif %}
+                        <td>{{ vaga.data_vagaOfertada|date:"d/m/Y"}}</td>
+                        <td>{{ vaga.hora_vagaOfertada }}</td>
+                        <td class="text-truncate text-break" style="max-width: 200px;" data-toggle="tooltip" title="{{ vaga.procedimento }}">{{ vaga.procedimento }}</td>
+                        <td>{{ vaga.motivo }}</td>
+                        <td>{{ vaga.unidadeExecutante }}</td>
+                        <td>
+                            <a href="{% url 'show_permuta' vaga.id %}" class="btn btn-warning btn-sm" title="Permutar" data-toggle="tooltip">
+                                <i class="fa fa-exchange" aria-hidden="true"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% endif %}
+            {% empty %}
+            <tr>
+                <td colspan="8">Nenhum registro encontrado.</td>
+            </tr>
+            {% endfor %}
+        </tbody>            
+    </table>
+</div>
+
+
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+
+    $(document).ready(function(){
+
+        $("#listar_permutas").DataTable({
+            responsive: true,
+            // "bSort": false,
+            "aaSorting": [],
+            "pageLength": 50,
+            "language": {
+                "decimal": "",
+                "emptyTable": "Sem dados disponíveis",
+                "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                "infoEmpty": "Mostrando de 0 até 0 de 0 registros",
+                "infoFiltered": "(filtrado de _MAX_ registros no total)",
+                "infoPostFix": "",
+                "thousands": ",",
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "loadingRecords": "A carregar dados...",
+                "processing": "A processar...",
+                "search": "Procurar:",
+                "zeroRecords": "Não foram encontrados resultados",
+                "paginate": {
+                    "first": "Primeiro",
+                    "last": "Último",
+                    "next": "Seguinte",
+                    "previous": "Anterior"
+                },
+                "aria": {
+                    "sortAscending": ": ordem crescente",
+                    "sortDescending": ": ordem decrescente"
+                }
+            }
+        });
+
+    });
+
+</script>
+{% endblock %}
+
+{% block rodape-links %}
+
+{% endblock %}
+
+
+

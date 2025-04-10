@@ -1,0 +1,562 @@
+{% extends 'paginas/modelo-ifpr.html' %}
+
+{% load static %}
+
+{% block conteudo %}
+<h4 class="text-center">
+    SMS - Controle de Equipamentos
+    <a href="{% url 'create-equipamentos' %}" class=" d-print-none btn btn-primary btn-sm btn-block mt-3"> <i class="fa fa-plus"></i> Cadastrar novo equipamento</a>
+</h4>
+
+<!-- FILTRO SEM DATATABLE -->
+<!-- <form action="?" method="GET" class="mb-3">
+    <div class="input-group">
+        <input type="" name="search" id="search" value="{{request.GET.search}}" class="p-1 border">
+        <div class="input-group-append">
+            <button type="submit" class="btn btn-primary" title="Pesquisar"><i
+                    class="fa-solid fa-magnifying-glass"></i></button>
+            <a href="{% url 'list-equipamentos' %}" class="btn btn-secondary" title="Limpar pesquisa"><i
+                    class="fa-solid fa-x"></i></a>
+        </div>
+    </div>
+</form> -->
+
+<hr>
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <!-- <li class="nav-item">
+        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">
+            <i class="fa-solid fa-display"></i> Ativos
+        </a>
+    </li>-->
+    <li class="nav-item">
+        <a class="nav-link" id="computadores-tab" data-toggle="tab" href="#computadores" role="tab" aria-controls="computadores" aria-selected="true">
+            <span title="Computadores" data-toggle="tooltip"><i class="fas fa-desktop"></i> Computador ({{ computadoresTotal }})</span>
+        </a>            
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="monitor-tab" data-toggle="tab" href="#monitor" role="tab" aria-controls="monitor" aria-selected="true">
+            <span title="monitor" data-toggle="tooltip"><i class="fas fa-desktop"></i> Monitor ({{ monitorTotal }})</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="impressoras-tab" data-toggle="tab" href="#impressoras" role="tab" aria-controls="impressoras" aria-selected="false">
+            <span title="Impressoras" data-toggle="tooltip"><i class="fas fa-print"></i> Impressora ({{ impressorasTotal }})</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="tablets-tab" data-toggle="tab" href="#tablets" role="tab" aria-controls="tablets" aria-selected="false">
+            <span title="Tablets" data-toggle="tooltip"><i class="fas fa-tablet-alt"></i> Tablet ({{ tabletsTotal }})</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="depreciados-tab" data-toggle="tab" href="#depreciados" role="tab" aria-controls="depreciados" aria-selected="false">
+            <i class="fas fa-recycle"></i> Depreciados ({{ depreciadosTotal }})
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="outros-tab" data-toggle="tab" href="#outros" role="tab" aria-controls="outros" aria-selected="false">
+            <span title="Outros" data-toggle="tooltip"><i class="fas fa-clipboard-list"></i> Outros ({{ outrosTotal }})</span>
+        </a>
+    </li>
+</ul>
+
+<div class="tab-content" id="myTabContent">
+    <!-- 
+    <div class="tab-pane fade show active py-5" id="home" role="tabpanel" aria-labelledby="home-tab">     
+        <div class="table-responsive">
+            <table class="table table-striped tabela-listar">
+                <thead>
+                    <tr>
+                        <th> Patrimônio</th>
+                        <th>#</th>
+                        <th> Unidade</th>
+                        <th> Equipamento</th>
+                        <th> Marca</th>
+                        <th> Modelo</th>
+                        <th> Origem</th>
+                        <th> Local Equipamento</th>
+                        
+                        <th > Observação</th>
+                        <th>Editar <i class="fas fa-ellipsis-v"></i></th>            
+                    </tr>
+                </thead>        
+                <tbody>
+                    {% for equipamento in object_list %}
+                        {% if equipamento.status == 1 %}
+                        <tr>
+                            <td>{{ equipamento.patrimonio }}</td>
+                            <td>{{ equipamento.id }}</td>
+                            <td>{{ equipamento.unidade }}</td>
+                            <td>{{ equipamento.equipamento }}</td>
+                            <td>{{ equipamento.marca}}</td>
+                            <td>{{ equipamento.modelo }}</td>
+                            <td>{{ equipamento.alugadoPor }}</td>
+                            <td>{{ equipamento.localidade }}</td>
+                            <td  class="overflow-auto">{{ equipamento.observacao }}</td>
+                            <td>
+                                <a href="{% url 'update-equipamentos' equipamento.pk %}" class="btn btn-warning btn-sm" title="Editar">
+                                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {%endif%}
+                    {% endfor %}
+                </tbody>      
+            </table>
+        </div>
+    </div>
+    <div class="tab-pane fade py-5" id="depreciados" role="tabpanel" aria-labelledby="depreciados-tab">        
+        <div class="table-responsive">
+            <table class="table table-striped tabela-listar">
+                <thead>
+                    <tr>
+                        <th> Patrimônio</th>
+                        <th>#</th>
+                        <th> Unidade</th>
+                        <th> Equipamento</th>
+                        <th> Marca</th>
+                        <th> Modelo</th>
+                        <th> Origem</th>
+                        <th> Local Equipamento</th>
+                        <th> Observação</th>
+                        <th>Editar <i class="fas fa-ellipsis-v"></i></th>
+                    </tr>
+                </thead>
+    
+                <tbody>
+                    {% for equipamento in object_list %}
+                        {% if equipamento.status == 2 %}
+                        <tr>
+                            <td>{{ equipamento.patrimonio }}</td>
+                            <td>{{ equipamento.id }}</td>
+                            <td>{{ equipamento.unidade }}</td>
+                            <td>{{ equipamento.equipamento }}</td>
+                            <td>{{ equipamento.marca }}</td>
+                            <td>{{ equipamento.modelo }}</td>
+                            <td>{{ equipamento.alugadoPor }}</td>
+                            <td>{{ equipamento.localidade }}</td>
+                            <td class="overflow-auto" >{{ equipamento.observacao }}</td>
+                            <td>
+                                <a href="{% url 'update-equipamentos' equipamento.pk %}" class="btn btn-warning btn-sm" title="Editar">
+                                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                                </a>
+                            </td>
+                        </tr>   
+                        {%endif%}
+                    {% endfor %}
+                </tbody>
+        </table>
+    </div> -->
+    <div class="tab-pane fade show active py-5" id="computadores" role="tabpanel" aria-labelledby="computadores-tab">     
+        <div class="table-responsive">
+            <table class="table table-striped tabela-listar">
+                <thead>
+                    <tr>
+                        <th> Patrimônio</th>
+                        <th> Adesivo</th>
+                        <!-- <th>#</th> -->
+                        <th> Unidade</th>
+                        <th> Local Equipamento</th>
+                        <!-- <th> Equipamento</th> -->
+                        <th> Marca</th>
+                        <th> Modelo</th>
+                        <th> Origem</th>
+                        
+                        <!-- <th > Observação</th> -->
+                        {% for group in request.user.groups.all %}
+                            {% if group.name == "administrator" %}
+                                <th class="d-print-none">Editar <i class="fas fa-ellipsis-v"></i></th>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                </thead>        
+                <tbody>
+                    {% for equipamento in object_list %}
+                        {% if equipamento.status == 1 and equipamento.equipamento == "Computador" %}
+                            <tr>
+                                <td>{{ equipamento.patrimonio }}</td>
+                                <td>{{ equipamento.adesivo|default_if_none:'-' }}</td>
+                                <!-- <td >{{ equipamento.id }}</td> -->
+                                <td>{{ equipamento.unidade }}</td>
+                                <td>{{ equipamento.localidade }}</td>
+                                <!-- <td>{{ equipamento.equipamento }}</td> -->
+                                <td>{{ equipamento.marca}}</td>
+                                <td>{{ equipamento.modelo|default_if_none:"-" }}</td>
+                                <td>
+                                    {% if equipamento.alugadoPor == 1 %}
+                                        PMBP
+                                    {% elif equipamento.alugadoPor == 2 %}
+                                        OS
+                                    {% elif equipamento.alugadoPor == 3 %}
+                                        Simpress
+                                    {% endif %}
+                                </td>
+                                <!-- <td  class="overflow-auto">{{ equipamento.observacao }}</td> -->
+                                {% for group in request.user.groups.all %}
+                                    {% if group.name == "administrator" %}
+                                        <td class="d-print-none">
+                                            <a href="{% url 'update-equipamentos' equipamento.pk %}" class="btn btn-warning btn-sm" title="Editar">
+                                                <i class="fa fa-pencil" aria-hidden="true"></i>
+                                            </a>
+                                        </td>
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>                            
+                        {%endif%}
+                    {% endfor %}
+                </tbody>      
+            </table>
+        </div>
+    </div>
+    <div class="tab-pane fade show py-5" id="monitor" role="tabpanel" aria-labelledby="monitor-tab">     
+        <div class="table-responsive">
+            <table class="table table-striped tabela-listar">
+                <thead>
+                    <tr>
+                        <th> Patrimônio</th>
+                        <th> Adesivo</th>
+                        <!-- <th>#</th> -->
+                        <th> Unidade</th>
+                        <th> Local Equipamento</th>
+                        <!-- <th> Equipamento</th> -->
+                        <th> Marca</th>
+                        <th> Modelo</th>
+                        <th> Origem</th>
+                        
+                        <!-- <th > Observação</th> -->
+                        {% for group in request.user.groups.all %}
+                            {% if group.name == "administrator" %}
+                                <th class="d-print-none">Editar <i class="fas fa-ellipsis-v"></i></th>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                </thead>        
+                <tbody>
+                    {% for equipamento in object_list %}
+                        {% if equipamento.status == 1 and equipamento.equipamento == "Monitor" %}
+                            <tr>
+                                <td>{{ equipamento.patrimonio }}</td>
+                                <td>{{ equipamento.adesivo|default_if_none:'-' }}</td>
+                                <!-- <td >{{ equipamento.id }}</td> -->
+                                <td>{{ equipamento.unidade }}</td>
+                                <td>{{ equipamento.localidade }}</td>
+                                <!-- <td>{{ equipamento.equipamento }}</td> -->
+                                <td>{{ equipamento.marca}}</td>
+                                <td>{{ equipamento.modelo|default_if_none:"-" }}</td>
+                                <td>
+                                    {% if equipamento.alugadoPor == 1 %}
+                                        PMBP
+                                    {% elif equipamento.alugadoPor == 2 %}
+                                        OS
+                                    {% elif equipamento.alugadoPor == 3 %}
+                                        Simpress
+                                    {% endif %}
+                                </td>
+                                <!-- <td  class="overflow-auto">{{ equipamento.observacao }}</td> -->
+                                {% for group in request.user.groups.all %}
+                                    {% if group.name == "administrator" %}
+                                        <td class="d-print-none">
+                                            <a href="{% url 'update-equipamentos' equipamento.pk %}" class="btn btn-warning btn-sm" title="Editar">
+                                                <i class="fa fa-pencil" aria-hidden="true"></i>
+                                            </a>
+                                        </td>
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>                            
+                        {%endif%}
+                    {% endfor %}
+                </tbody>      
+            </table>
+        </div>
+    </div>
+    <div class="tab-pane fade py-5" id="impressoras" role="tabpanel" aria-labelledby="impressoras-tab">     
+        <div class="table-responsive">
+            <table class="table table-striped tabela-listar">
+                <thead>
+                    <tr>
+                        <th> Patrimônio</th>
+                        <th> Aviso</th>
+                        <!-- <th>#</th> -->
+                        <th> Unidade</th>
+                        <th> Local Equipamento</th>
+                        <!-- <th> Equipamento</th> -->
+                        <th> Marca</th>
+                        <th> Modelo</th>
+                        <th> Origem</th>
+                        <!-- OBSERVAÇÃO COMO POP-OVER -->
+                        <!-- <th > Observação</th> -->
+                        {% for group in request.user.groups.all %}
+                            {% if group.name == "administrator" %}
+                                <th class="d-print-none">Editar <i class="fas fa-ellipsis-v"></i></th>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                </thead>        
+                <tbody>
+                    {% for equipamento in object_list %}
+                        {% if equipamento.status == 1 and equipamento.equipamento == "Impressora" %}
+                            <tr>
+                                <td>{{ equipamento.patrimonio }}</td>
+                                <td>{{ equipamento.adesivo|default_if_none:'-' }}</td>
+                                <!-- <td>{{ equipamento.id }}</td> -->
+                                <td style="font-size: 15px;">{{ equipamento.unidade }}</td>
+                                <td>{{ equipamento.localidade }}</td>
+                                <!-- <td>{{ equipamento.equipamento }}</td> -->
+                                <td>{{ equipamento.marca}}</td>
+                                <td>{{ equipamento.modelo|default_if_none:"-" }}</td>
+                                <td>
+                                    {% if equipamento.alugadoPor == 1 %}
+                                        PMBP
+                                    {% elif equipamento.alugadoPor == 2 %}
+                                        OS
+                                    {% elif equipamento.alugadoPor == 3 %}
+                                        Simpress
+                                    {% endif %}
+                                </td>
+                                <!-- <td  class="overflow-auto">{{ equipamento.observacao }}</td> -->
+                                {% for group in request.user.groups.all %}
+                                    {% if group.name == "administrator" %}
+                                        <td class="d-print-none">
+                                            <a href="{% url 'update-equipamentos' equipamento.pk %}" class="btn btn-warning btn-sm" title="Editar">
+                                                <i class="fa fa-pencil" aria-hidden="true"></i>
+                                            </a>
+                                        </td>
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>                            
+                        {%endif%}
+                    {% endfor %}
+                </tbody>      
+            </table>
+        </div>
+    </div>
+    <div class="tab-pane fade py-5" id="tablets" role="tabpanel" aria-labelledby="tablets-tab">        
+        <div class="table-responsive">
+            <table class="table table-striped tabela-listar">
+                <thead>
+                    <tr>                        
+                        <th> Patrimônio</th>
+                        <th> Adesivo</th>
+                        <th> Unidade</th>
+                        <th> Local Equipamento</th>
+                        <!-- <th> Equipamento</th> -->
+                        <th> Marca</th>
+                        <th> Modelo</th>
+                        <th> Origem</th>
+                        <!-- <th> Observação</th> -->
+                        {% for group in request.user.groups.all %}
+                            {% if group.name == "administrator" %}
+                                <th class="d-print-none">Editar <i class="fas fa-ellipsis-v"></i></th>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                </thead>
+    
+                <tbody>
+                    {% for equipamento in object_list %}
+                        {% if equipamento.status == 1 and equipamento.equipamento == "Tablet" %}
+                        <tr>                            
+                                <td>{{ equipamento.patrimonio }}</td>
+                                <td>{{ equipamento.adesivo|default_if_none:'-' }}</td>
+                                <td style="font-size: 14px;">{{ equipamento.unidade }}</td>
+                                <td>{{ equipamento.localidade }}</td>
+                                <!-- <td>{{ equipamento.equipamento }}</td> -->
+                                <td>{{ equipamento.marca }}</td>
+                                <td>{{ equipamento.modelo|default_if_none:"-" }}</td>
+                                <td>
+                                    {% if equipamento.alugadoPor == 1 %}
+                                        PMBP
+                                    {% elif equipamento.alugadoPor == 2 %}
+                                        OS
+                                    {% elif equipamento.alugadoPor == 3 %}
+                                        Simpress
+                                    {% endif %}
+                                </td>
+                                <!-- <td class="overflow-auto" >{{ equipamento.observacao }}</td> -->
+                                {% for group in request.user.groups.all %}
+                                    {% if group.name == "administrator" %}
+                                        <td class="d-print-none">
+                                            <a href="{% url 'update-equipamentos' equipamento.pk %}" class="btn btn-warning btn-sm" title="Editar">
+                                                <i class="fa fa-pencil" aria-hidden="true"></i>
+                                            </a>
+                                        </td>
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>
+                        {%endif%}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="tab-pane fade py-5" id="depreciados" role="tabpanel" aria-labelledby="depreciados-tab">        
+        <div class="table-responsive">
+            <table class="table table-striped tabela-listar">
+                <thead>
+                    <tr>                        
+                        <th> Patrimônio</th>
+                        <th> Adesivo</th>
+                        <th> Unidade</th>
+                        <th> Local Equipamento</th>
+                        <!-- <th> Equipamento</th> -->
+                        <th> Marca</th>
+                        <th> Modelo</th>
+                        <th> Origem</th>
+                        <!-- <th> Observação</th> -->
+                        {% for group in request.user.groups.all %}
+                            {% if group.name == "administrator" %}
+                                <th class="d-print-none">Editar <i class="fas fa-ellipsis-v"></i></th>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                </thead>
+    
+                <tbody>
+                    {% for equipamento in object_list %}
+                        {% if equipamento.status == 2 %}
+                        <tr>                            
+                            <td>{{ equipamento.patrimonio }}</td>
+                            <td>{{ equipamento.adesivo|default_if_none:'-' }}</td>>
+                            <td>{{ equipamento.unidade }}</td>
+                            <td>{{ equipamento.localidade }}</td>
+                            <!-- <td>{{ equipamento.equipamento }}</td> -->
+                            <td>{{ equipamento.marca }}</td>
+                            <td>{{ equipamento.modelo|default_if_none:"-" }}</td>
+                            <td>
+                                {% if equipamento.alugadoPor == 1 %}
+                                    PMBP
+                                {% elif equipamento.alugadoPor == 2 %}
+                                    OS
+                                {% elif equipamento.alugadoPor == 3 %}
+                                    Simpress
+                                {% endif %}
+                            </td>
+                            <!-- <td class="overflow-auto" >{{ equipamento.observacao }}</td> -->
+                            {% for group in request.user.groups.all %}
+                                {% if group.name == "administrator" %}
+                                    <td class="d-print-none">
+                                        <a href="{% url 'update-equipamentos' equipamento.pk %}" class="btn btn-warning btn-sm" title="Editar">
+                                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                                        </a>
+                                    </td>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                        {%endif%}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="tab-pane fade py-5" id="outros" role="tabpanel" aria-labelledby="outros-tab">        
+        <div class="table-responsive">
+            <table class="table table-striped tabela-listar">
+                <thead>
+                    <tr>                        
+                        <th> Patrimônio</th>
+                        <th> Aviso</th>
+                        <th> Unidade</th>
+                        <th> Local Equipamento</th>
+                        <!-- <th> Equipamento</th> -->
+                        <th> Marca</th>
+                        <th> Modelo</th>
+                        <th> Origem</th>
+                        <!-- <th> Observação</th> -->
+                        {% for group in request.user.groups.all %}
+                            {% if group.name == "administrator" %}
+                                <th class="d-print-none">Editar <i class="fas fa-ellipsis-v"></i></th>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                </thead>
+    
+                <tbody>
+                    {% for equipamento in object_list %}
+                        {% if equipamento.status == 1 and equipamento.equipamento == "Outros" %}
+                        <tr>                            
+                            <td>{{ equipamento.patrimonio }}</td>
+                            <td>{{ equipamento.adesivo|default_if_none:'-' }}</td>
+                            <td>{{ equipamento.unidade }}</td>
+                            <td>{{ equipamento.localidade }}</td>
+                            <!-- <td>{{ equipamento.equipamento }}</td> -->
+                            <td>{{ equipamento.marca }}</td>
+                            <td>{{ equipamento.modelo|default_if_none:"-" }}</td>
+                            <td>
+                                {% if equipamento.alugadoPor == 1 %}
+                                    PMBP
+                                {% elif equipamento.alugadoPor == 2 %}
+                                    OS
+                                {% elif equipamento.alugadoPor == 3 %}
+                                    Simpress
+                                {% endif %}
+                            </td>
+                            <!-- <td class="overflow-auto" >{{ equipamento.observacao }}</td> -->
+                            {% for group in request.user.groups.all %}
+                                {% if group.name == "administrator" %}
+                                    <td class="d-print-none">
+                                        <a href="{% url 'update-equipamentos' equipamento.pk %}" class="btn btn-warning btn-sm" title="Editar">
+                                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                                        </a>
+                                    </td>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                        {%endif%}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+{% block scripts %}
+<script>
+        $('#id_paciente').select2();
+
+        $(".tabela-listar").DataTable({
+            responsive: true,
+            // "bSort": false,
+            "aaSorting": [],
+            "pageLength": 14,
+            "language": {
+                "decimal": "",
+                "emptyTable": "Sem dados disponíveis",
+                "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                "infoEmpty": "Mostrando de 0 até 0 de 0 registros",
+                "infoFiltered": "(filtrado de _MAX_ registros no total)",
+                "infoPostFix": "",
+                "thousands": ",",
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "loadingRecords": "A carregar dados...",
+                "processing": "A processar...",
+                "search": "Procurar:",
+                "zeroRecords": "Não foram encontrados resultados",
+                "paginate": {
+                    "first": "Primeiro",
+                    "last": "Último",
+                    "next": "Seguinte",
+                    "previous": "Anterior"
+                },
+                "aria": {
+                    "sortAscending": ": ordem crescente",
+                    "sortDescending": ": ordem decrescente"
+                }
+            }
+        });
+
+
+
+        
+
+
+</script>
+{% endblock %}
+
+{% block rodape-links %}
+
+{% endblock %}
+

@@ -1,0 +1,679 @@
+{% extends 'paginas/modelo-ifpr.html' %}
+
+{% load static %}
+
+{% block conteudo %}
+<div class="container-fluid">
+<div class="row text-center">
+        <div class="col-12 col-xl-6 border rounded bg-light p-4 mb-3">
+            <form action="{% url 'importar-fila' %}" method="POST" enctype="multipart/form-data">
+                <div class="row">
+                    {% csrf_token %}
+                    <div class="col-12">
+                        <h3>Importar Fila</h3>
+                    </div>
+                    <div class="col-12 form-group">
+                        <input name="myfile" class="form-control-file" type="file" />
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-upload"></i> Importar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-12 col-xl-6 border rounded bg-light p-4 mb-3">
+            <div class="col-12">
+                <h3>Últimos arquivos importados</h3>
+            </div>
+            <div class="col-12 table-responsive">
+                <table class="table table-hover">
+                    <thead class="bg-light">
+                        <tr>
+                            <th>Tipo Fila</th>
+                            <th>Arquivo</th>
+                            <th>Data do arquivo</th>
+                            <th>Data da importação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            {% if ultimaImportacaoSimples.tipoFila == 2 %}
+                            <td>Normal</td>
+                            {% else %}
+                            <td>Regulada</td>
+                            {% endif %}
+                            <td>{{ ultimaImportacaoSimples.nomeArquivo }}</td>
+                            <td>{{ ultimaImportacaoSimples.dataDoArquivo|date:"d/m/Y" }}</td>
+                            <td>{{ ultimaImportacaoSimples.created_at|date:"d/m/Y" }}</td>
+                        </tr>
+                        <tr>
+                            {% if ultimaImportacaoRegulada.tipoFila == 2 %}
+                            <td>Normal</td>
+                            {% else %}
+                            <td>Regulada</td>
+                            {% endif %}
+                            <td>{{ ultimaImportacaoRegulada.nomeArquivo }}</td>
+                            <td>{{ ultimaImportacaoRegulada.dataDoArquivo|date:"d/m/Y" }}</td>
+                            <td>{{ ultimaImportacaoRegulada.created_at|date:"d/m/Y" }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulário para sincronizar dicionário -->
+    <!-- <div class="col-3">        
+            <div class="row">                
+                <div class="col-12">
+                    <h3>Passo 2: Sincronizar Dicionário</h3>
+                </div> 
+                <div class="col-12 form-group mt-1">
+                    <br>
+                </div>      
+                <div class="col-12">
+                    <a href="#" class="btn btn-primary btn-block"><i class="fas fa-sync"></i> Sincronizar</a>
+                    
+                </div>
+            </div>        
+    </div> -->
+</div>
+<!-- <div class="row mt-3">
+    <div class="col-12">
+        <h3>Últimos arquivos importados</h3>
+    </div>
+    <div class="col-12">
+        <table class="table table-hover">
+            <thead class="bg-light">
+                <tr>
+                    <th>Tipo Fila</th>
+                    <th>Arquivo</th>
+                    <th>Data do arquivo</th>
+                    <th>Data da importação</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    {% if ultimaImportacaoSimples.tipoFila == 2 %}
+                    <td>Normal</td>
+                    {% else %}
+                    <td>Regulada</td>
+                    {% endif %}
+                    <td>{{ ultimaImportacaoSimples.nomeArquivo }}</td>
+                    <td>{{ ultimaImportacaoSimples.dataDoArquivo|date:"d/m/Y" }}</td>
+                    <td>{{ ultimaImportacaoSimples.created_at|date:"d/m/Y" }}</td>
+                </tr>
+                <tr>
+                    {% if ultimaImportacaoRegulada.tipoFila == 2 %}
+                    <td>Normal</td>
+                    {% else %}
+                    <td>Regulada</td>
+                    {% endif %}
+                    <td>{{ ultimaImportacaoRegulada.nomeArquivo }}</td>
+                    <td>{{ ultimaImportacaoRegulada.dataDoArquivo|date:"d/m/Y" }}</td>
+                    <td>{{ ultimaImportacaoRegulada.created_at|date:"d/m/Y" }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div> -->
+
+<div class="row my-3">
+    <div class="col-12">
+        <h3>Histórico da Fila</h3>
+    </div>
+    <div class="col-12 col-xl-6">
+        <div class="card">
+            <div class="card-body">
+                <canvas id="filaEsperaGrafico"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-xl-6">
+        <div class="card">
+            <div class="card-body">
+                <canvas id="filaReguladaGrafico"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row my-3">
+    <div class="col-12">
+        <h4>Histórico de Inserção da Fila (<span id="updateData">{{ ultimaImportacaoSimples.dataDoArquivo|date:"d/m/Y" }}</span>)</h4>
+    </div>
+    <div class="col-12 col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <canvas id="graficoUnidadesDiarioAjax"></canvas>
+            </div>
+        </div>
+    </div>    
+</div>
+
+<div class="alert alert-warning" role="alert">
+    Acesso ao site do <strong>SISREG:</strong> <a href="https://sisregiii.saude.gov.br/cgi-bin/index"
+        target="blank">Fazer Login</a>
+</div>
+
+
+{% endblock %}
+
+{% block rodape-links %}
+
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+
+    Chart.register(ChartDataLabels);
+    $(document).ready(function () {
+        // fila gráfico
+        $.ajax({
+            url: '/api/historicoFilaEsperaAjax',
+            success: function (response) {
+
+                let datas = response.map(function (e) {
+                    return e.dataArquivo;
+                });
+                let totais = response.map(function (e) {
+                    return e.total;
+                });
+
+
+
+                //instancia do grafico
+                var ctx = document.getElementById('filaEsperaGrafico').getContext('2d');
+
+                //configura opções
+                var myoption = {
+                    onClick: (e, elements) => {
+                        const canvasPosition = Chart.helpers.getRelativePosition(e, grafFila);
+
+                        // Substitute the appropriate scale IDs
+                        const dataX = grafFila.scales.x.getValueForPixel(canvasPosition.x);
+                        const dataY = grafFila.scales.y.getValueForPixel(canvasPosition.y);
+
+                        console.log(dataX, new Date(dataY))
+                    },
+                    tooltips: {
+                        enabled: true
+                    },
+                    hover: {
+                        animationDuration: 1
+                    },
+
+
+                    // scales: {
+                    //     y: { // defining min and max so hiding the dataset does not change scale range
+                    //         min: 0
+                    //     },
+
+                    // }
+                };
+
+                var config = {
+                    type: 'line',
+                    data: {
+                        labels: datas,
+                        datasets: [{
+                            data: totais,
+                            // backgroundColor: [
+                            //     'rgba(255,99,132,0.2)',
+                            //     'rgba(54,162,235,0.2)',
+                            // ],
+                            // borderColor: [
+                            //     'rgba(255,99,132,1)',
+                            //     'rgba(54,162,235,1)',
+                            // ],
+                            // borderWidth: 1
+                        }],
+                    },
+                    options: myoption,
+                    // plugins: [ChartDataLabels],
+                }
+
+                window.grafFila = new Chart(ctx, config);
+
+                // grafFila._getSortedDatasetMetas()
+                // TESTE 2.5
+
+                var canvas = document.getElementById("filaEsperaGrafico");
+                var ctx = canvas.getContext("2d");
+                var myNewChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: datas,
+                        datasets: [{
+                            label: 'Fila de Espera', //versão 2.5
+                            data: totais,
+                            // backgroundColor: [
+                            //     'rgba(255,99,132,0.2)',
+                            //     'rgba(54,162,235,0.2)',
+                            // ],
+                            // borderColor: [
+                            //     'rgba(255,99,132,1)',
+                            //     'rgba(54,162,235,1)',
+                            // ],
+                            // borderWidth: 1
+
+                            //versão 2.5
+                            backgroundColor: "rgba(54,162,235,0.03)",
+                            borderColor: "rgba(54,162,235,1)",
+                            lineTension: 0,
+                        }],
+                    },
+                });
+
+                canvas.onclick = function (evt) {
+                    var activePoints = myNewChart.getElementsAtEvent(evt);
+                    if (activePoints[0]) {
+                        var chartData = activePoints[0]['_chart'].config.data;
+                        var idx = activePoints[0]['_index'];
+
+                        var labelData = chartData.labels[idx];
+                        var value = chartData.datasets[0].data[idx];
+
+                        var url = "Data: " + labelData + " total: " + value;
+                        // console.log(url);
+                        // alert(url);
+
+                        // ######################################## TESTE AJAX
+                        var token = $('[name="csrfmiddlewaretoken"]').val();
+
+                        $.ajax({
+                            url: '/api/analyticsSupport/graficoUnidadesDiarioAjax',
+                            // url: "{% url 'verifica-cns' %}",
+                            type: 'post',
+                            data: {
+                                'data': labelData,
+                                'csrfmiddlewaretoken': token,
+                            },
+                            success: function (response) {
+                                window.grafFila.destroy();
+                                console.log(response)
+                                let nomeUnidadeSolicitante = response.map(function (e) {
+                                    return e.nomeUnidadeSolicitante;
+                                });
+                                let totalChamado = response.map(function (e) {
+                                    return e.totalChamado;
+                                });
+
+                                //instancia do grafico
+                                var ctx = document.getElementById('graficoUnidadesDiarioAjax').getContext('2d');
+
+                                //configura opções
+                                var myoption = {
+                                    indexAxis: 'y',
+                                    tooltips: {
+                                        enabled: true
+                                    },
+                                    hover: {
+                                        animationDuration: 1
+                                    },
+                                    animation: {
+                                        duration: 500,
+                                        onComplete: function () {
+                                            var chartInstance = this.chart,
+                                                ctx = chartInstance.ctx;
+                                            ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+
+
+                                            this.data.datasets.forEach(function (dataset, i) {
+                                                var meta = chartInstance.controller.getDatasetMeta(i);
+                                                meta.data.forEach(function (bar, index) {
+                                                    var data = dataset.data[index];
+                                                    ctx.fillText(data, bar._model.x - 14, bar._model.y - 5);
+                                                });
+                                            });
+                                        }
+                                    }
+
+
+                                };
+
+                                var config = {
+                                    // type: 'bar', //NOVA VERSÃO
+                                    type: 'horizontalBar', //2.5
+                                    data: {
+                                        labels: nomeUnidadeSolicitante,
+                                        datasets: [{
+                                            label: [],
+                                            data: totalChamado,
+                                            backgroundColor: [
+                                                //nova versão
+                                                'rgba(255, 99, 132, 0.2)',
+                                                'rgba(255, 205, 86, 0.2)',
+                                                'rgba(75, 112, 192, 0.2)',
+                                                'rgba(255, 179, 64, 0.2)',
+                                                'rgba(54, 122, 235, 0.2)',
+                                                'rgba(153, 102, 255, 0.2)',
+                                                'rgba(201, 203, 207, 0.2)',
+                                                'rgba(155, 39, 132, 0.2)',
+                                                'rgba(215, 159, 64, 0.2)',
+                                                'rgba(115, 205, 86, 0.2)',
+                                                'rgba(65, 192, 192, 0.2)',
+                                                'rgba(94, 162, 235, 0.2)',
+                                                'rgba(193, 102, 255, 0.2)',
+                                                //até aqui nova versão
+                                                //a partir daqui 2.5
+                                                'rgba(255, 99, 132, 0.2)',
+                                                'rgba(255, 205, 86, 0.2)',
+                                                'rgba(75, 112, 192, 0.2)',
+                                                'rgba(255, 179, 64, 0.2)',
+                                                'rgba(54, 122, 235, 0.2)',
+                                                'rgba(153, 102, 255, 0.2)',
+                                                'rgba(201, 203, 207, 0.2)',
+                                                'rgba(155, 39, 132, 0.2)',
+                                                'rgba(215, 159, 64, 0.2)',
+                                                'rgba(115, 205, 86, 0.2)',
+                                                'rgba(65, 192, 192, 0.2)',
+                                                'rgba(94, 162, 235, 0.2)',
+                                                'rgba(193, 102, 255, 0.2)',
+                                                'rgba(255, 99, 132, 0.2)',
+                                                'rgba(255, 205, 86, 0.2)',
+                                                'rgba(75, 112, 192, 0.2)',
+                                                'rgba(255, 179, 64, 0.2)',
+                                                'rgba(54, 122, 235, 0.2)',
+                                                'rgba(153, 102, 255, 0.2)',
+                                                'rgba(201, 203, 207, 0.2)',
+                                                'rgba(155, 39, 132, 0.2)',
+                                                'rgba(215, 159, 64, 0.2)',
+                                                'rgba(115, 205, 86, 0.2)',
+                                                'rgba(65, 192, 192, 0.2)',
+                                                'rgba(94, 162, 235, 0.2)',
+                                                'rgba(193, 102, 255, 0.2)',
+
+                                            ],
+                                            borderColor: [
+                                                'rgb(255, 99, 132)',
+                                                'rgb(255, 205, 86)',
+                                                'rgb(75, 192, 192)',
+                                                'rgb(255, 159, 64)',
+                                                'rgb(54, 162, 235)',
+                                                'rgb(153, 102, 255)',
+                                                'rgb(201, 203, 207)',
+                                                'rgba(155, 39, 132)',
+                                                'rgba(215, 159, 64)',
+                                                'rgba(115, 205, 86)',
+                                                'rgba(65, 192, 192)',
+                                                'rgba(94, 162, 235)',
+                                                'rgba(193, 102, 255)',
+                                                //até aqui nova versão
+                                                //a partir daqui 2.5
+                                                'rgb(255, 99, 132)',
+                                                'rgb(255, 205, 86)',
+                                                'rgb(75, 192, 192)',
+                                                'rgb(255, 159, 64)',
+                                                'rgb(54, 162, 235)',
+                                                'rgb(153, 102, 255)',
+                                                'rgb(201, 203, 207)',
+                                                'rgba(155, 39, 132)',
+                                                'rgba(215, 159, 64)',
+                                                'rgba(115, 205, 86)',
+                                                'rgba(65, 192, 192)',
+                                                'rgba(94, 162, 235)',
+                                                'rgba(193, 102, 255)',
+                                                'rgb(255, 99, 132)',
+                                                'rgb(255, 205, 86)',
+                                                'rgb(75, 192, 192)',
+                                                'rgb(255, 159, 64)',
+                                                'rgb(54, 162, 235)',
+                                                'rgb(153, 102, 255)',
+                                                'rgb(201, 203, 207)',
+                                                'rgba(155, 39, 132)',
+                                                'rgba(215, 159, 64)',
+                                                'rgba(115, 205, 86)',
+                                                'rgba(65, 192, 192)',
+                                                'rgba(94, 162, 235)',
+                                                'rgba(193, 102, 255)',
+                                            ],
+                                            borderWidth: 1,
+                                        }],
+                                    },
+                                    plugins: [ChartDataLabels],
+
+                                    options: myoption,
+                                }
+
+                                window.grafFila = new Chart(ctx, config);
+                                document.getElementById('updateData').innerHTML = labelData;
+                            }
+                        });
+
+
+                        // ######################################## TESTE AJAX
+
+
+
+                    }
+                };
+            }
+        });
+
+        $.ajax({
+            url: '/api/historicoFilaReguladaAjax',
+            success: function (response) {
+
+                let datas = response.map(function (e) {
+                    return e.dataArquivo;
+                });
+                let totais = response.map(function (e) {
+                    return e.total;
+                });
+
+                //instancia do grafico
+                var ctx = document.getElementById('filaReguladaGrafico').getContext('2d');
+
+                //configura opções
+                var myoption = {
+                    tooltips: {
+                        enabled: true
+                    },
+                    hover: {
+                        animationDuration: 1
+                    },
+
+                    // scales: {
+                    // y: { // defining min and max so hiding the dataset does not change scale range
+                    // min: 0
+                    // },
+
+                    // }
+                };
+
+                var config = {
+                    type: 'line',
+                    data: {
+                        labels: datas,
+                        datasets: [{
+                            label: 'Fila de Regulada',
+                            data: totais,
+                            // backgroundColor: [
+                            //     'rgba(255,99,132,0.2)',
+                            //     'rgba(54,162,235,0.2)',
+                            // ],
+                            // borderColor: [
+                            //     'rgba(255,99,132,1)',
+                            //     'rgba(54,162,235,1)',
+                            // ],
+                            // borderWidth: 1
+                            //versão 2.5
+                            backgroundColor: "rgba(54,162,235,0.03)",
+                            borderColor: "rgba(54,162,235,1)",
+                            lineTension: 0,
+                        }],
+                    },
+                    options: myoption,
+                    // plugins: [ChartDataLabels],
+                }
+
+                var grafFila = new Chart(ctx, config);
+
+            }
+        });
+
+
+        $.ajax({
+            url: '/api/analyticsSupport/graficoUnidadesDiarioAjax',
+            success: function (response) {
+                console.log(response)
+                let nomeUnidadeSolicitante = response.map(function (e) {
+                    return e.nomeUnidadeSolicitante;
+                });
+                let totalChamado = response.map(function (e) {
+                    return e.totalChamado;
+                });
+
+                //instancia do grafico
+                var ctx = document.getElementById('graficoUnidadesDiarioAjax').getContext('2d');
+
+                //configura opções
+                var myoption = {
+                    indexAxis: 'y',
+                    tooltips: {
+                        enabled: true
+                    },
+                    hover: {
+                        animationDuration: 1
+                    },
+                    animation: {
+                        duration: 500,
+                        onComplete: function () {
+                            var chartInstance = this.chart,
+                                ctx = chartInstance.ctx;
+                            ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+
+
+                            this.data.datasets.forEach(function (dataset, i) {
+                                var meta = chartInstance.controller.getDatasetMeta(i);
+                                meta.data.forEach(function (bar, index) {
+                                    var data = dataset.data[index];
+                                    ctx.fillText(data, bar._model.x - 12, bar._model.y - 5);
+                                });
+                            });
+                        },
+                    }
+
+
+                };
+
+                var config = {
+                    // type: 'bar', //NOVA VERSÃO
+                    type: 'horizontalBar', //2.5
+                    data: {
+                        labels: nomeUnidadeSolicitante,
+                        datasets: [{
+                            label: [],
+                            data: totalChamado,
+                            backgroundColor: [
+                                //nova versão
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(255, 205, 86, 0.2)',
+                                'rgba(75, 112, 192, 0.2)',
+                                'rgba(255, 179, 64, 0.2)',
+                                'rgba(54, 122, 235, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(201, 203, 207, 0.2)',
+                                'rgba(155, 39, 132, 0.2)',
+                                'rgba(215, 159, 64, 0.2)',
+                                'rgba(115, 205, 86, 0.2)',
+                                'rgba(65, 192, 192, 0.2)',
+                                'rgba(94, 162, 235, 0.2)',
+                                'rgba(193, 102, 255, 0.2)',
+                                //até aqui nova versão
+                                //a partir daqui 2.5
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(255, 205, 86, 0.2)',
+                                'rgba(75, 112, 192, 0.2)',
+                                'rgba(255, 179, 64, 0.2)',
+                                'rgba(54, 122, 235, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(201, 203, 207, 0.2)',
+                                'rgba(155, 39, 132, 0.2)',
+                                'rgba(215, 159, 64, 0.2)',
+                                'rgba(115, 205, 86, 0.2)',
+                                'rgba(65, 192, 192, 0.2)',
+                                'rgba(94, 162, 235, 0.2)',
+                                'rgba(193, 102, 255, 0.2)',
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(255, 205, 86, 0.2)',
+                                'rgba(75, 112, 192, 0.2)',
+                                'rgba(255, 179, 64, 0.2)',
+                                'rgba(54, 122, 235, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(201, 203, 207, 0.2)',
+                                'rgba(155, 39, 132, 0.2)',
+                                'rgba(215, 159, 64, 0.2)',
+                                'rgba(115, 205, 86, 0.2)',
+                                'rgba(65, 192, 192, 0.2)',
+                                'rgba(94, 162, 235, 0.2)',
+                                'rgba(193, 102, 255, 0.2)',
+
+                            ],
+                            borderColor: [
+                                'rgb(255, 99, 132)',
+                                'rgb(255, 205, 86)',
+                                'rgb(75, 192, 192)',
+                                'rgb(255, 159, 64)',
+                                'rgb(54, 162, 235)',
+                                'rgb(153, 102, 255)',
+                                'rgb(201, 203, 207)',
+                                'rgba(155, 39, 132)',
+                                'rgba(215, 159, 64)',
+                                'rgba(115, 205, 86)',
+                                'rgba(65, 192, 192)',
+                                'rgba(94, 162, 235)',
+                                'rgba(193, 102, 255)',
+                                //até aqui nova versão
+                                //a partir daqui 2.5
+                                'rgb(255, 99, 132)',
+                                'rgb(255, 205, 86)',
+                                'rgb(75, 192, 192)',
+                                'rgb(255, 159, 64)',
+                                'rgb(54, 162, 235)',
+                                'rgb(153, 102, 255)',
+                                'rgb(201, 203, 207)',
+                                'rgba(155, 39, 132)',
+                                'rgba(215, 159, 64)',
+                                'rgba(115, 205, 86)',
+                                'rgba(65, 192, 192)',
+                                'rgba(94, 162, 235)',
+                                'rgba(193, 102, 255)',
+                                'rgb(255, 99, 132)',
+                                'rgb(255, 205, 86)',
+                                'rgb(75, 192, 192)',
+                                'rgb(255, 159, 64)',
+                                'rgb(54, 162, 235)',
+                                'rgb(153, 102, 255)',
+                                'rgb(201, 203, 207)',
+                                'rgba(155, 39, 132)',
+                                'rgba(215, 159, 64)',
+                                'rgba(115, 205, 86)',
+                                'rgba(65, 192, 192)',
+                                'rgba(94, 162, 235)',
+                                'rgba(193, 102, 255)',
+                            ],
+                            borderWidth: 1,
+                        }],
+                    },
+
+                    plugins: [ChartDataLabels],
+
+                    options: myoption,
+                }
+
+                window.grafFila = new Chart(ctx, config);
+
+            }
+        });
+    });
+
+
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js"></script>
+<script>
+   
+</script>
+{% endblock %}

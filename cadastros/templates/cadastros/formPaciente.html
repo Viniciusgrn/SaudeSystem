@@ -1,0 +1,376 @@
+{% extends 'paginas/modelo-ifpr.html' %}
+
+{% load static %}
+
+{% load crispy_forms_tags %}
+
+{% block conteudo %}
+<h3> Cadastro</h3>
+<p class="lead">
+    Preencher todos os campos obrigatorios.
+</p>
+
+<hr>
+
+<!-- <form action="{% url 'cadastrar-paciente' %}" method="POST"> -->
+<form action="" method="POST">
+
+    {% csrf_token %}
+    <!-- {{ form|crispy }} -->
+    <div class="form-row">
+        <div class="form-group col-md-3">
+            <label for="inputEmail4" style="font-weight: bold;">Cartão Sus<span title="Campo obrigatório"
+                    style="color:red;" data-toggle="tooltip">*</span></label>
+            {{form.cns}}
+        </div>
+        <div class="form-group col-md-6">
+            <label for="inputAddress2" style="font-weight: bold;">Nome completo<span title="Campo obrigatório"
+                    style="color:red;" data-toggle="tooltip">*</span></label>
+            {{form.nome}}
+        </div>
+        <div class="form-group col-md-3">
+            <label for="inputCity" style="font-weight: bold;">Data de nascimento<span title="Campo obrigatório"
+                    style="color:red;" data-toggle="tooltip">*</span></label>
+            {{form.dataNascimento}}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-3">
+            <label for="inputAddress">Nº do prontuário do paciente</label>
+            {{form.numeroProntuario}}
+        </div>
+        <div class="form-group col-md-3">
+            <label for="inputZip">CPF</label>
+            {{form.cpf}}
+        </div>
+        <div class="form-group  col-md-3">
+            <label for="inputZip" style="font-weight: bold;">Telefone/Celular<span title="Campo obrigatório"
+                    style="color:red;" data-toggle="tooltip">*</span></label>
+            {{form.telefonePrincipal}}
+        </div>
+        <div class="form-group  col-md-3">
+            <label for="inputCity">Telefone para recado</label>
+            {{form.telefoneRecado}}
+        </div>
+    </div>
+    <div class="form-row">
+        {% for group in request.user.groups.all %}
+            {% if group.name == "callcenter" or group.name == "administrator"%}
+                <div class="form-group col-md-3">
+                    <label for="inputPassword4" style="font-weight: bold;">Selecione a Unidade<span title="Campo obrigatório"
+                            style="color:red;" data-toggle="tooltip">*</span></label>
+                    {{form.estabelecimento}}
+                </div>
+                {% else %}
+                <div class="form-group">
+                    <label for="userUnidade">&nbsp;</label>
+                    <input class="form-control" id="userUnidade" type="hidden" name="estabelecimento" value="{{ userUnidade }}">
+                </div>
+            {% endif %}
+        {% endfor %}
+        <div class="form-group col-md-2">
+            <label for="inputState">Sexo</label>
+            {{form.sexo}}
+        </div>   
+        <div class="form-group col-md-2 offset-md-1">
+            <label class="" for="inlineFormInputGroup" style="font-weight: bold;">Altura do Paciente<span
+                    title="Campo obrigatório" style="color:red;" data-toggle="tooltip">*</span></label>
+            <div class="row p-0 no-gutters">
+                <div class="col-6">
+                    <div class="input-group pr-2">
+                        <input type="text" name="alturaMetros" class="form-control" id="id_alturaMetros" placeholder="" min="0"
+                            max="400" value="{{ alturaMetros|default_if_none:'' }}" required>
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">m</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="input-group pl-2">
+                        <input type="text"  name="alturaCentimetros" class="form-control" id="id_alturaCentimetros" placeholder="" min="0"
+                            max="99" value="{{ alturaCentimetros|default_if_none:'' }}" required>
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">cm</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group offset-md-1 col-md-2">
+            <label class="" for="inlineFormInputGroup" style="font-weight: bold;">Peso do Paciente<span
+                    title="Campo obrigatório" style="color:red;" data-toggle="tooltip">*</span></label>
+            <div class="row p-0 no-gutters">
+                <div class="col-6">
+                    <div class="input-group pr-2">
+                        <input type="text" name="pesoKg" class="form-control" id="id_pesoKg" placeholder="" min="0"
+                            max="400" value="{{ pesoKg|default_if_none:'' }}" required>
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">kg</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="input-group pl-2">
+                        <input type="text" name="pesoGrama" class="form-control" id="id_pesoGramas" placeholder="" min="0"
+                            max="99"  value="{{ pesoGramas|default_if_none:'' }}" required>
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">g</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+
+    {% for group in request.user.groups.all %}
+        {% if group.name == "administrativo" or group.name == "administrator" %}
+            <div class="accordion mb-3" id="accordionExample">
+                <div class="card">
+                    <div class="card-header p-0 m-0" id="headingOne">
+                        <h2 class="mb-0">
+                            <button class="btn text-secondary   " type="button" data-toggle="collapse"
+                                data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                <i class="fa fa-user"></i> Dados Complementares
+                            </button>
+                        </h2>
+                    </div>
+
+                    <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                        <div class="card-body">
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
+                                    <label for="inputZip" style="font-weight: bold;">Nome da mãe<span title="Campo obrigatório"
+                                            style="color:red;" data-toggle="tooltip">*</span></label>
+                                    {{form.nomeDaMae}}
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="inputZip">Nome do pai</label>
+                                    {{form.nomePai}}
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="inputZip">Nome do responsável</label>
+                                    {{form.nomeResponsavel}}
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-3">
+                                    <label for="inputState">RG</label>
+                                    {{form.rg}}
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <label for="inputZip">Orgão emissor</label>
+                                    {{form.orgaoEmissor}}
+                                </div>
+                                <div class="form-group col-md-1">
+                                    <label for="inputZip">UF emissor</label>
+                                    {{form.estadoEmissor}}
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <label for="inputZip">Data emissão</label>
+                                    {{form.dataEmissao}}
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="inputZip">Raça/Cor</label>
+                                    {{form.racaCor}}
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="inputState">Nome social</label>
+                                    {{form.nomeSocial}}
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="inputZip">Tipo sanguíneo</label>
+                                    {{form.tipoSanguineo}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+    <div class="form-row">
+        <button type="submit" class="btn btn-primary btn-block">Salvar</button>
+    </div>
+
+</form>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/jquery.mask.min.js' %}"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#id_telefonePrincipal').mask("(00) 0000-00000");
+        $('#id_telefoneRecado').mask("(00) 0000-00000");
+        $('#id_alturaMetros').mask("0");
+        $('#id_alturaCentimetros').mask("00");
+        $('#id_pesoKg').mask("000");
+        $('#id_pesoGramas').mask("000");
+        $('#id_cpf').mask("000.000.000-00");
+        $('#id_dataNascimento').mask("00/00/0000");
+        $('#id_cns').mask("000.0000.0000.0000");
+
+        $('#id_cns').keypress(function () {
+            if ($('#id_cns').val().length < 18) {
+                changeBorderGreen();
+                limpaElementos();
+                disableSubmit()
+            } else if ($('#id_cns').val().length == 18) {
+                enableSubmit()
+            }
+        })
+
+        $('#id_cns').focusout('change', function () {
+            var cns = $('#id_cns').val();
+            cns = cns.replace(/[^0-9]/, "").replace(/[^0-9]/, "").replace(/[^0-9]/, "");
+            var token = $('[name="csrfmiddlewaretoken"]').val();
+            $.ajax({
+                url: "{% url 'verifica-cns' %}",
+                type: 'post',
+                data: {
+                    'cns': cns,
+                    'csrfmiddlewaretoken': token,
+                },
+                success: function (response) {
+                    limpaElementos()
+                    if (response.status == true) {
+                        var template = "<div class='invalid-feedback pacienteExistente' id='pacienteExistente'><i class='fas fa-exclamation-triangle'></i><strong> Paciente já existe.</strong></div>"
+                        changeBorderred;
+                        document.getElementById('id_cns').insertAdjacentHTML("afterend", template)
+                        document.getElementById('pacienteExistente').style.display = 'block';
+                        disableSubmit()
+                    } else if (response.status == false) {
+                        changeBorderGreen()
+                        enableSubmit()
+
+                    }
+                },
+                error: function (response) {
+                    console.log("Você não tem permissão para essa ação.")
+                }
+            });
+        });
+
+        function changeBorderred(){
+            var element = document.getElementById("id_cns");
+            element.style.borderColor = "red;  font-weight: bold;";;
+        }
+
+        function changeBorderGreen() {
+            var element = document.getElementById("id_cns");
+            element.style.borderColor = "green";;
+        }
+
+        function limpaElementos() {
+            var lista = document.getElementsByClassName("pacienteExistente");
+            for (var i = lista.length - 1; i >= 0; i--) {
+                lista[i].remove()
+            }
+        }
+
+        function enableSubmit() {
+            $('button[type=submit]').attr('disabled', false);
+        }
+
+        function disableSubmit() {
+            $('button[type=submit]').attr('disabled', 'disabled');
+        }
+    });
+
+// var JavaScriptObfuscator = require('javascript-obfuscator');
+
+// var obfuscationResult = JavaScriptObfuscator.obfuscate(
+//     `
+//     $('#id_telefone').mask("(00)00000000000");
+//         $('#id_dataNascimento').mask("00/00/0000");
+//         $('#id_cns').mask("000.0000.0000.0000");
+
+//         $('#id_cns').keypress(function () {
+//             if ($('#id_cns').val().length < 18) {
+//                 changeBorderGreen();
+//                 limpaElementos();
+//                 disableSubmit()
+//             } else if ($('#id_cns').val().length == 18) {
+//                 enableSubmit()
+//             }
+//         })
+
+//         $('#id_cns').focusout('change', function () {
+//             var cns = $('#id_cns').val();
+//             cns = cns.replace(/[^0-9]/, "").replace(/[^0-9]/, "").replace(/[^0-9]/, "");
+//             var token = $('[name="csrfmiddlewaretoken"]').val();
+//             $.ajax({
+//                 url: "{% url 'verifica-cns' %}",
+//                 type: 'post',
+//                 data: {
+//                     'cns': cns,
+//                     'csrfmiddlewaretoken': token,
+//                 },
+//                 success: function (response) {
+//                     limpaElementos()
+//                     if (response.status == true) {
+//                         var template = "<div class='invalid-feedback pacienteExistente' id='pacienteExistente'><i class='fas fa-exclamation-triangle'></i><strong> Paciente já existe.</strong></div>"
+//                         changeBorderred; font - weight: bold; ()
+//                         document.getElementById('id_cns').insertAdjacentHTML("afterend", template)
+//                         document.getElementById('pacienteExistente').style.display = 'block';
+//                         disableSubmit()
+//                     } else if (response.status == false) {
+//                         changeBorderGreen()
+//                         enableSubmit()
+
+//                     }
+//                 },
+//                 error: function (response) {
+//                     console.log("Você não tem permissão para essa ação.")
+//                 }
+//             });
+//         });
+
+//         function changeBorderred; font - weight: bold; (){
+//             var element = document.getElementById("id_cns");
+//             element.style.borderColor = "red;  font-weight: bold;";;
+//         }
+
+//         function changeBorderGreen() {
+//             var element = document.getElementById("id_cns");
+//             element.style.borderColor = "green";;
+//         }
+
+//         function limpaElementos() {
+//             var lista = document.getElementsByClassName("pacienteExistente");
+//             for (var i = lista.length - 1; i >= 0; i--) {
+//                 lista[i].remove()
+//             }
+//         }
+
+//         function enableSubmit() {
+//             $('button[type=submit]').attr('disabled', false);
+//         }
+
+//         function disableSubmit() {
+//             $('button[type=submit]').attr('disabled', 'disabled');
+//         }
+//     `,
+//     {
+//         compact: false,
+//         controlFlowFlattening: true,
+//         controlFlowFlatteningThreshold: 1,
+//         numbersToExpressions: true,
+//         simplify: true,
+//         stringArrayShuffle: true,
+//         splitStrings: true,
+//         stringArrayThreshold: 1
+//     }
+// );
+
+// console.log(obfuscationResult.getObfuscatedCode());
+</script>
+{% endblock %}
+
+
+{% block rodape-links %}
+
+{% endblock %}

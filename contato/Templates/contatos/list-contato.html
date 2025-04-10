@@ -1,0 +1,154 @@
+{% extends 'paginas/modelo-ifpr.html' %}
+
+{% load static %}
+
+{% block conteudo %}
+<h4 class="text-center">
+    Contatos
+    <a href="{% url 'contato-create' %}" class="btn btn-primary btn-sm float-right">Adicionar contato</a>
+</h4>
+
+<hr>
+
+
+<div class="input-group">
+  
+    <input type="" name="contato" id="contato" value="{{request.GET.contato}}" class="p-1 border">
+    
+      <div class="input-group-append">
+          <button type="submit" class="btn btn-primary" title="Pesquisar"><i class="fa-solid fa-magnifying-glass"></i></button>
+          <a href="{% url 'contato-list' %}" class="btn btn-secondary" title="Limpar pesquisa"><i class="fa-solid fa-x"></i></a>
+      </div> 
+   
+</div>
+    
+
+</form>
+<hr>
+
+<div class="table-responsive">
+    <table class="table table-striped" id="tabela-contato">
+        <thead>
+            <tr>
+                <th><i class="fas fa-calendar-alt"></i> Nome</th>
+                <th><i class="fas fa-user-nurse"></i> Cargo</th>
+                <th><i class="fas fa-clinic-medical"></i> Unidade</th>                          
+                <th>Assunto</th>
+                <th>Mensagem</th>
+                <th>Atualizado em</th>
+                
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for contato in object_list %}
+            <tr>
+                <td>{{ contato.nomeCompleto}}</td>
+                <td>{{ contato.cargo }}</td>
+                <td>{{ contato.unidade }}</td>
+                <td>{{ contato.assunto }}</td>
+                <td>{{ contato.mensagem }}</td>
+                <td>{{ contato.updated_at }}</td>
+              
+                <td>
+                    <a href="{%url 'contato-update' contato.pk %}" class="btn btn-warning btn-sm" title="Editar">
+                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                    </a>                   
+                </td>
+            </tr>
+           
+            {% endfor %}
+        </tbody>
+            
+    </table>
+    Existem {{page_obj.paginator.count}} contatos.
+    <hr>
+    <nav aria-label="Page navigation">   
+        <ul class="pagination justify-content-end">
+           
+            {% if page_obj.has_previous %}
+                {% if request.GET.contato %}
+                   <li class="page-item">
+                        <a class="page-link" href="?page=1&contato={{request.GET.contato}}" aria-label="Primeira">
+                            <span aria-hidden="true">Primeira</span>
+                            <span class="sr-only">Primeira</span>   
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{page_obj.previous_page_number}}&contato={{request.GET.contato}}">Anterior</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1" aria-label="Primeira">
+                            <span aria-hidden="true">Primeira</span>
+                            <span class="sr-only">Primeira</span>   
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{page_obj.previous_page_number}}">Anterior</a>
+                    </li>
+                {% endif %}
+            {% endif %}
+            {% for n in page_obj.paginator.page_range %}
+                {% if request.GET.contato %}
+                    {% if page_obj.number == n %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ n }}
+                                <span class="sr-only">(current)</span>
+                            </span>
+                        </li>
+                    {% elif n > page_obj.number|add:'-3' and n < page_obj.number|add:'3' %}
+                        <li class="page-item"><a class="page-link" href="?page={{ n }}&contato={{request.GET.contato}}">{{ n }}</a></li>
+                    {% endif %}
+    
+                {% else %}
+                    {% if page_obj.number == n %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ n }}
+                                <span class="sr-only">(current)</span>
+                            </span>
+                        </li>
+                    {% elif n > page_obj.number|add:'-3' and n < page_obj.number|add:'3' %}
+                        <li class="page-item"><a class="page-link" href="?page={{ n }}">{{ n }}</a></li>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+    
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link text-secondary" href="#" aria-label="">
+                    <span aria-hidden="true">...</span>
+                    <span class="sr-only">...</span>
+                    </a>
+                </li>
+                {% if request.GET.contato %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&contato={{request.GET.contato}}" aria-label="última">
+                        <span aria-hidden="true">{{ page_obj.paginator.num_pages }}</span>
+                        <span class="sr-only">última</span>
+                        </a>
+                    </li>
+                    <li class="page-item"></li>
+                        <a class="page-link" href="?page={{page_obj.next_page_number}}&contato={{request.GET.contato}}">Seguinte</a>
+                    </li>
+                    {% else %}                    
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="última">
+                            <span aria-hidden="true">{{ page_obj.paginator.num_pages }}</span>
+                            <span class="sr-only">última</span>
+                            </a>
+                        </li>
+                        <li class="page-item"></li>
+                            <a class="page-link" href="?page={{page_obj.next_page_number}}">Seguinte</a>
+                        </li>
+                {% endif %}
+            {% endif %}
+        </ul>
+    </nav>
+
+</div>
+
+</div> 
+
+
+{% endblock %}

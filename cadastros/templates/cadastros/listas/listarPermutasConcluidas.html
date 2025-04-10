@@ -1,0 +1,240 @@
+{% extends 'paginas/modelo-ifpr.html' %}
+
+{% load static %}
+
+{% block conteudo %}
+
+{% if message %}
+    <div class="alert alert-primary">{{ message }}</div>
+{% endif %}
+
+<h3 class="text-center">
+    <i class="fa fa-check"></i> 
+    Consulta das Permutas
+    <!-- <a href="{% url 'cadastrar-vagaofertada' %}" class="btn btn-primary btn-sm float-right"><i class="fa fa-plus"></i> Adicionar</a> -->
+</h3>
+
+<hr>
+
+<label for="search">Pesquisar</label>
+
+<form action="?" method="GET"> 
+
+    <!-- {% comment %} <div class="form-group">
+      <label for=""></label>
+      <input type="text" class="form-control" name="" id="" aria-describedby="PesquisaId" placeholder="">
+    </div> {% endcomment %} -->
+<div class="input-group">
+  
+    <input type="" name="search" id="search" value="{{request.GET.search}}" class="p-1 border">
+    
+      <div class="input-group-append">
+          <button type="submit" class="btn btn-primary" title="Pesquisar"><i class="fa-solid fa-magnifying-glass"></i></button>
+          <a href="{% url 'listar-permutas-concluidas' %}" class="btn btn-secondary" title="Limpar pesquisa"><i class="fa-solid fa-x"></i></a>
+      </div> 
+   
+</div>
+
+</form>
+
+<hr>
+
+<div class="table-responsive">
+    <table class="table table-striped" id="listar_permutas">
+        <thead>
+            <tr>
+                <th class="text-center" title="Data da permuta" data-toggle="tooltip"><i class="fa fa-calendar-check"></i></th>                
+                <th>Solicitante</th>
+                <th>Cod.</th>
+                <th>Paciente ofertado</th>
+                <th data-toggle="tooltip" title="Cartão SUS do paciente ofertado" data-placement="top">CNS</th>
+                <th>Procedimento</th>
+                <th>Motivo</th>
+                <!-- <th>Data/hora</th> -->
+                <th></th>
+                <th>Paciente agendado</th>
+                <th data-toggle="tooltip" title="Cartão SUS do paciente agendado" data-placement="top">CNS</th>
+                {% for group in request.user.groups.all %}
+                    {% if group.name == 'administrator' %}
+                        <th data-toggle="tooltip" title="Operador que fez a permuta." data-placement="top"><i class="fa fa-user" aria-hidden="true"></i> Operador</th>
+                        <th>Opções</th>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for permuta in object_list %}                
+                <tr>
+                    <td>{{ permuta.created_at|date:"d/m/Y" }}</td>
+                    <td>{{ permuta.unidadeSolicitante|default_if_none:"-" }}</td>
+                    <td class="text-center">{{ permuta.codSolicitacaoPacienteOfertado|default_if_none:"-" }}</td>
+                    <td>{{ permuta.nomePacienteOfertado }}</td>
+                    <td>{{ permuta.nomePacienteOfertado.cns }}</td>
+                    <td data-toggle="tooltip" 
+                    title='Data: {{ permuta.data_vagaOfertada|date:"d"}}/{{ permuta.data_vagaOfertada|date:"m"}}/{{ permuta.data_vagaOfertada|date:"Y"}} às {{ permuta.hora_vagaOfertada }}' 
+                    data-placement="top">{{ permuta.procedimento }}</td>
+                    <td>{{ permuta.motivo }}</td>
+                    <!-- <td>{{ permuta.data_vagaOfertada|date:"d"}}/{{ permuta.data_vagaOfertada|date:"m"}}/{{ permuta.data_vagaOfertada|date:"Y"}} às {{ permuta.hora_vagaOfertada }}</td> -->
+                    <td><i class="fa fa-arrow-right"></i></td>
+                    <td>{{ permuta.nomePacienteAgendado }}</td>
+                    <td>{{ permuta.nomePacienteAgendado.cns }}</td>
+                    {% for group in request.user.groups.all %}
+                        {% if group.name == 'administrator' %}
+                            <td title="{{ permuta.createdBy_user.first_name }}" data-toggle="tooltip">{{ permuta.createdBy_user }}</td>
+                        {% endif%}
+                    {% endfor %}
+                    {% for group in request.user.groups.all %}
+                        {% if group.name == 'administrator' %}
+                            <td>
+                                <a href="{% url 'excluir-permutaConcluida' permuta.pk %}" class="btn btn-danger btn-sm" title="Excluir">
+                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                </a>
+                            </td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8">Nenhuma registro encontrado.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+            
+    </table>
+
+    <nav aria-label="Page navigation">   
+        <ul class="pagination justify-content-end">
+            {% if page_obj.has_previous %}
+                {% if request.GET.search %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1&search={{request.GET.search}}" aria-label="Primeira">
+                            <span aria-hidden="true">Primeira</span>
+                            <span class="sr-only">Primeira</span>   
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{page_obj.previous_page_number}}&search={{request.GET.search}}">Anterior</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1" aria-label="Primeira">
+                            <span aria-hidden="true">Primeira</span>
+                            <span class="sr-only">Primeira</span>   
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{page_obj.previous_page_number}}">Anterior</a>
+                    </li>
+                {% endif %}
+            {% endif %}
+            {% for n in page_obj.paginator.page_range %}
+                {% if request.GET.search %}
+                    {% if page_obj.number == n %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ n }}
+                                <span class="sr-only">(current)</span>
+                            </span>
+                        </li>
+                    {% elif n > page_obj.number|add:'-3' and n < page_obj.number|add:'3' %}
+                        <li class="page-item"><a class="page-link" href="?page={{ n }}&search={{request.GET.search}}">{{ n }}</a></li>
+                    {% endif %}
+    
+                {% else %}
+                    {% if page_obj.number == n %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ n }}
+                                <span class="sr-only">(current)</span>
+                            </span>
+                        </li>
+                    {% elif n > page_obj.number|add:'-3' and n < page_obj.number|add:'3' %}
+                        <li class="page-item"><a class="page-link" href="?page={{ n }}">{{ n }}</a></li>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+    
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link text-secondary" href="#" aria-label="">
+                    <span aria-hidden="true">...</span>
+                    <span class="sr-only">...</span>
+                    </a>
+                </li>
+                {% if request.GET.search %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&search={{request.GET.search}}" aria-label="última">
+                        <span aria-hidden="true">{{ page_obj.paginator.num_pages }}</span>
+                        <span class="sr-only">última</span>
+                        </a>
+                    </li>
+                    <li class="page-item"></li>
+                        <a class="page-link" href="?page={{page_obj.next_page_number}}&search={{request.GET.search}}">Seguinte</a>
+                    </li>
+                    {% else %}                    
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="última">
+                            <span aria-hidden="true">{{ page_obj.paginator.num_pages }}</span>
+                            <span class="sr-only">última</span>
+                            </a>
+                        </li>
+                        <li class="page-item"></li>
+                            <a class="page-link" href="?page={{page_obj.next_page_number}}">Seguinte</a>
+                        </li>
+                {% endif %}
+            {% endif %}
+        </ul>
+    </nav>
+
+</div>
+
+
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+
+    // $(document).ready(function(){
+
+    //     $("#listar_permutas").DataTable({
+    //         responsive: true,
+    //         // "bSort": false,
+    //         "aaSorting": [],
+    //         "pageLength": 50,
+    //         "language": {
+    //             "decimal": "",
+    //             "emptyTable": "Sem dados disponíveis",
+    //             "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+    //             "infoEmpty": "Mostrando de 0 até 0 de 0 registros",
+    //             "infoFiltered": "(filtrado de _MAX_ registros no total)",
+    //             "infoPostFix": "",
+    //             "thousands": ",",
+    //             "lengthMenu": "Mostrar _MENU_ registros",
+    //             "loadingRecords": "A carregar dados...",
+    //             "processing": "A processar...",
+    //             "search": "Procurar:",
+    //             "zeroRecords": "Não foram encontrados resultados",
+    //             "paginate": {
+    //                 "first": "Primeiro",
+    //                 "last": "Último",
+    //                 "next": "Seguinte",
+    //                 "previous": "Anterior"
+    //             },
+    //             "aria": {
+    //                 "sortAscending": ": ordem crescente",
+    //                 "sortDescending": ": ordem decrescente"
+    //             }
+    //         }
+    //     });
+
+    // });
+
+</script>
+{% endblock %}
+
+{% block rodape-links %}
+
+{% endblock %}
+
+
+

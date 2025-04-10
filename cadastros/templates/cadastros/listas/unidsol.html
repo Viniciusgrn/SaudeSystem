@@ -1,0 +1,83 @@
+{% extends 'paginas/modelo-ifpr.html' %}
+
+{% load static %}
+
+{% block conteudo %}
+<h3 class="text-center">
+    Listar Unidades Solicitantes
+    <a href="{% url 'cadastrar-unidsolic' %}" class="btn btn-primary btn-sm float-right">Adicionar</a>    
+</h3>
+
+<hr>
+
+<div class="table-responsive">
+    <table class="table table-striped" id="tabela-listar">
+        <thead>
+            <tr>
+                <th>CNES</th>
+                <th>Nome</th>
+                <th>Opção</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for unidadeSolicitante in object_list %}
+            <tr>
+                <td>{{ unidadeSolicitante.cnes }}</td>
+                <td>{{ unidadeSolicitante.nome }}</td>
+                <td>
+                    <a href="{% url 'editar-unidsolic' unidadeSolicitante.pk %}" class="btn btn-warning btn-sm" title="Editar">
+                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                    </a>
+                    <a href="{% url 'excluir-unidsolic' unidadeSolicitante.pk %}" class="btn btn-danger btn-sm" title="Excluir">
+                        <i class="fa fa-trash" aria-hidden="true"></i>
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3">Nenhum campo registrado.</td>
+            </tr>
+            {% endfor %}
+        </tbody>    
+    </table>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $body = $("body");    
+    $(document).ready(function(){    
+        $("#tabela-listar").DataTable({
+            responsive: true,           
+            "pageLength": 50,
+            "language": {                
+                "emptyTable": "Sem dados disponíveis",
+                "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                // "info": false,
+                "infoEmpty": "Mostrando de 0 até 0 de 0 registros",
+                "infoFiltered": "(filtrado de _MAX_ registros no total)",
+                "search": "Pesquisar",
+                'searchPlaceholder': 'Pesquisar',
+                "thousands": ",",
+                "lengthMenu": "Mostrar _MENU_ registros",                
+                "search": '',
+                "zeroRecords": "Não foram encontrados resultados",
+                "paginate": {
+                    "first": "Primeiro",
+                    "last": "Último",
+                    "next": "Seguinte",
+                    "previous": "Anterior"
+                },
+                "aria": {
+                    "sortAscending": ": ordem crescente",
+                    "sortDescending": ": ordem decrescente"
+                }
+            },            
+        });
+    });
+</script>
+{% endblock %}
+
+{% block rodape-links %}
+
+{% endblock %}

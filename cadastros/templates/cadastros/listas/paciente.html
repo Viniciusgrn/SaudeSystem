@@ -1,0 +1,211 @@
+{% extends 'paginas/modelo-ifpr.html' %}
+
+{% load static %}
+
+{% block conteudo %}
+<h4 class="text-center">
+    Listar Paciente
+    <a href="{% url 'cadastrar-paciente' %}" class="btn btn-primary btn-sm float-right">Adicionar</a>
+</h4>
+<hr>
+<label for="pesquisa">Pesquisar</label>
+<form action="?" method="GET" class="mb-3">
+    <div class="input-group">
+        <input type="" name="s" id="s" value="{{request.GET.s}}" class="p-1 border">
+        <div class="input-group-append">
+            <button type="submit" class="btn btn-primary" title="Pesquisar"><i class="fa-solid fa-magnifying-glass"></i></button>
+            <a href="{% url 'listar-paciente' %}" class="btn btn-secondary" title="Limpar pesquisa"><i class="fa-solid fa-x"></i></a>
+        </div>    
+    </div>
+</form>
+<!-- <div class="row">
+    <div class="col-12">
+        <ol>
+            <li>{{ pacienteEsus.nu_cpf }}</li>
+            <li>{{ pacienteEsus.co_seq_tacidadao }}</li>
+            <li>{{ pacienteEsus.co_tipo_auditoria }}</li>
+            <li>{{ pacienteEsus.dt_auditoria }}</li>
+            <li>{{ pacienteEsus.co_seq_cidadao }}</li>
+            <li>{{ pacienteEsus.co_unico_cidadao_prontuario }}</li>
+            <li>{{ pacienteEsus.co_unico_prontuario }}</li>
+            <li>{{ pacienteEsus.st_desconhece_nome_mae }}</li>
+            <li>{{ pacienteEsus.co_localidade }}</li>
+            <li>{{ pacienteEsus.nu_area }}</li>
+            <li>{{ pacienteEsus.nu_micro_area }}</li>
+            <li>{{ pacienteEsus.nu_nis_pis_pasep }}</li>
+            <li>{{ pacienteEsus.dt_atualizado }}</li>
+            <li>{{ pacienteEsus.nu_cns_responsavel }}</li>
+            <li>{{ pacienteEsus.no_responsavel }}</li>
+            <li>{{ pacienteEsus.dt_nascimento_responsavel }}</li>
+            <li>{{ pacienteEsus.nu_cns_cuidador }}</li>
+            <li>{{ pacienteEsus.no_cuidador }}</li>
+            <li>{{ pacienteEsus.dt_nascimento_cuidador }}</li>
+            <li>{{ pacienteEsus.tp_cds_cuidador }}</li>
+            <li>{{ pacienteEsus.co_unico_cidadao }}</li>
+            <li>{{ pacienteEsus.co_nacionalidade }}</li>
+            <li>{{ pacienteEsus.co_pais_nascimento }}</li>
+            <li>{{ pacienteEsus.co_unico_ultima_ficha }}</li>
+            <li>{{ pacienteEsus.dt_ultima_ficha }}</li>
+            <li>{{ pacienteEsus.st_registro_cadsus }}</li>
+            <li>{{ pacienteEsus.dt_atualizado_cadsus }}</li>
+            <li>{{ pacienteEsus.st_desconhece_nome_pai }}</li>
+            <li>{{ pacienteEsus.dt_naturalizacao }}</li>
+            <li>{{ pacienteEsus.dt_entrada_brasil }}</li>
+            <li>{{ pacienteEsus.nu_portaria_naturalizacao }}</li>
+            <li>{{ pacienteEsus.st_fora_area }}</li>
+            <li>{{ pacienteEsus.st_infrm_orientacao_sexual }}</li>
+            <li>{{ pacienteEsus.tp_orientacao_sexual }}</li>
+            <li>{{ pacienteEsus.st_infrm_identidade_genero }}</li>
+            <li>{{ pacienteEsus.tp_identidade_genero }}</li>
+            <li>{{ pacienteEsus.st_compartilhamento_prontuario }}</li>
+            <li>{{ pacienteEsus.st_ativo }}</li>
+            <li>{{ pacienteEsus.st_nao_possui_cuidador }}</li>
+            <li>{{ pacienteEsus.nu_cns }}</li>
+            <li>{{ pacienteEsus.no_cidadao }}</li>
+            <li>{{ pacienteEsus.no_cidadao_filtro }}</li>
+            <li>{{ pacienteEsus.co_escolaridade }}</li>
+            <li>{{ pacienteEsus.co_raca_cor }}</li>
+            <li>{{ pacienteEsus.co_etnia }}</li>
+            <li>{{ pacienteEsus.co_estado_civil }}</li>
+            <li>{{ pacienteEsus.co_cbo }}</li>
+            <li>{{ pacienteEsus.dt_nascimento }}</li>
+            <li>{{ pacienteEsus.dt_obito }}</li>
+            <li>{{ pacienteEsus.no_mae }}</li>
+            <li>{{ pacienteEsus.no_mae_filtro }}</li>
+            <li>{{ pacienteEsus.no_pai }}</li>
+            <li>{{ pacienteEsus.no_social }}</li>
+            <li>{{ pacienteEsus.st_faleceu }}</li>
+            <li>{{ pacienteEsus.nu_documento_obito }}</li>
+            <li>{{ pacienteEsus.st_dados_obito_cadsus }}</li>
+            <li>{{ pacienteEsus.no_localidade_exterior }}</li>
+            <li>{{ pacienteEsus.co_pais_exterior }}</li>
+            <li>{{ pacienteEsus.ds_cep }}</li>
+            <li>{{ pacienteEsus.ds_complemento }}</li>
+            <li>{{ pacienteEsus.ds_ponto_referencia }}</li>
+            <li>{{ pacienteEsus.ds_logradouro }}</li>
+            <li>{{ pacienteEsus.co_uf }}</li>
+            <li>{{ pacienteEsus.co_localidade_endereco }}</li>
+            <li>{{ pacienteEsus.nu_numero }}</li>
+            <li>{{ pacienteEsus.st_sem_numero }}</li>
+            <li>{{ pacienteEsus.no_bairro }}</li>
+            <li>{{ pacienteEsus.no_bairro_filtro }}</li>
+            <li>{{ pacienteEsus.tp_logradouro }}</li>
+            <li>{{ pacienteEsus.nu_telefone_residencial }}</li>
+            <li>{{ pacienteEsus.nu_telefone_celular }}</li>
+            <li>{{ pacienteEsus.nu_telefone_contato }}</li>
+            <li>{{ pacienteEsus.ds_email }}</li>
+            <li>{{ pacienteEsus.st_ativo_para_exibicao }}</li>
+            <li>{{ pacienteEsus.st_unificado }}</li>
+            <li>{{ pacienteEsus.st_territorio_utiliza_cpf }}</li>
+            <li>{{ pacienteEsus.nu_cpf_cuidador }}</li>
+            <li>{{ pacienteEsus.nu_cpf_responsavel }}</li>
+            <li>{{ pacienteEsus.no_tipo_sanguineo }}</li>
+            <li>{{ pacienteEsus.no_sexo }}</li>
+        </ol>
+    </div>
+</div> -->
+<div class="table-responsive">
+    <table class="table table-striped tabela-listar">
+        <thead>
+            <tr>
+                <th>Cartão Sus</th>
+                <th>Nome</th>
+                <th>Data Nascimento</th>
+                <th>Telefone</th>                
+                <th>Opção</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            {% for paciente in object_list %}
+            <tr>
+
+                <td>{{ paciente.cns }}</td>
+                <td>{{ paciente.nome }}</td>
+                <td>{{ paciente.dataNascimento|date:"d"}}/{{ paciente.dataNascimento|date:"m"}}/{{ paciente.dataNascimento|date:"Y"}}</td>
+                <td>{{ paciente.telefone}}</td>
+                         
+                <td>
+                    <a href="{% url 'editar-paciente' paciente.pk %}" class="btn btn-warning btn-sm" title="Editar">
+                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                    </a>
+                    <a href="{% url 'excluir-paciente' paciente.pk %}" class="btn btn-danger btn-sm" title="Excluir">
+                        <i class="fa fa-trash" aria-hidden="true"></i>
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">Nenhuma paciente registrado.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+            
+    </table>
+    {% include 'paginas/componentes/filtro.html' %}    
+</div>
+{% endblock %}
+{% block scripts %}
+<script>  
+        $('#id_paciente').select2(); 
+        // var table = new Tabulator(".tabela-listar", {
+        //     // data:tabledata,
+        //     // height:"100%",
+        //     // minHeight: 300,
+        //     // rowHeight:40,
+        //     layout:"fitColumns", // [fitDataFill,fitDataStretch,fitDataTable,fitColumns]
+        //     pagination:"local",
+        //     paginationSize:10,
+        //     // responsiveLayout:"collapse",
+        //     // resizableColumnFit: "false", // true, "header", "cell", false 
+        //     resizableRowGuide:true,
+        //     resizableColumnGuide:true,
+        //     movableColumns:true,
+        //     paginationCounter:"rows", //pages
+        //     langs:{
+        //         "default":{
+        //             "pagination":{
+        //                 "counter":{
+        //                     "showing": "Exibindo",
+        //                     "of": "de",
+        //                     "rows": "linhas",
+        //                     "pages": "páginas",
+        //                 }
+        //             },
+        //         }
+        //     },
+        //     // rowHeader:{headerSort:false, hozAlign:"center", resizable:false, frozen:true}, //{formatter:"rownum"}
+        //     // resizableRows:true,
+        //     frozenRows:0,
+        //     columns: [
+        //         {title: "Cartão Sus", field: "cns",hozAlign:"center"},
+        //         {title: "Nome", field: "nome", hozAlign:"center"},
+        //         {title: "Data Nascimento", field: "dataNascimento", width:'20%', hozAlign:"center"},
+        //         {title: "Telefone", field: "telefone", width:'10%', hozAlign:"center"},
+        //         {title: "Opção", formatter:"html", width:'10%', hozAlign:"center"},                
+        //     ],
+        //     // autoColumns:"full",
+        //     placeholder:"Sem registros para exibir",
+        //     placeholderHeaderFilter:"Não encontrei registros com o termo pesquisado",
+        //     // autoColumns:true,
+        //     // autoColumnsDefinitions:function(definitions){
+        //     //     //definitions - array of column definition objects
+        //     //     definitions.forEach((column) => {
+        //     //         column.headerFilter = true; // add header filter to every column
+        //     //     });
+
+        //     //     return definitions;
+        //     // },
+        //     // autoColumnsDefinitions:[
+        //     //     {field:"nome", editor:"input", headerFilter:true}, //add input editor to the name column                
+        //     // ],
+        //     footerElement:"<a href='{% url 'cadastrar-paciente' %}'><button class='btn btn-primary'><i class='fa fa-plus'></i> Cadastrar paciente</button></a>",
+        // });
+        //     table.on("tableBuilt", () => {
+        //     table.setPage(2);
+        // });
+    
+</script>
+{% endblock %}
+{% block rodape-links %}
+{% endblock %}

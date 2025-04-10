@@ -1,0 +1,106 @@
+{% extends 'paginas/modelo-ifpr.html' %}
+
+{% load static %}
+
+{% block conteudo %}
+
+{% if message %}
+    <div class="alert alert-primary">{{ message }}</div>
+{% endif %}
+
+<h3 class="text-center">
+     <i class="fa fa-clipboard-list"></i> Listar os Procedimentos a Serem Ofertados
+    <a href="{% url 'cadastrar-vagaofertada' %}" class="btn btn-primary btn-sm float-right"><i class="fa fa-plus"></i> Adicionar</a>
+</h3>
+
+<hr>
+
+<div class="table-responsive">
+    <table class="table table-striped" id="tabela-listar">
+        <thead>
+            <tr>
+                <th>Unidade</th>
+                <th>Data de Inclusão</th>
+                <th>Cód. Solicitação</th>
+                <th>Tipo</th>
+                <th>Data/Hora do Procedimento</th>
+                <th>Procedimento</th>
+                <th>Unidade Executante</th>
+                <th>Opção</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for permuta in object_list %}
+                {% if permuta.status == False %}
+                    <tr>
+                        <td>{{ permuta.unidadeSolicitante }}</td>
+                        <td>{{ permuta.created_at|date:"d/m/Y" }}</td>
+                        <td>{{ permuta.codSolicitacao }}</td>
+                        <td>{{ permuta.tipo }}</td>
+                        <td>{{ permuta.data_vagaOfertada|date:"d"}}/{{ permuta.data_vagaOfertada|date:"m"}}/{{ permuta.data_vagaOfertada|date:"Y"}} às {{ permuta.hora_vagaOfertada }}</td>
+                        <td>{{ permuta.procedimento }}</td>
+                        <td>{{ permuta.unidadeExecutante }}</td>
+                        <td>
+                            <a href= "{% url 'editar-vagaofertada' permuta.pk %}" class="btn btn-warning btn-sm" title="Editar">
+                                <i class="fa fa-pencil" aria-hidden="true"></i>
+                            </a>
+                            {% for group in request.user.groups.all %}
+                                {% if group.name == 'administrator' or group.name == 'callcenter'%}
+                                    <a href="{% url 'excluir-vagaofertada' permuta.pk %}" class="btn btn-danger btn-sm" title="Excluir">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </a>
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endif %}
+            {% empty %}
+            <tr>
+                <td colspan="8">Nenhum campo registrado.</td>
+            </tr>
+            {% endfor %}
+        </tbody>    
+    </table>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $body = $("body");    
+    $(document).ready(function(){    
+        $("#tabela-listar").DataTable({
+            responsive: true,           
+            "pageLength": 50,
+            "language": {                
+                "emptyTable": "Sem dados disponíveis",
+                "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                // "info": false,
+                "infoEmpty": "Mostrando de 0 até 0 de 0 registros",
+                "infoFiltered": "(filtrado de _MAX_ registros no total)",
+                "search": "Pesquisar",
+                'searchPlaceholder': 'Pesquisar',
+                "thousands": ",",
+                "lengthMenu": "Mostrar _MENU_ registros",                
+                "search": '',
+                "zeroRecords": "Não foram encontrados resultados",
+                "paginate": {
+                    "first": "Primeiro",
+                    "last": "Último",
+                    "next": "Seguinte",
+                    "previous": "Anterior"
+                },
+                "aria": {
+                    "sortAscending": ": ordem crescente",
+                    "sortDescending": ": ordem decrescente"
+                }
+            },            
+        });
+    });
+</script>
+{% endblock %}
+
+{% block rodape-links %}
+
+{% endblock %}
+
+

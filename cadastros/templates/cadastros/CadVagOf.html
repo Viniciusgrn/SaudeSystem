@@ -1,0 +1,217 @@
+{% extends 'paginas/modelo-ifpr.html' %}
+
+{% load static %}
+
+{% load crispy_forms_tags %}
+
+{% block conteudo %}
+<h1 class="text-center"> Cadastrar Vaga Ofertada  </h1>
+<p class="lead">
+    Preencha todos os campos obrigatórios.
+</p>
+
+<hr>
+<form action="{% url 'cadastrar-vagaofertada' %}" method="POST" enctype="multipart/form-data">
+    
+    {% csrf_token %}
+    
+    <!-- {{ form|crispy }} -->
+
+    <div class="row">
+        <div id="div_id_paciente" class="form-group  col-12 col-md-12">
+            <label for="id_paciente" class=" requiredField"><i class="fa fa-search"></i> Informe o Cartão Sus do Paciente<span class="asteriskField">*</span>
+            </label>
+            <input type="text" name="cns" id="cnsPaciente" class="form-control" required>
+            <p class="alert alert-warning"><i class="fa fa-user"></i> <strong>CNS:</strong><span id="numeroCns">
+                    </span> &nbsp;&nbsp;&nbsp; <strong>Nome:</strong> <span id="nomePaciente"></span>
+            </p>
+            <input type="hidden" name="paciente" id="id_paciente">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-12 col-md-4">
+            <label for="{{ form.data_vagaOfertada.id_for_label }}">Data do Exame/Consulta<span class="asteriskField">*</span></label>
+            {{ form.data_vagaOfertada }}            
+        </div>
+        <div class="form-group col-12 col-md-4">
+            <label for="{{ form.hora_vagaOfertada.id_for_label }}">Hora do Exame/Consulta<span class="asteriskField">*</span></label>
+            {{ form.hora_vagaOfertada }}
+        </div>
+        <div class="form-group col-12 col-md-4">
+            <label for="{{ form.tipo.id_for_label }}">Tipo<span class="asteriskField">*</span></label>
+            {{ form.tipo }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-12 col-md-2">
+            <label for="{{ form.codSolicitacao.id_for_label }}">Código da Solicitação<span class="asteriskField">*</span></label>
+            {{ form.codSolicitacao }}
+        </div>
+        <div class="form-group col-12 col-md-5">
+            <label for="{{ form.unidadeExecutante.id_for_label }}">Unidade Executante<span class="asteriskField">*</span></label>
+            {{ form.unidadeExecutante }}
+        </div>
+        <div class="form-group col-12 col-md-5">
+            <label for="{{ form.procedimento.id_for_label }}">Procedimento<span class="asteriskField">*</span></label>
+            {{ form.procedimento }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-12 col-md-12">
+            <label for="{{ form.motivo.id_for_label }}">Motivo da Desistência?<span class="asteriskField">*</span></label>
+            {{ form.motivo }}
+        </div>
+    </div>
+    
+    {% if userUnidade == False %}
+    <span class="d-inline-block" data-toggle="tooltip" title="É necessário estar vinculado a uma unidade. Contate o T.I da saúde">
+        <input type="button" class="btn btn-primary disabled" value="Salvar">
+    </span>
+    {% else %}
+    <button type="submit" class="btn btn-primary btn-block">Salvar</button>
+    {% endif %}
+</form>
+
+
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+    $(document).ready(function(){
+        var now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());       
+        
+        // $('#id_paciente').select2();
+        $('#id_procedimento').select2();
+        // $('#id_data_vagaOfertada').attr('type', 'date');
+        // $('#id_hora_vagaOfertada').attr('type', 'time');
+        // var horaVaga = document.getElementById('id_hora_vagaOfertada');
+        
+        document.getElementById("id_data_vagaOfertada").type = "date";
+        document.getElementById("id_hora_vagaOfertada").type = "time";
+        // document.getElementById("id_data_vagaOfertada").value = now.toISOString().slice(0,10);
+        // document.getElementById("id_hora_vagaOfertada").value = now.toISOString().slice(11,16);        
+    });
+    
+    
+    
+    var dataVaga = document.getElementById('id_data_vagaOfertada');
+    var dataAtual = new Date().toISOString().split('T',1)[0];
+    dataVaga.addEventListener('focusout', () => {
+        limpaElementos();
+        if(dataVaga.value !== '' ){            
+            if(dataVaga.value >= dataAtual){
+                console.log('Pode agendar');
+                changeBorderGreen()
+                enableSubmit()
+            } else {
+                var template = "<div class='invalid-feedback dataInvalida' id='dataInvalida'><i class='fas fa-exclamation-triangle'></i><strong> A data não pode ser inferior a data atual. </strong></div>"
+                changeBorderRed() 
+                document.getElementById('id_data_vagaOfertada').insertAdjacentHTML("afterend", template)
+                document.getElementById('dataInvalida').style.display = 'block';
+                disableSubmit()
+            }            
+        } else{
+            console.log('Preencha hora da vaga');
+        }
+
+    });
+
+    function changeBorderRed() {
+            var element = document.getElementById("id_data_vagaOfertada");
+            element.style.borderColor = "red";
+        }
+
+        function changeBorderGreen() {
+            var element = document.getElementById("id_data_vagaOfertada");
+            element.style.borderColor = "green";
+        }
+
+        function limpaElementos() {
+            var lista = document.getElementsByClassName("dataInvalida");
+            for (var i = lista.length - 1; i >= 0; i--) {
+                lista[i].remove()
+            }
+        }
+
+        function enableSubmit() {
+            $('button[type=submit]').attr('disabled', false);
+        }
+
+        function disableSubmit() {
+            $('button[type=submit]').attr('disabled', 'disabled');
+        }
+
+        disableSubmit()
+        $('#cnsPaciente').focusout('change', function () {
+            if ($('#cnsPaciente').val().length < 15) {
+                $('#numeroCns').html('');
+                $('#nomePaciente').html('');
+                $('#nomePaciente').html("<span class='text-danger'><strong><i class='fa fa-warning'></i> Você não digitou os 15 números do Cartão SUS</strong></span>");
+                var element = document.getElementById("cnsPaciente");
+                    element.style.borderColor = "red";
+                    disableSubmit()
+
+            } else {            
+                var cns = $('#cnsPaciente').val();
+                var token = $('[name="csrfmiddlewaretoken"]').val();
+                cns = cns.replace(/[^0-9]/, "").replace(/[^0-9]/, "").replace(/[^0-9]/, "");
+                $.ajax({
+                    url: "{% url 'buscaDadosPacienteAjax' %}",
+                    type: 'post',
+                    data: {
+                        'cns': cns,
+                        'csrfmiddlewaretoken': token,
+                    },
+                    success: function (response) {
+                        console.log(response.cns)
+                        if (response.cns != undefined) {                        
+                            $('#numeroCns').html(response.cns);
+                            $('#id_paciente').val(response.id);
+                            $('#nomePaciente').html(response.nome);                            
+                            var element = document.getElementById("cnsPaciente");
+                            element.style.borderColor = "green";
+                            enableSubmit()
+
+                            if(response.status == false){
+                                var template = "<div class='invalid-feedback pacienteExistente' id='pacienteExistente'><i class='fas fa-exclamation-triangle'></i><strong> Paciente já existe.</strong></div>"                        
+                                changeBorderRed()
+                                document.getElementById('nomePaciente').insertAdjacentHTML("afterend", template)
+                                document.getElementById('pacienteExistente').style.display = 'block';
+                                disableSubmit()
+                            }else if(response.status == false){
+                                changeBorderGreen()
+                                enableSubmit()
+                            }
+
+                        }
+                        else {
+                            // Dado não encontrado, exiba a mensagem de erro
+                            var element = document.getElementById("cnsPaciente");
+                            element.style.borderColor = "red";
+                            $('#numeroCns').html('');
+                            $('#nomePaciente').html("<span class='text-danger'><strong><i class='fa fa-warning'></i> O CNS não foi encontrado. Por favor, cadastre o paciente.</strong></span> <a href='{% url 'cadastrar-paciente'  %}' target='blank' class='btn btn-sm btn-primary'><i class='fa fa-user'></i> Cadastrar Paciente</a>");
+                            disableSubmit()
+                        }
+                    },
+                    error: function (response) {
+                        console.log("Você não tem permissão para essa ação. Inesperado")
+                    }
+                });
+            }
+        });
+
+        
+
+</script>
+
+{% endblock %}
+
+
+
+{% block rodape-links %}
+
+{% endblock %}
+
