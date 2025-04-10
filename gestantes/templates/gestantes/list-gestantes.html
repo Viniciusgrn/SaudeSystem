@@ -1,0 +1,197 @@
+{% extends 'paginas/modelo-ifpr.html' %}
+
+{% load static %}
+
+{% block conteudo %}
+<h4 class="text-center">
+    Gestantes
+    <a href="{% url 'create-gestante' %}" class="btn btn-primary btn-sm float-right">Inserir gestante</a>
+</h4>
+
+<hr>
+<div class="container">
+    <div class="card p-3 m-3 text-center">
+        <h5 class="border-bottom pb-2">Calculadora DPP</h5>
+        <div class="row mt-3">
+            <div class="col-12">
+                <form action="">
+                    <div class="row">
+                        <div class="col-6">
+                            <label for="dum"><i class="fa fa-calendar"></i> Data da dum</label>
+                            <input class="form-control" type="date" name="dum" id="id_dum">
+                        </div>
+                        <div class="col-6">
+                            <label for="idadeGestacional"><i class="fa fa-calendar"></i> Data da IG ultrassom</label>
+                            <input class="form-control" type="date" name="idadeGestacional" id="id_idadeGestacional">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h5>DPP</h5>
+                            <h4 id="id_dpp">00/00/0000</h4>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>  
+    </div>
+</div>
+
+ <div class="tab-pane fade show active py-1" id="home" role="tabpanel" aria-labelledby="home-tab">
+    <div class="table-responsive">
+        <table class="table table-striped" id="tabela-listar">
+            <thead>
+                <tr>
+                    <!-- <th>#</th> -->
+                    <th>Data entrada</th>
+                    <th>Status</th>
+                    <th>Idade gestacional</th>
+                    <th>Dt agendamento</th>
+                    <th>Data 14 semanas</th>
+                    <th>Data 24 semanas</th>
+                    <th>Data 28 semanas</th>
+                    <th>DT limite médico</th>
+                    <th>Data agendamento</th>
+                    <th>Cns</th>
+                    <th>Cross</th>
+                    <th>Paciente</th>
+                    <th>Data nascimento</th>
+                    <th>Diag/Procedimento</th>
+                    <th>Tipo de ECO</th>
+                    <th>Telefone</th>
+                    <th>Unidade</th>
+                    <!-- <th>Inserir Idade Gestacional:</th>
+                    <th>IG Ultrassom</th>
+                    <th>Data provável do parto(DDP):</th>
+                    <th>Informar se é de 1º, 2º ou 3º trimestre:</th>
+                    <th>Observação da unidade</th>
+                    <th>Data solicitada US obstetrico</th>
+                    <th>Inserir a data em que a gestante completa 12 semanas</th>
+                    <th>Código para imprimir a filipeta no SISREG</th> -->
+                    <th>Observação</th>
+                    <th><i class="fas fa-cogs"></i></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for gestante in object_list %}
+                    <!-- <td>{{gestante.id}}</td> -->
+                    <td>{{gestante.nome}}</td>
+                    <td>{{gestante.dataNascimento}}</td>
+                    <td>{{gestante.telefoneParaContato}}</td>
+                    <td>{{gestante.cns}}</td>
+                    <td>{{gestante.cross}}</td>
+                    <td>{{gestante.statusProcesso}}</td>
+                    <td>{{gestante.unidade}}</td>
+                    <td>{{gestante.dataInicioPrenatal}}</td>
+                    <td>{{gestante.gestaoGemelar}}</td>
+                    <td>{{gestante.dum}}</td>
+                    <td>{{gestante.idadeGestacional}}</td>
+                    <td>{{gestante.idadeGestacionalUltrassom}}</td>
+                    <td>{{gestante.ddp}}</td>
+                    <td>{{gestante.trimestre}}</td>
+                    <td>{{gestante.observacaoUnidade}}</td>
+                    <td>{{gestante.dataSolicitacaoUsObstetrico}}</td>
+                    <!-- <td>{{gestante.dataAgendada}}</td> -->
+                    <!-- <td>{{gestante.codigoSolicitacao}}</td> -->
+                    <!-- <td>{{gestante.observacaoSMS}}</td> -->
+                    <td>
+                        <a href="{% url 'update-gestante' gestante.pk %}" class="btn btn-warning btn-sm"
+                            title="Editar">
+                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                        </a>
+                    </td>
+                    </tr>
+                    {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+
+    $('#id_paciente').select2();
+    /**    
+    * @param {string} dum
+    */
+    
+    $("#tabela-listar").DataTable({
+        responsive: true,
+        // "bSort": false,
+        "aaSorting": [],
+        "pageLength": 100,
+        "scrollY": "70px",
+        "language": {
+            "decimal": "",
+            "emptyTable": "Sem dados disponíveis",
+            "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+            "infoEmpty": "Sem registros",
+            "infoFiltered": "(filtrado de _MAX_ registros no total)",
+            "infoPostFix": "",
+            "thousands": ".",
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "loadingRecords": "A carregar dados...",
+            "processing": "A processar...",
+            "search": "Procurar:",
+            "zeroRecords": "Não foram encontrados resultados",
+            "paginate": {
+                "first": "Primeiro",
+                "last": "Último",
+                "next": "Seguinte",
+                "previous": "Anterior"
+            },
+            "aria": {
+                "sortAscending": ": ordem crescente",
+                "sortDescending": ": ordem decrescente"
+            }
+        }
+    });
+
+    var dum = document.getElementById('id_dum');
+    dpp = document.getElementById('id_dpp');
+    
+    dum.addEventListener('change', function(){
+        if(dum.value.length == 10){
+            calculaDataProvavelPartoJaneiroMarco(dum.value)
+        }
+    });
+
+    function calculaDataProvavelPartoJaneiroMarco(dum){
+        if(Number(dum.substring(5,7)) >= 1 && Number(dum.substring(5,7)) <= 3){
+            var dia = Number(dum.substring(8)) + 7;
+            if(dia > 31) {
+                dia = dia - 31;
+            }
+            var mes = Number(dum.substring(5,7)) + 9 + 1;
+            var ano = Number(dum.substring(0,4));
+            if(mes>12){
+                ano = ano + 1;
+            }
+            
+            dpp.innerText = dia+"/"+mes+"/"+ano;
+
+        } else {
+            var dia = Number(dum.substring(8)) + 7;
+            if(dia >=31){
+                dia = dia - 31;
+            }
+            var mes = Number(dum.substring(5,7)) - 3;
+            var ano = Number(dum.substring(0,4));
+
+            if(mes > 3){
+                ano = ano + 1;
+            }
+                        
+            dpp.innerText = dia+"/"+mes+"/"+ano;
+        }
+    }
+    
+</script>
+{% endblock %}
+
+{% block rodape-links %}
+
+{% endblock %}
