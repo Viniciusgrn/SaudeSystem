@@ -1,0 +1,88 @@
+{% extends 'paginas/modelo-ifpr.html' %}
+
+{% load static %}
+
+{% block conteudo %}
+<h4 class="text-center">
+    Gestantes
+    <a href="{% url 'create-unidadeDemanda' %}" class="btn btn-primary btn-sm float-right">Inserir demanda da unidade</a>
+</h4>
+
+<hr>
+ <div class="tab-pane fade show active py-1" id="home" role="tabpanel" aria-labelledby="home-tab">
+    <div class="table-responsive">
+        <table class="table table-striped" id="tabela-listar">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Unidade:</th>
+                    <th>CNES:</th>
+                    <th>Quantidade:</th>
+                    <th>Editar <i class="fas fa-ellipsis-v"></i></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for unidadeDemanda in object_list %}
+                    <td>{{unidadeDemanda.id}}</td>
+                    <td>{{unidadeDemanda.unidade}}</td>
+                    <td>{{unidadeDemanda.cnes}}</td>
+                    <td>{{unidadeDemanda.quantidade}}</td>
+                    <td>
+                        <a href="{% url 'update-unidadeDemanda' unidadeDemanda.pk %}" class="btn btn-warning btn-sm"
+                            title="Editar">
+                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                        </a>
+                    </td>
+                    </tr>
+                    {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+
+    $('#id_paciente').select2();
+
+    $("#tabela-listar").DataTable({
+        responsive: true,
+        // "bSort": false,
+        "aaSorting": [],
+        "pageLength": 100,
+        "scrollY": "70px",
+        "language": {
+            "decimal": "",
+            "emptyTable": "Sem dados disponíveis",
+            "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+            "infoEmpty": "Sem registros",
+            "infoFiltered": "(filtrado de _MAX_ registros no total)",
+            "infoPostFix": "",
+            "thousands": ".",
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "loadingRecords": "A carregar dados...",
+            "processing": "A processar...",
+            "search": "Procurar:",
+            "zeroRecords": "Não foram encontrados resultados",
+            "paginate": {
+                "first": "Primeiro",
+                "last": "Último",
+                "next": "Seguinte",
+                "previous": "Anterior"
+            },
+            "aria": {
+                "sortAscending": ": ordem crescente",
+                "sortDescending": ": ordem decrescente"
+            }
+        }
+    });
+
+</script>
+{% endblock %}
+
+{% block rodape-links %}
+
+{% endblock %}

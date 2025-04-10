@@ -1,0 +1,418 @@
+{% extends 'paginas/modelo-ifpr.html' %}
+{% load humanize %}
+{% load static %}
+
+{% block conteudo %}
+<h4 class="text-center">
+    Chamados
+    <a href="{% url 'create-chamado-unidade' %}" class="btn btn-primary btn-sm float-right">Abrir um Novo Chamado</a>
+</h4>
+
+<hr>
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link" id="abertos-tab" data-toggle="tab" href="#abertos" role="tab" aria-controls="abertos" aria-selected="true"><i class="fa fa-clipboard-list"></i> Aguardando Atendimento ({{ totalAbertos|intcomma }})</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="fechados-tab" data-toggle="tab" href="#fechados" role="tab" aria-controls="fechados" aria-selected="false"><i class="fa fa-clipboard-check"></i> Concluídos ({{ totalConcluidos|intcomma }})</a>
+    </li>    
+  </ul>
+
+<div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active py-5" id="abertos" role="tabpanel" aria-labelledby="abertos-tab">
+        <div class="d-block d-sm-none">
+            <div class="row my-1 py-1 border text-center">
+                <div class="col-12 my-0 py-0 ">                    
+                    <p class=""><strong>Total de chamados abertos</strong></p>
+                    <h4 class="">{{ aguardandoTotal|intcomma }}</h4>
+                </div>
+            </div>
+            {% for chamado in object_list %}
+                {% if chamado.status != 4 and chamado.status != 5 and chamado.status != 6 %}
+                    <div class="accordion mb-1 py-0" id="accordionExample">
+                        <div class="card my-0 py-0">
+                        <div class="card-body my-0 py-0" id="">
+                            <h6 class="my-0 py-0">
+                            <button class="btn btn-sm btn-block collapsed my-0 py-0" type="button" data-toggle="collapse" data-target="#collapse{{chamado.pk}}" aria-expanded="true" aria-controls="collapseOne">
+                                <div class="col-12 my-0 py-0 text-left">
+                                    <p class="my-0 py-0"><i class="fa fa-calendar-check"></i>  {{ chamado.dataAbertura|date:"d/m/Y"  }} às {{ chamado.dataAbertura|date:"H:m" }}
+                                    </p>
+                                    <p class="my-0 py-0">{{ chamado.unidade }}</p>
+                                    <p class="mb-1 pb-1">Assunto:
+                                        {% if chamado.assunto == 1 %}
+                                            Computador
+                                        {% elif chamado.assunto == 2 %}
+                                            Impressora
+                                        {% elif chamado.assunto == 3 %}
+                                            Internet
+                                        {% elif chamado.assunto == 4 %}
+                                            Outros
+                                        {% endif %}</p>
+                                </div>
+                            </button>
+                            </h6>
+                        </div>
+                    
+                        <div id="collapse{{chamado.pk}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                            <div class="card-body">                                        
+                            <p><strong>Data de Abertura</strong> {{ chamado.dataAbertura|date:"d/m/Y"  }} às {{ chamado.dataAbertura|date:"H:m" }}</p>
+                            <hr>
+                            <p><strong>Solicitante:</strong> {{ chamado.solicitante }}</p>
+                            <p><strong>Descrição:</strong> {{ chamado.ocorrencia }}</p>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                {% endif %}
+                {% empty %}
+                    <div class="col">
+                        Nenhum registrado encontrado.
+                    </div>
+            {% endfor %}
+        </div>
+
+
+        <div class="table-responsive d-none d-sm-block">
+            <table class="table table-striped tabela-listar">
+                <thead>
+                    <tr>                        
+                        <th><i class="fas fa-calendar-alt"></i> Data Abertura</th>
+                        <th><i class="fas fa-user-nurse"></i> Solicitante</th>
+                        <th><i class="fas fa-clinic-medical"></i> Unidade</th>
+                        <th><i class="fas fa-file-alt"></i> Ocorrência</th>
+                        
+                        <!-- <th><i class="fas fa-tools"></i> Técnico</th>                 -->
+                        <!-- <th><i class="fas fa-calendar-alt"></i> Data Operação</th>                 -->
+                        <!-- <th><i class="fas fa-calendar-alt"></i> Data Resolução</th>                 -->
+                        <!-- <th><i class="fas fa-comment-dots"></i> Obs</th> -->
+                        <!-- <th><i class="fas fa-info-circle"></i> Status</th> -->
+                        <th>Opção <i class="fas fa-ellipsis-v"></i></th>
+                        
+                    </tr>
+                </thead>
+        
+                <tbody>
+                    {% for chamado in object_list %}
+                        {% if chamado.status != 4 and chamado.status != 5 and chamado.status != 6 %}
+                            <tr>
+                                <td>{{ chamado.dataAbertura|date:"d/m/Y" }}</td>
+                                <td>{{ chamado.solicitante }}</td>
+                                <td>{{ chamado.unidade }}</td>
+                                <td>{{ chamado.ocorrencia }}</td>
+                                
+                                <!-- <td>{{ chamado.tecnico|default_if_none:"-" }}</td> -->
+                                <!-- <td>{{ chamado.dataOperacao|date:"d/m/Y" }}</td> -->
+                                <!-- <td>{{ chamado.dataResolucao|date:"d/m/Y" }}</td> -->                                
+                                    <!-- <td>{{ chamado.observacao|default_if_none:"-" }}</td>                                 -->
+                
+                                <!-- {% if chamado.status == 1 %}
+                                    <td>Aguardando atendimento</td>
+                                {% elif chamado.status == 2 %}
+                                    <td>Aguardando peça de reposição</td>
+                                {% elif chamado.status == 3 %}
+                                    <td>Em andamento</td>
+                                {% elif chamado.status == 4 %}
+                                    <td>Concluído</td>
+                                {% elif chamado.status == 5 %}
+                                    <td>Não tem conserto</td>
+                                {% elif chamado.status == 6 %}
+                                    <td>Equipamento depreciado</td>
+                                {% endif %} -->
+                                <td>
+                                    <a href="{% url 'update-chamado' chamado.id %}" class="btn btn-warning btn-sm" title="Editar">
+                                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                                    </a>
+                                    <!-- <a href="#" class="btn btn-danger btn-sm" title="Excluir">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </a> -->
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% empty %}
+                    <tr>
+                        <td colspan="9">Nenhum registrado encontrado.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                    
+            </table>
+        </div>
+    </div>
+    
+    <!-- ABA CONCLUÍDOS -->
+    <div class="tab-pane fade py-5" id="fechados" role="tabpanel" aria-labelledby="fechados-tab">
+
+        <div class="table-responsive">
+            <table class="table table-striped tabela-listar">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-calendar-alt"></i> Data Abertura</th>
+                        <th><i class="fas fa-user-nurse"></i> Solicitante</th>
+                        <th><i class="fas fa-clinic-medical"></i> Unidade</th>
+                        <th><i class="fas fa-file-alt"></i> Ocorrência</th>                
+                        <th><i class="fas fa-tools"></i> Técnico</th>                
+                        <th><i class="fas fa-calendar-alt"></i> Data Operação</th>                
+                        <th><i class="fas fa-calendar-alt"></i> Data Resolução</th>                
+                        <th><i class="fas fa-comment-dots"></i> Obs</th>
+                        <th><i class="fas fa-info-circle"></i> Status</th>
+                        <th>Opção <i class="fas fa-ellipsis-v"></i></th>
+                        
+                    </tr>
+                </thead>
+        
+                <tbody>
+                    {% for chamado in object_list %}
+                        {% if chamado.status == 4 %}
+                            <tr>
+                                <td>{{ chamado.dataAbertura|date:"d/m/Y" }}</td>
+                                <td>{{ chamado.solicitante }}</td>
+                                <td>{{ chamado.unidade }}</td>
+                                <td>{{ chamado.ocorrencia }}</td>
+                                {% if chamado.tecnico == None %}
+                                    <td>Não Atribuído</td>
+                                {% else %}
+                                    <td>{{ chamado.tecnico }}</td>
+                                {% endif %}
+                                <td>{{ chamado.dataOperacao|date:"d/m/Y" }}</td>
+                                <td>{{ chamado.dataResolucao|date:"d/m/Y" }}</td>
+                                {% if chamado.tecnico == None %}
+                                    <td>-</td>
+                                {% else %}
+                                    <td>{{ chamado.observacao }}</td>
+                                {% endif %}
+                
+                                {% if chamado.status == 1 %}
+                                    <td>Aguardando atendimento</td>
+                                {% elif chamado.status == 2 %}
+                                    <td>Aguardando peça de reposição</td>
+                                {% elif chamado.status == 3 %}
+                                    <td>Em andamento</td>
+                                {% elif chamado.status == 4 %}
+                                    <td>Concluído</td>
+                                {% elif chamado.status == 5 %}
+                                    <td>Não tem conserto</td>
+                                {% elif chamado.status == 6 %}
+                                    <td>Equipamento depreciado</td>
+                                {% endif %}
+                                <td>
+                                    <a href="{% url 'update-chamado' chamado.id %}" class="btn btn-warning btn-sm" title="Editar">
+                                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                                    </a>
+                                    <a href="#" class="btn btn-danger btn-sm" title="Excluir">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% empty %}
+                    <tr>
+                        <td colspan="9">Nenhum registrado encontrado.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>                    
+            </table>
+        </div>
+
+    </div>
+
+    <!-- ABA SEM CONSERTO -->
+    <div class="tab-pane fade py-5" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+        
+        <div class="table-responsive">
+            <table class="table table-striped tabela-listar">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-calendar-alt"></i> Data Abertura</th>
+                        <th><i class="fas fa-user-nurse"></i> Solicitante</th>
+                        <th><i class="fas fa-clinic-medical"></i> Unidade</th>
+                        <th><i class="fas fa-file-alt"></i> Ocorrência</th>                
+                        <th><i class="fas fa-tools"></i> Técnico</th>                
+                        <th><i class="fas fa-calendar-alt"></i> Data Operação</th>                
+                        <th><i class="fas fa-calendar-alt"></i> Data Resolução</th>                
+                        <th><i class="fas fa-comment-dots"></i> Obs</th>
+                        <th><i class="fas fa-info-circle"></i> Status</th>
+                        <th>Opção <i class="fas fa-ellipsis-v"></i></th>
+                        
+                    </tr>
+                </thead>
+        
+                <tbody>
+                    {% for chamado in object_list %}
+                        {% if chamado.status == 5 %}
+                            <tr>
+                                <td>{{ chamado.dataAbertura|date:"d/m/Y" }}</td>
+                                <td>{{ chamado.solicitante }}</td>
+                                <td>{{ chamado.unidade }}</td>
+                                <td>{{ chamado.ocorrencia }}</td>
+                                {% if chamado.tecnico == None %}
+                                    <td>Não Atribuído</td>
+                                {% else %}
+                                    <td>{{ chamado.tecnico_id }}</td>
+                                {% endif %}
+                                <td>{{ chamado.dataOperacao|date:"d/m/Y" }}</td>
+                                <td>{{ chamado.dataResolucao|date:"d/m/Y" }}</td>
+                                {% if chamado.observacao|default_if_none:"-" %}                                    
+                                    <td>{{ chamado.observacao }}</td>
+                                {% endif %}
+                
+                                {% if chamado.status == 1 %}
+                                    <td>Aguardando atendimento</td>
+                                    {% elif chamado.status == 2 %}
+                                    <td>Aguardando peça de reposição</td>
+                                    {% elif chamado.status == 3 %}
+                                    <td>Em andamento</td>
+                                    {% elif chamado.status == 4 %}
+                                    <td>Concluído</td>
+                                    {% elif chamado.status == 5 %}
+                                    <td>Não tem conserto</td>
+                                    {% elif chamado.status == 6 %}
+                                    <td>Equipamento depreciado</td>
+                                {% endif %}
+                                <td>
+                                    <a href="{% url 'update-chamado' chamado.id %}" class="btn btn-warning btn-sm" title="Editar">
+                                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                                    </a>
+                                    <a href="#" class="btn btn-danger btn-sm" title="Excluir">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% empty %}
+                    <tr>
+                        <td colspan="9">Nenhum registrado encontrado.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                    
+            </table>
+        </div>
+
+    </div>
+
+    <div class="tab-pane fade py-5" id="depreciados" role="tabpanel" aria-labelledby="depreciados-tab">
+    
+        <div class="table-responsive">
+            <table class="table table-striped tabela-listar">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-calendar-alt"></i> Data Abertura</th>
+                        <th><i class="fas fa-user-nurse"></i> Solicitante</th>
+                        <th><i class="fas fa-clinic-medical"></i> Unidade</th>
+                        <th><i class="fas fa-file-alt"></i> Ocorrência</th>
+                        <th><i class="fas fa-tools"></i> Técnico</th>
+                        <th><i class="fas fa-calendar-alt"></i> Data Operação</th>
+                        <th><i class="fas fa-calendar-alt"></i> Data Resolução</th>
+                        <th><i class="fas fa-comment-dots"></i> Obs</th>
+                        <th><i class="fas fa-info-circle"></i> Status</th>
+                        <th>Opção <i class="fas fa-ellipsis-v"></i></th>
+    
+                    </tr>
+                </thead>
+    
+                <tbody>
+                    {% for chamado in object_list %}
+                        {% if chamado.status == 6 %}
+                            <tr>
+                                <td>{{ chamado.dataAbertura|date:"d/m/Y" }}</td>
+                                <td>{{ chamado.solicitante }}</td>
+                                <td>{{ chamado.unidade }}</td>
+                                <td>{{ chamado.ocorrencia }}</td>
+                                {% if chamado.tecnico == None %}
+                                    <td>Não Atribuído</td>
+                                {% else %}
+                                    <td>{{ chamado.tecnico }}</td>
+                                {% endif %}
+                                <td>{{ chamado.dataOperacao|date:"d/m/Y" }}</td>
+                                <td>{{ chamado.dataResolucao|date:"d/m/Y" }}</td>
+                                {% if chamado.tecnico == None %}
+                                    <td>-</td>
+                                {% else %}
+                                    <td>{{ chamado.observacao }}</td>
+                                {% endif %}
+        
+                                {% if chamado.status == 1 %}
+                                <td>Aguardando atendimento</td>
+                                {% elif chamado.status == 2 %}
+                                <td>Aguardando peça de reposição</td>
+                                {% elif chamado.status == 3 %}
+                                <td>Em andamento</td>
+                                {% elif chamado.status == 4 %}
+                                <td>Concluído</td>
+                                {% elif chamado.status == 5 %}
+                                <td>Não tem conserto</td>
+                                {% elif chamado.status == 6 %}
+                                <td>Equipamento depreciado</td>
+                                {% endif %}
+                                    <td>
+                                        <a href="{% url 'update-chamado' chamado.id %}" class="btn btn-warning btn-sm" title="Editar">
+                                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-danger btn-sm" title="Excluir">
+                                            <i class="fa fa-trash" aria-hidden="true"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                        {% endif %}
+                        {% empty %}
+                        <tr>
+                            <td colspan="9">Nenhum registrado encontrado.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+    
+            </table>
+        </div>
+    
+    </div>
+  </div>
+
+{% endblock %}
+
+
+
+{% block scripts %}
+<script>
+    $(".tabela-listar").DataTable({
+        responsive: true,
+        // "bSort": false,
+        "aaSorting": [],
+        // "order": [[0, 'asc']],
+        "pageLength": -1,
+        "lengthMenu": [
+            [10, 25, 50, -1],
+            [10, 25, 50, 'todos']
+        ],
+        "language": {
+            "decimal": "",
+            "emptyTable": "Sem dados disponíveis",
+            "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+            "infoEmpty": "Mostrando de 0 até 0 de 0 registros",
+            "infoFiltered": "(filtrado de _MAX_ registros no total)",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "loadingRecords": "A carregar dados...",
+            "processing": "A processar...",
+            "search": "Procurar:",
+            "zeroRecords": "Não foram encontrados resultados",
+            "paginate": {
+                "first": "Primeiro",
+                "last": "Último",
+                "next": "Seguinte",
+                "previous": "Anterior"
+            },
+            "aria": {
+                "sortAscending": ": ordem crescente",
+                "sortDescending": ": ordem decrescente"
+            }
+        }
+    });
+</script>
+{% endblock %}
+
+{% block rodape-links %}
+
+{% endblock %}
+

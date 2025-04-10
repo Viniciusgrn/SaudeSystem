@@ -1,0 +1,489 @@
+{% extends 'paginas/modelo-ifpr.html' %}
+{% load humanize %}
+{% load static %}
+
+{% block conteudo %}
+<h4 class="text-center">
+    Analytics
+</h4>
+
+<hr>
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true"><i class="fa fa-clipboard-list"></i> Dashboard</a>
+    </li>    
+  </ul>
+
+<div class="tab-content" id="myTabContent">
+    <!-- Dashboard -->
+    <div class="tab-pane fade show active py-5" id="home" role="tabpanel" aria-labelledby="home-tab">        
+        <div class="table-responsive">            
+            <div class="row mb-3">
+                <div class="col-12 col-md-6 mb-3">
+                    <div class="card text-center">
+                        <div class="card-body">                            
+                            <!-- Totais -->
+                            <div class="row mb-3">
+                                <div class="col-12 col-md-8">
+                                    <div class="row">
+                                        <!-- <div class="col-12">
+                                            <p class="card-category">Chamados</p>
+                                        </div> -->
+                                        <div class="col-6 col-md-3">
+                                            <p class="card-category">chamados abertos</p>
+                                            <h4 class="card-title">{{ aguardandoTotal|intcomma }}</h4>
+                                        </div>
+                                        <div class="col-6 col-md-3">
+                                            <p class="card-category">chamados andamento</p>
+                                            <h4 class="card-title">{{ andamentoTotal|intcomma }}</h4>
+                                        </div>
+                                        <div class="col-6 col-md-3">
+                                            <p class="card-category">chamados fechados</p>
+                                            <h4 class="card-title">{{ fechadosTotal|intcomma }}</h4>
+                                        </div>
+                                        <div class="col-6 col-md-3">
+                                            <p class="card-category">total de chamados</p>
+                                            <h4 class="card-title">{{ chamadosTotal|intcomma }}</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12 col-md-4">
+                                    <canvas id="graficoChamados"></canvas>
+                                </div>
+                            </div>
+
+
+
+                                <div class="row">
+                                    <!-- <div class="col-8">
+                                        <div class="row border-bottom mb-3">
+                                            <div class="col-12">
+                                                <p class="card-category">Últimos 7 dias</p>
+                                            </div>
+                                            <div class="col-3">
+                                                <h4 class="card-title">{{ seteDiasAguardando|intcomma }}</h4>
+                                                <p class="card-category">abertos</p>                                                
+                                            </div>
+                                            <div class="col-3">
+                                                <h4 class="card-title">{{ seteDiasAndamento|intcomma }}</h4>
+                                                <p class="card-category">andamento</p>
+                                            </div>
+                                            <div class="col-3">
+                                                <h4 class="card-title">{{ seteDiasFechados|intcomma }}</h4>
+                                                <p class="card-category">fechados</p>
+                                            </div>     
+                                            <div class="col-3">
+                                                <h4 class="card-title">{{ seteDiasTotal|intcomma }}</h4>
+                                                <p class="card-category">total</p>
+                                            </div>
+                                        </div>
+                                        <div class="row border-bottom mb-3">
+                                            <div class="col-12">
+                                                <p class="card-category">Últimos 15 dias</p>
+                                            </div>
+                                            <div class="col-3">
+                                                <h4 class="card-title">{{ quinzeDiasAguardando|intcomma }}</h4>
+                                                <p class="card-category">abertos</p>
+                                            </div>
+                                            <div class="col-3">
+                                                <h4 class="card-title">{{ quinzeDiasAndamento|intcomma }}</h4>
+                                                <p class="card-category">andamento</p>                                                
+                                            </div>
+                                            <div class="col-3">
+                                                <h4 class="card-title">{{ quinzeDiasFechados|intcomma }}</h4>
+                                                <p class="card-category">fechados</p>
+                                            </div>
+                                            <div class="col-3">
+                                                <h4 class="card-title">{{ quinzeDiasTotal|intcomma }}</h4>
+                                                <p class="card-category">total</p>
+                                            </div>     
+                                        </div>
+                                        <div class="row border-bottom mb-3">
+                                            <div class="col-12">
+                                                <p class="card-category">Últimos 30 dias</p>
+                                            </div>
+                                            <div class="col-3">
+                                                <h4 class="card-title">{{ trintaDiasAguardando|intcomma }}</h4>
+                                                <p class="card-category">abertos</p>
+                                            </div>
+                                            <div class="col-3">
+                                                <h4 class="card-title">{{ trintaDiasAndamento|intcomma }}</h4>
+                                                <p class="card-category">andamento</p>
+                                            </div>
+                                            <div class="col-3">
+                                                <h4 class="card-title">{{ trintaDiasFechados|intcomma }}</h4>
+                                                <p class="card-category">fechados</p>
+                                            </div>
+                                            <div class="col-3">
+                                                <h4 class="card-title">{{ trintaDiasTotal|intcomma }}</h4>
+                                                <p class="card-category">total</p>
+                                            </div>
+                                        </div> 
+                                    </div> -->
+                                </div>                            
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 mb-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <div class="text-center">																						
+                                <div class="row">
+                                    <div class="col-12 col-md-6 mb-3">
+                                        <div class="row">
+                                            <div class="col-12 border-bottom mb-3">
+                                                <p class="card-category">Total de Equipamentos</p>
+                                                <h4 class="card-title">{{ equipamentoTotal|intcomma }}</h4>
+                                            </div>
+                                            <div class="col-4 col-md-4">
+                                                <p class="card-category"><span title="Computadores" data-toggle="tooltip" data-placement="bottom"><i class="fa-solid fa-computer"></i></span></p>
+                                                <h4 class="card-title">{{ computadores|intcomma }}</h4>
+                                            </div>                                                        
+                                            <div class="col-4 col-md-4">
+                                                <p class="card-category"><span title="Impressoras" data-toggle="tooltip" data-placement="bottom"><i class="fa-solid fa-print"></i></span></p>
+                                                <h4 class="card-title">{{ impressoras|intcomma }}</h4>
+                                            </div>
+                                            <div class="col-4 col-md-4">
+                                                <p class="card-category"><span title="Tablets" data-toggle="tooltip" data-placement="bottom"><i class="fa-solid fa-tablet-screen-button"></i></span></p>
+                                                <h4 class="card-title">{{ tablets|intcomma }}</h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-4">
+                                        <canvas id="graficoEquipamentos"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <!-- <div class="text-center">																						 -->
+                                <div class="row">                                    
+                                    <div class="col-12 col-md-8 mb-3">
+                                        <table class="table table-hover" id="tecnicoTable">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Técnico</th>
+                                                    <th scope="col">Total</th>                                        
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for tecnico in totalChamadosPorTecnico %}                                                    
+                                                    <tr>
+                                                        <th scope="row">{{ tecnico.nome }}</th>
+                                                        <td>{{tecnico.totalChamados}}</td>
+                                                    </tr>                                                    
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>                                    
+                                    <div class="mt-5 col-12 col-md-4">
+                                        <canvas id="graficoTecnicos"></canvas>
+                                    </div>
+                                </div>
+                            <!-- </div> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <!-- <div class="text-center">																						 -->
+                                <div class="row">                                    
+                                    <div class="col-12 col-md-8 mb-3">
+                                        <table class="table table-hover" id="unidadeTable">
+                                            <thead>
+                                                <tr>
+                                                <th scope="col">Unidade</th>
+                                                <th scope="col">Total</th>                                                    
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for unidade in totalChamadosPorUnidade %}
+                                                    <tr>
+                                                        <th scope="row">{{ unidade.unidade }}</th>
+                                                        <td>{{ unidade.totalChamados }}</td>                                                            
+                                                    </tr>                                                        
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>                                    
+                                    <div class="col-12 col-md-4">
+                                        <canvas id="graficoUnidades"></canvas>
+                                    </div>
+                                </div>
+                            <!-- </div> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Dashboard -->
+  </div>
+
+{% endblock %}
+
+
+
+{% block scripts %}
+<script>
+
+    $(document).ready(function () {
+
+        $("#tecnicoTable").DataTable({
+            responsive: true,
+            // "bSort": false,
+            "aaSorting": [],
+            "pageLength": 7,
+            "language": {
+                "decimal": "",
+                "emptyTable": "Sem dados disponíveis",
+                "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                "infoEmpty": "Mostrando de 0 até 0 de 0 registros",
+                "infoFiltered": "(filtrado de _MAX_ registros no total)",
+                "infoPostFix": "",
+                "thousands": ",",
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "loadingRecords": "A carregar dados...",
+                "processing": "A processar...",
+                "search": "Procurar:",
+                "zeroRecords": "Não foram encontrados resultados",
+                "paginate": {
+                    "first": "Primeiro",
+                    "last": "Último",
+                    "next": "Seguinte",
+                    "previous": "Anterior"
+                },
+                "aria": {
+                    "sortAscending": ": ordem crescente",
+                    "sortDescending": ": ordem decrescente"
+                }
+            }
+        });
+
+        $("#unidadeTable").DataTable({
+            responsive: true,
+            // "bSort": false,
+            "aaSorting": [],
+            "pageLength": 5,
+            "language": {
+                "decimal": "",
+                "emptyTable": "Sem dados disponíveis",
+                "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                "infoEmpty": "Mostrando de 0 até 0 de 0 registros",
+                "infoFiltered": "(filtrado de _MAX_ registros no total)",
+                "infoPostFix": "",
+                "thousands": ",",
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "loadingRecords": "A carregar dados...",
+                "processing": "A processar...",
+                "search": "Procurar:",
+                "zeroRecords": "Não foram encontrados resultados",
+                "paginate": {
+                    "first": "Primeiro",
+                    "last": "Último",
+                    "next": "Seguinte",
+                    "previous": "Anterior"
+                },
+                "aria": {
+                    "sortAscending": ": ordem crescente",
+                    "sortDescending": ": ordem decrescente"
+                }
+            }
+        });
+
+
+
+        new Chart(document.getElementById('graficoChamados'), {
+            type: 'pie',  
+            data: {
+                labels: ['Aguardando Atendimento', 'Em andamento', 'Fechados'],
+                datasets: [{          
+                    data: [{{aguardandoTotal}}, {{andamentoTotal}}, {{fechadosTotal}}],
+                    borderWidth: 1
+                }]
+            },
+            options: { 
+                plugins: 
+                { 
+                    legend: 
+                    { 
+                        display: true 
+                    }, 
+                } 
+            },
+        });
+
+        new Chart(document.getElementById('graficoEquipamentos'), {
+            type: 'pie',  
+            data: {
+                labels: ['Computadores', 'Impressoras', 'Tablets'],
+                datasets: [{          
+                    data: [{{computadores}}, {{impressoras}}, {{tablets}}],
+                    borderWidth: 1
+                }]
+            },
+            options: { 
+                plugins: 
+                { 
+                    legend: 
+                    { 
+                        display: true 
+                    }, 
+                } 
+            },
+        });
+
+
+        $.ajax({
+            // url: '/api/historicoFilaReguladaAjax',
+            url: '/api/analyticsSupport/graficoTecnicosAjax',
+            success: function (response) {
+                let nomeTecnicos = response.map(function (e) {
+                    return e.tecnico;
+                });
+                let totaisChamados = response.map(function (e) {                    
+                    return e.totalChamado;
+                });
+
+                nomeTecnicos.shift();
+                totaisChamados.shift();
+
+                console.log(nomeTecnicos,totaisChamados)
+                //instancia do grafico
+                var ctx = document.getElementById('graficoTecnicos').getContext('2d');
+
+                //configura opções
+                var myoption = {
+                    plugins:{
+                        legend:{
+                            display: true,
+                        },
+                    },
+                    tooltips: {
+                        enabled: true
+                    },
+                    hover: {
+                        animationDuration: 1
+                    },
+
+                    // scales: {
+                    //     y: { // defining min and max so hiding the dataset does not change scale range
+                    //         min: 0
+                    //     },
+
+                    // }
+                };
+
+                var config = {
+                    type: 'pie',
+                    data: {
+                        // labels: nomeTecnicos,
+                        labels: ['Rafael', 'Emyle', 'Luan', 'Vinicius'],
+                        datasets: [{
+                            label: [],
+                            data: totaisChamados,
+                            // backgroundColor: [
+                            //     'rgba(255,99,132,0.2)',
+                            //     'rgba(54,162,235,0.2)',
+                            // ],
+                            // borderColor: [
+                            //     'rgba(255,99,132,1)',
+                            //     'rgba(54,162,235,1)',
+                            // ],
+                            // borderWidth: 1
+                        }],
+                    },
+                    options: myoption,
+                }
+                
+                //instancia grafico dos técnicos
+                new Chart(ctx, config);
+            },
+            error: function (data) { 
+                console.log(data.statusText);
+            }
+        });
+
+
+        $.ajax({
+            // url: '/api/historicoFilaReguladaAjax',
+            url: '/api/analyticsSupport/graficoUnidadesAjax',
+            success: function (response) {
+                let nomeUnidades = response.map(function (e) {                    
+                    return e.unidade_id;
+                });
+                let totaisChamados = response.map(function (e) {                    
+                    return e.totalChamado;
+                });
+
+                //instancia do grafico
+                var ctx = document.getElementById('graficoUnidades').getContext('2d');
+
+                //configura opções
+                var myoption = {
+                    plugins:{
+                        legend:{
+                            display: false,
+                        },
+                    },
+                    tooltips: {
+                        enabled: true
+                    },
+                    hover: {
+                        animationDuration: 1
+                    },
+
+                    // scales: {
+                    //     y: { // defining min and max so hiding the dataset does not change scale range
+                    //         min: 0
+                    //     },
+
+                    // }
+                };
+
+                var config = {
+                    type: 'pie',
+                    data: {
+                        labels: nomeUnidades,
+                        datasets: [{
+                            label: [],
+                            data: totaisChamados,
+                            // backgroundColor: [
+                            //     'rgba(255,99,132,0.2)',
+                            //     'rgba(54,162,235,0.2)',
+                            // ],
+                            // borderColor: [
+                            //     'rgba(255,99,132,1)',
+                            //     'rgba(54,162,235,1)',
+                            // ],
+                            // borderWidth: 1
+                        }],
+                    },
+                    options: myoption,
+                }
+                
+                //instancia grafico dos técnicos
+                new Chart(ctx, config);
+            },
+            error: function (data) { 
+                console.log(data.statusText);
+            }
+        });
+
+    });
+</script>
+
+
+{% endblock %}
+
+{% block rodape-links %}
+
+{% endblock %}
+

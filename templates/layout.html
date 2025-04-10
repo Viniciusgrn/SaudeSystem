@@ -1,0 +1,292 @@
+{% load static %}
+
+<!doctype html>
+<html lang="pt-br" class="h-100">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Rafael H. D. Zottesso">
+
+    
+    <title>{% block titulo %} {% endblock %} - SMS Bragança Pta</title>
+    
+
+    <!-- Ícone do favicon -->
+    <link href="{% static 'img/favicon.gif' %}" rel="shortcut icon" type="image/x-icon" />
+
+
+    <!-- Importação do Bootstrap 4 e do Font awesome -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet"> -->
+
+    <!-- CSS adicional Select2-->
+    <link href="{% static 'css/ifpr.css' %}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    
+    <link href="{% static 'tabulator-master/dist/css/tabulator.min.css' %}" rel="stylesheet">
+    <!-- Importação do Datatables -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.22/datatables.min.css" />
+    <link href="{% static 'fontawesomefree/css/all.min.css' %}" rel="stylesheet" type="text/css">
+
+    <!-- Ícone na barra de abas -->
+    <!-- <link rel="shortcut icon" href="{% static 'img/favicon.png' %}"> -->
+
+    <!-- Bloco destinado aos estilos para cada página -->
+    {% block styles %}
+
+    {% endblock %}
+
+</head>
+
+<body class="d-flex flex-column h-100">
+    <main role="main" class="flex-shrink-0">
+<!-- Bloco com o menu principal -->
+        {% block menu %}
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary font-115 shadow">
+
+            <div class="container-fluid">
+                <a class="navbar-brand mr-1" href="{% url 'index' %}">
+                    <img src="{% static 'img/fb.png' %}" height="40" alt="">
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+                    aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item px-0 mx-0">
+                            <a class="nav-link" href="{% url 'index' %}">
+                                <i class="fa fa-home" aria-hidden="true"></i>                                
+                            </a>
+                        </li>                 
+                        {% if request.user.is_authenticated %}
+                            {% for group in request.user.groups.all %}
+                                    {% if group.name == 'administrativo' or group.name == "callcenter" or group.name == "administrator" %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownMenuLink"
+                            role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-plus-square" aria-hidden="true"></i>
+                            Call Center
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                {% for group in request.user.groups.all %}
+                                    {% if group.name == 'administrativo' %}
+                                        <a class="dropdown-item" href="{% url 'listar-paciente' %}">Paciente</a>
+                                        <a class="dropdown-item" href="{% url 'listar-vagaofertada' %}">Vaga A Ser Ofertada</a>
+                                        {% elif group.name == 'enfermeiros' or group.name == 'medicos' %}
+                                        <a class="dropdown-item" href="{% url 'listar_classificacaoRisco' %}">Classificação de Risco</a>
+                                        {% elif group.name == "callcenter" or group.name == "administrator" %}
+                                        <a class="dropdown-item" href="{% url 'listar-paciente' %}">Paciente</a>
+                                        <a class="dropdown-item" href="{% url 'listar-procedimento' %}">Procedimento</a>
+                                        <a class="dropdown-item" href="{% url 'listar-unidsol' %}">Unidade Solicitante</a>
+                                        <a class="dropdown-item" href="{% url 'listar-unidexec' %}">Unidade Executante</a>
+                                        <a class="dropdown-item" href="{% url 'listar-vagaofertada' %}">Vaga A Ser Ofertada</a>
+                                        <a class="dropdown-item" href="{% url 'listar_permutas' %}">Permutas Disponíveis</a>
+                                        <a class="dropdown-item" href="{% url 'listar-importar' %}">Fila de Espera</a>                            
+                                        <hr class="m-0">
+                                        <a class="dropdown-item" href="{% url 'listar-permutas-concluidas' %}">Consulta das Permutas</a>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </li>
+                        {% endif %}
+                                {% endfor %}
+                        {% endif %}
+
+                        {% for group in request.user.groups.all %}
+                                {% if group.name == "administrator" or group.name == "cirurgia"%}
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle text-white" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-file-alt"></i>
+                                        Relatórios
+                                        </a>
+                                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                            <li class="dropdown-submenu"><a class="dropdown-item dropdown-toggle" href="#">Regulação</a>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item" href="{%  url 'relatorioFilaPorGrupo' %}">Relatório da fila por grupo</a></li>
+                                                    <li><a class="dropdown-item" href="{% url 'relatorioAgrupadoPorProcedimento' %}">Relatório da fila por procedimento</a></li>
+                                                </ul>
+                                            </li>
+                                            <li class="dropdown-submenu"><a class="dropdown-item dropdown-toggle disabled" href="#">TI</a>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item" href="#">Relatório de equipamentos</a></li>
+                                                    <li><a class="dropdown-item" href="#">Relatório de chamados</a></li>
+                                        
+                                                    <!-- submenu do submenu -->
+                                                    <!-- <li class="dropdown-submenu"><a class="dropdown-item dropdown-toggle" href="#">Submenu</a>
+                                                        <ul class="dropdown-menu">
+                                                        <li><a class="dropdown-item" href="#"><i class="fas fa-file-alt"></i> Relatório da por grupo</a></li>
+                                                        <li><a class="dropdown-item" href="#"><i class="fas fa-file-alt"></i> Relatório da por procedimento</a></li>                                                       
+                                                        </ul>
+                                                    </li>   -->
+                                                </ul>
+                                            </li>
+                                            <li class="dropdown-submenu"><a class="dropdown-item dropdown-toggle disabled" href="#">Call Center</a>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item" href="#">Relatório 1</a></li>
+                                                    <li><a class="dropdown-item" href="#">Relatório 2</a></li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                {% elif group.name == "cirurgia" or group.name == "relatorios" %}
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle text-white" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-file-alt"></i>
+                                        Relatórios
+                                        </a>
+                                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                            <li class="dropdown-submenu"><a class="dropdown-item dropdown-toggle" href="#">Regulação</a>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item" href="{%  url 'relatorioFilaPorGrupo' %}">Relatório da fila por grupo</a></li>
+                                                    <li><a class="dropdown-item" href="{% url 'relatorioAgrupadoPorProcedimento' %}">Relatório da fila por procedimento</a></li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                {% endif %}
+                            {%endfor%}
+
+                        <!-- <li class="nav-item ">
+                            <a class="nav-link" href="{% url 'sobre' %}">
+                                <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                Sobre
+                            </a>
+                        </li>
+                        <li class="nav-item ">
+                            <a class="nav-link" href="#">
+                                <i class="fa fa-question-circle" aria-hidden="true"></i>
+                                Ajuda
+                            </a>
+                        </li> -->
+                    </ul>
+                    <ul class="navbar-nav">
+                        {% if request.user.is_authenticated %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa fa-user" aria-hidden="true"></i> {% if request.user.is_authenticated %} Olá {{ request.user.first_name }} {% endif %}
+                                </a>
+                                <div class="dropdown-menu">
+                                    <!-- <a class="dropdown-item" href="{% url 'userInfo' %}"><i class="fa-solid fa-person"></i> Informações pessoais</a>     -->
+                                    <!-- <a class="dropdown-item" href="{% url 'contato-create' %}"><i class="fa fa-comment"></i> Feedback</a>     -->
+                                    <a class="dropdown-item" href="{% url 'changePassword' %}"><i class="fa-solid fa-key"></i></i> Mudar senha</a>    
+                                    <div class="dropdown-divider"></div>                        
+                                    <a class="dropdown-item" href="{% url 'userLogout' %}"><i class="fa fa-sign-out"></i> Logout</a>                             
+                                </div>
+                            </li>
+                        {% else %}
+<!--                            <li class="nav-item">-->
+<!--                                <a class="nav-link" href="{% url 'userCreate' %}">-->
+<!--                                    Cadastro-->
+<!--                                </a>-->
+<!--                            </li>-->
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'userLogin' %}">
+                                    <i class="fa fa-sign-in" aria-hidden="true"></i>
+                                    Login
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+                    
+
+                <!-- fim do container -->
+            </div>
+        </nav>
+        {% endblock %}
+
+
+        <!-- Bloco de conteúdo -->
+        <div class="container py-5">
+            {% block content %}
+            <h3>Avisos:</h3>
+            {% endblock %}
+        </div>
+
+    </main>
+
+    <footer class="mt-auto">
+
+        <!-- Bloco acima do rodapé com links -->
+        {% block rodape-links %}<!--
+        <div class="container-fluid bg-ifpr text-white p-3">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm">
+                        <h5>O Município</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white">Link 1</a></li>
+                            <li><a href="#" class="text-white">Link 2</a></li>
+                            <li><a href="#" class="text-white">Link 3</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-sm">
+                        <h5>Serviços</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white">Link 1</a></li>
+                            <li><a href="#" class="text-white">Link 2</a></li>
+                            <li><a href="#" class="text-white">Link 3</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-sm">
+                        <h5>Acesso rápido</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white">Link 1</a></li>
+                            <li><a href="#" class="text-white">Link 2</a></li>
+                            <li><a href="#" class="text-white">Link 3</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>-->
+        {% endblock %}
+
+
+        <!-- Rodapé -->
+        {% block rodape %}
+        <div class="container-fluid bg-light text-center p-3">
+            <div class="row">
+                <div class="col-md-4 mx-auto text-center">
+                    <!-- <img src="{% static 'img/ifpr.png' %}" height="48" class="float-left" alt="">
+                    <p>
+                        <span class="lead">Instituto Federal do Paraná</span><br>
+                        <span>Desenvolvido por Rafael H. D. Zottesso</span>
+                    </p> -->
+                </div>
+                <!-- <div class="col-md text-left">
+                    <img src="{% static 'img/ifpr.png' %}" height="100" alt="">
+                </div> -->
+
+            </div>
+        </div>
+        {% endblock %}
+    </footer>
+
+
+    <!-- Importação do JS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="{% static 'fontawesomefree/js/all.min.js' %}"></script>
+    <script src="{% static 'tabulator-master/dist/js/tabulator.min.js' %}"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.22/datatables.min.js"></script>
+    <script src="{% static 'js/jquery.mask.min.js' %}"></script>
+    <script src="{% static 'js/util.js' %}"></script>
+    <script>
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
+    {% block scripts %}
+
+    {% endblock %}
+
+</body>
+
+</html>

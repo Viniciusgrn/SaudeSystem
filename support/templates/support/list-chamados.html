@@ -1,0 +1,734 @@
+{% extends 'paginas/modelo-ifpr.html' %}
+{% load humanize %}
+{% load static %}
+
+{% block conteudo %}
+<h4 class="text-center">
+    Chamados
+    <a href="{% url 'create-chamado' %}" class="btn btn-primary btn-sm float-right">Novo Chamado</a>
+</h4>
+<hr>
+{% for group in request.user.groups.all %}
+    {% if group.name == 'support' %}
+        <div class="row mb-3">
+            <div class="col-12 col-md-8 offset-2">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12 col-md-12">
+                                <div class="row">
+                                    <div class="col-12 col-md-6 col-lg-3">                                        
+                                        <p class="card-category"><i class="fa fa-warning text-warning"></i> Abertos hoje</p>
+                                        <h4 class="card-title">{{ aguardandoHoje|intcomma }}</h4>
+                                    </div>
+                                    <div class="col-12 col-md-6 col-lg-3">                                        
+                                        <p class="card-category"><i class="fa fa-warning text-warning"></i> Abertos nos últimos 7 dias</p>
+                                        <h4 class="card-title">{{ seteDiasAguardando|intcomma }}</h4>
+                                    </div>
+                                    <!-- <div class="col-12 col-md-6 col-lg-3">
+                                        <p class="card-category">Em andamento</p>
+                                        <h4 class="card-title">{{ andamentoTotal|intcomma }}</h4>
+                                    </div> -->
+                                    <div class="col-12 col-md-6 col-lg-3">
+                                        <p class="card-category"><i class="fa fa-check-square text-success"></i> Atendidos nos últimos 7 dias</p>
+                                        <h4 class="card-title">{{ seteDiasFechados|intcomma }}</h4>
+                                    </div>
+                                    <div class="col-12 col-md-6 col-lg-3">
+                                        <p class="card-category"><i class="fa fa-check-square text-success"></i> Atendidos nos últimos 30 dias</p>
+                                        <h4 class="card-title">{{ trintaDiasFechados|intcomma }}</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endfor %}
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    {% for group in request.user.groups.all %}
+        {% if group.name == 'administrator' %}
+            <li class="nav-item">
+                <a class="nav-link" id="resumo-tab" data-toggle="tab" href="#resumo" role="tab" aria-controls="resumo" aria-selected="true">Resumo</a>
+            </li>
+        {% endif %}      
+    {% endfor %}
+    <li class="nav-item">
+      <a class="nav-link active" id="abertos-tab" data-toggle="tab" href="#abertos" role="tab" aria-controls="abertos" aria-selected="true">Abertos <span class="badge badge-pill badge-danger small"><small>{{aguardandoTotal}}</small></span></a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="fechados-tab" data-toggle="tab" href="#fechados" role="tab" aria-controls="fechados" aria-selected="false"> Concluídos <span class="badge badge-pill badge-danger"><small>{{fechadosTotal}}</small></span></a>
+    </li>
+    <!-- <li class="nav-item">
+      <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false"><i class="fa fa-clipboard-question"></i> Sem Conserto</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="depreciados-tab" data-toggle="tab" href="#depreciados" role="tab" aria-controls="depreciados" aria-selected="false"><i class="fa fa-clipboard-question"></i>Equipamentos depreciados</a>
+    </li> -->
+  </ul>
+
+<div class="tab-content" id="myTabContent">
+    {% for group in request.user.groups.all %}
+        {% if group.name == 'administrator' %}
+            <div class="tab-pane fade py-5" id="resumo" role="tabpanel" aria-labelledby="resumo-tab">        
+                <div class="row mb-3">
+                    <div class="col-12 col-md-6 mb-3">
+                        <div class="card text-center">
+                            <div class="card-body">                            
+                                <!-- Totais -->
+                                <div class="row mb-3">
+                                    <div class="col-12 col-md-12">
+                                        <div class="row">                                    
+                                            <div class="col-12 col-md-12 col-lg-12 border-bottom mb-2">
+                                            
+                                                <h5>Chamados</h5>
+                                            
+                                            </div>
+                                            <div class="col-12 col-md-6 col-lg-3">                                        
+                                                <p class="card-category"><i class="fa fa-warning text-warning"></i> Abertos hoje</p>
+                                                <h4 class="card-title">{{ aguardandoHoje|intcomma }}</h4>
+                                            </div>
+                                            <div class="col-12 col-md-6 col-lg-3">                                        
+                                                <p class="card-category"><i class="fa fa-warning text-warning"></i> Abertos nos últimos 7 dias</p>
+                                                <h4 class="card-title">{{ seteDiasAguardando|intcomma }}</h4>
+                                            </div>
+                                            <!-- <div class="col-12 col-md-6 col-lg-3">
+                                                <p class="card-category">Em andamento</p>
+                                                <h4 class="card-title">{{ andamentoTotal|intcomma }}</h4>
+                                            </div> -->
+                                            <div class="col-12 col-md-6 col-lg-3">
+                                                <p class="card-category"><i class="fa fa-check-square text-success"></i> Atendidos nos últimos 7 dias</p>
+                                                <h4 class="card-title">{{ seteDiasFechados|intcomma }}</h4>
+                                            </div>
+                                            <div class="col-12 col-md-6 col-lg-3">
+                                                <p class="card-category"><i class="fa fa-check-square text-success"></i> Atendidos nos últimos 30 dias</p>
+                                                <h4 class="card-title">{{ trintaDiasFechados|intcomma }}</h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                                    <div class="row">
+                                        <!-- <div class="col-8">
+                                            <div class="row border-bottom mb-3">
+                                                <div class="col-12">
+                                                    <p class="card-category">Últimos 7 dias</p>
+                                                </div>
+                                                <div class="col-3">
+                                                    <h4 class="card-title">{{ seteDiasAguardando|intcomma }}</h4>
+                                                    <p class="card-category">abertos</p>                                                
+                                                </div>
+                                                <div class="col-3">
+                                                    <h4 class="card-title">{{ seteDiasAndamento|intcomma }}</h4>
+                                                    <p class="card-category">andamento</p>
+                                                </div>
+                                                <div class="col-3">
+                                                    <h4 class="card-title">{{ seteDiasFechados|intcomma }}</h4>
+                                                    <p class="card-category">fechados</p>
+                                                </div>     
+                                                <div class="col-3">
+                                                    <h4 class="card-title">{{ seteDiasTotal|intcomma }}</h4>
+                                                    <p class="card-category">total</p>
+                                                </div>
+                                            </div>
+                                            <div class="row border-bottom mb-3">
+                                                <div class="col-12">
+                                                    <p class="card-category">Últimos 15 dias</p>
+                                                </div>
+                                                <div class="col-3">
+                                                    <h4 class="card-title">{{ quinzeDiasAguardando|intcomma }}</h4>
+                                                    <p class="card-category">abertos</p>
+                                                </div>
+                                                <div class="col-3">
+                                                    <h4 class="card-title">{{ quinzeDiasAndamento|intcomma }}</h4>
+                                                    <p class="card-category">andamento</p>                                                
+                                                </div>
+                                                <div class="col-3">
+                                                    <h4 class="card-title">{{ quinzeDiasFechados|intcomma }}</h4>
+                                                    <p class="card-category">fechados</p>
+                                                </div>
+                                                <div class="col-3">
+                                                    <h4 class="card-title">{{ quinzeDiasTotal|intcomma }}</h4>
+                                                    <p class="card-category">total</p>
+                                                </div>     
+                                            </div>
+                                            <div class="row border-bottom mb-3">
+                                                <div class="col-12">
+                                                    <p class="card-category">Últimos 30 dias</p>
+                                                </div>
+                                                <div class="col-3">
+                                                    <h4 class="card-title">{{ trintaDiasAguardando|intcomma }}</h4>
+                                                    <p class="card-category">abertos</p>
+                                                </div>
+                                                <div class="col-3">
+                                                    <h4 class="card-title">{{ trintaDiasAndamento|intcomma }}</h4>
+                                                    <p class="card-category">andamento</p>
+                                                </div>
+                                                <div class="col-3">
+                                                    <h4 class="card-title">{{ trintaDiasFechados|intcomma }}</h4>
+                                                    <p class="card-category">fechados</p>
+                                                </div>
+                                                <div class="col-3">
+                                                    <h4 class="card-title">{{ trintaDiasTotal|intcomma }}</h4>
+                                                    <p class="card-category">total</p>
+                                                </div>
+                                            </div> 
+                                        </div> -->
+                                    </div>                            
+                            </div>
+                        </div>
+                    </div>
+                    {% for group in request.user.groups.all %}
+                        {% if group.name == 'chefia' %}
+                    <div class="col-12 col-md-6 mb-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <div class="text-center">																						
+                                    <div class="row">
+                                        <div class="col-12 col-md-12 mb-3">
+                                            <div class="row">
+                                                <div class="col-12 col-md-12 col-lg-12 border-bottom mb-2 pb-1">
+                                                    <h5>Contagem de equipamentos</h5>
+                                                    
+                                                            <small><strong>Última atualização: <span class="text-primary">{{equipamentoUltimoCadastro|date:"d/m/Y H:m" }}</span></strong></small>
+                                                       
+                                                </div>
+                                                <div class="col-12 mb-3 border-bottom">
+                                                    <p class="card-category">Total de Equipamentos</p>
+                                                    <h4 class="card-title">{{ equipamentoTotal|intcomma }}</h4>
+                                                </div>
+                                                <div class="col-12 col-md-3">
+                                                    <p class="card-category"><span title="Computadores" data-toggle="tooltip" data-placement="bottom"><i class="fa-solid fa-computer"></i></span> Computador</p>
+                                                    <h4 class="card-title">{{ computadores|intcomma }}</h4>
+                                                </div>                                                        
+                                                <div class="col-12 col-md-3">
+                                                    <p class="card-category"><span title="Monitores" data-toggle="tooltip" data-placement="bottom"><i class="fa-solid  fa-computer"></i></span> Monitores</p>
+                                                    <h4 class="card-title">{{ monitores|intcomma}}</h4>
+                                                </div>
+                                                <div class="col-12 col-md-3">
+                                                    <p class="card-category"><span title="Impressoras" data-toggle="tooltip" data-placement="bottom"><i class="fa-solid fa-print"></i></span> Impressora</p>
+                                                    <h4 class="card-title">{{ impressoras|intcomma }}</h4>
+                                                </div>
+                                                <div class="col-12 col-md-3">
+                                                    <p class="card-category"><span title="Tablets" data-toggle="tooltip" data-placement="bottom"><i class="fa-solid fa-tablet-screen-button"></i></span> Tablet</p>
+                                                    <h4 class="card-title">{{ tablets|intcomma }}</h4>
+                                                </div>
+                                            </div>
+                                        </div>                                
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-12 col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-12 col-md-12 col-lg-12 border-bottom mb-3 text-center">
+                                        <h5><i class="fa-solid fa-clipboard-check text-success"></i></span> Desempenho de chamados</h5>
+                                        <h5>nos últimos 30 dias</h5>                                    
+                                    </div>
+                                    {% if totalChamadosPorTecnicoMensal %}
+                                        {% for tecnico in totalChamadosPorTecnicoMensal %}
+                                                <div class="col-12 mb-3">
+                                                    <p class="card-category text-center "><strong>{{tecnico.nome}}</strong></p>
+                                                    <div class="row border-bottom text-center">
+                                                        <!-- <div class="col-12">
+                                                            <p class="card-category"><span title="Computadores" data-toggle="tooltip" data-placement="bottom"><i class="fa-solid fa-computer"></i></span> Neste mês</p>
+                                                            <h4 class="card-title">{{ tecnico.totalChamados|intcomma }}</h4>
+                                                        </div> -->
+                                                        <div class="col-12">
+                                                            <h4 class="card-title">{{ tecnico.totalChamados|intcomma }}</h4>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                        {% endfor %}
+                                    {% else %}
+                                            <div class="col-12 mb-3">
+                                                <!-- <p class="card-category text-center "><strong>{{tecnico.nome}}</strong></p> -->
+                                                <div class="row border-bottom text-center">                                            
+                                                    <div class="col-12">
+                                                        <p class="card-title">Não há registros desse mês para exibir</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                    {% endif %}
+                                </div>                        
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body">                        
+                                <div class="row">
+                                    <div class="col-12 col-md-12 col-lg-12 border-bottom mb-3 text-center">
+                                        <h5><i class="fa-solid fa-clipboard-check text-success"></i></span> Desempenho histórico</h5>
+                                        <h5>por técnico</h5>
+                                    </div>                                
+                                    <div class="col-12 col-md-12 mb-3">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Técnico</th>
+                                                    <th scope="col">Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for tecnico in totalChamadosPorTecnico %}
+                                                    <tr>
+                                                        <th scope="row">{{ tecnico.nome }}</th>
+                                                        <td>{{tecnico.totalChamados}}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <!-- <div class="text-center"> -->
+                                    <div class="row">
+                                        <div class="col-12 col-md-12 col-lg-12 border-bottom mb-3 text-center">
+                                            <h5><i class="fa-solid fa-clipboard-check text-success"></i> Todos chamados por unidade</h5>                                   
+                                        </div>     
+                                        <div class="col-12 col-md-12 mb-3">
+                                            <table class="table table-hover tabela-listar">
+                                                <thead>
+                                                    <tr>
+                                                    <th scope="col">Unidade</th>
+                                                    <th scope="col">Total</th>                                                    
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for unidade in totalChamadosPorUnidade %}
+                                                        <tr>
+                                                            <th scope="row">{{ unidade.unidade }}</th>
+                                                            <td>{{ unidade.totalChamados }}</td>                                                            
+                                                        </tr>                                                        
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                <!-- </div> -->
+                            </div>
+                        </div>
+                    </div>
+                    {%endif%}
+                    {%endfor%}
+                </div>
+            </div>
+            {%endif%}
+        {%endfor%}
+            
+    <div class="tab-pane fade show active py-2" id="abertos" role="tabpanel" aria-labelledby="abertos-tab">
+        <div class="d-block d-sm-none">
+            <div class="row my-1 py-1 border text-center">
+                <div class="col-12 my-0 py-0 ">                    
+                    <p class=""><strong>Total de chamados abertos</strong></p>
+                    <h4 class="">{{ aguardandoTotal|intcomma }}</h4>
+                </div>
+            </div>
+            {% for chamado in object_list %}
+                {% if chamado.status != 4 and chamado.status != 5 and chamado.status != 6 %}
+                    <div class="accordion mb-1 py-0" id="accordionExample">
+                        <div class="card my-0 py-0">
+                        <div class="card-body my-0 py-0" id="">
+                            <h6 class="my-0 py-0">
+                            <button class="btn btn-sm btn-block collapsed my-0 py-0" type="button" data-toggle="collapse" data-target="#collapse{{chamado.pk}}" aria-expanded="true" aria-controls="collapseOne">
+                                <div class="col-12 my-0 py-0 text-left">
+                                    <p class="my-0 py-0"><i class="fa fa-calendar-check"></i>  {{ chamado.dataAbertura|date:"d/m/Y"  }} às {{ chamado.dataAbertura|date:"H:m" }}
+                                    </p>
+                                    <p class="my-0 py-0">{{ chamado.unidade }}</p>
+                                    <p class="mb-1 pb-1">Assunto:
+                                        {% if chamado.assunto == 1 %}
+                                            Computador
+                                        {% elif chamado.assunto == 2 %}
+                                            Impressora
+                                        {% elif chamado.assunto == 3 %}
+                                            Internet
+                                        {% elif chamado.assunto == 4 %}
+                                            Outros
+                                        {% endif %}</p>
+                                </div>
+                            </button>
+                            </h6>
+                        </div>
+                    
+                        <div id="collapse{{chamado.pk}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                            <div class="card-body">                                        
+                                <p><strong>Data de Abertura</strong> {{ chamado.dataAbertura|date:"d/m/Y"  }} às {{ chamado.dataAbertura|date:"H:m" }}</p>
+                                <hr>
+                                <p title="Aberto por: {{ chamado.createdBy_user.first_name }} {{ chamado.createdBy_user.last_name }}" data-toggle="tooltip" ><strong>Solicitante:</strong> {{ chamado.solicitante }}</p>
+                                <p><strong>Descrição:</strong> {{ chamado.ocorrencia }}</p>
+                                <a href="{% url 'update-chamado' chamado.id %}" class="btn btn-warning btn-block btn-sm" title="Editar Chamado">
+                                    <i class="fa fa-pencil" aria-hidden="true"></i> Ver detalhes
+                                </a>
+                                <a href="{% url 'delete-chamado' chamado.id %}" class="btn btn-danger btn-block btn-sm" title="Excluir chamado">
+                                    <i class="fa fa-trash" aria-hidden="true"></i> Excluir Chamado
+                                </a>
+                            </div>                            
+                        </div>
+                        </div>
+                    </div>
+                {% endif %}
+                {% empty %}
+                    <div class="col">
+                        Nenhum registrado encontrado.
+                        
+                    </div>
+            {% endfor %}
+        </div>
+
+
+        <div class="table-responsive d-none d-sm-block">
+            <table class="table table-striped tabela-listar">
+                <thead>
+                    <tr>                        
+                        <th><i class="fas fa-calendar-alt"></i> Data Abertura</th>
+                        <th><i class="fas fa-user-nurse"></i> Solicitante</th>
+                        <th><i class="fas fa-clinic-medical"></i> Unidade</th>
+                        <th><i class="fas fa-file-alt"></i> Ocorrência</th>
+                        
+                        <!-- <th><i class="fas fa-tools"></i> Técnico</th>                 -->
+                        <!-- <th><i class="fas fa-calendar-alt"></i> Data Operação</th>                 -->
+                        <!-- <th><i class="fas fa-calendar-alt"></i> Data Resolução</th>                 -->
+                        <!-- <th><i class="fas fa-comment-dots"></i> Obs</th> -->
+                        <!-- <th><i class="fas fa-info-circle"></i> Status</th> -->
+                        <th>Opção <i class="fas fa-ellipsis-v"></i></th>                        
+                    </tr>
+                </thead>
+        
+                <tbody>
+                    {% for chamado in object_list %}
+                        {% if chamado.status != 4 and chamado.status != 5 and chamado.status != 6 %}
+                            <tr>
+                                <td>{{ chamado.dataAbertura|date:"d/m/Y"  }} às {{ chamado.dataAbertura|date:"H:m" }}</td>
+                                <td title="Aberto por: {{ chamado.createdBy_user.first_name }} {{ chamado.createdBy_user.last_name }}" data-toggle="tooltip">{{ chamado.solicitante }}</td>
+                                <td>{{ chamado.unidade }}</td>
+                                <td>{{ chamado.ocorrencia }}</td>
+                                
+                                <!-- <td>{{ chamado.tecnico|default_if_none:"-" }}</td> -->
+                                <!-- <td>{{ chamado.dataOperacao|date:"d/m/Y" }}</td> -->
+                                <!-- <td>{{ chamado.dataResolucao|date:"d/m/Y" }}</td> -->                                
+                                    <!-- <td>{{ chamado.observacao|default_if_none:"-" }}</td>                                 -->
+                
+                                <!-- {% if chamado.status == 1 %}
+                                    <td>Aguardando atendimento</td>
+                                {% elif chamado.status == 2 %}
+                                    <td>Aguardando peça de reposição</td>
+                                {% elif chamado.status == 3 %}
+                                    <td>Em andamento</td>
+                                {% elif chamado.status == 4 %}
+                                    <td>Concluído</td>
+                                {% elif chamado.status == 5 %}
+                                    <td>Não tem conserto</td>
+                                {% elif chamado.status == 6 %}
+                                    <td>Equipamento depreciado</td>
+                                {% endif %} -->
+                                <td>
+                                    <a href="{% url 'update-chamado' chamado.id %}" class="btn btn-warning btn-sm" title="Editar">
+                                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                                    </a>
+                                    <a href="{% url 'delete-chamado' chamado.id %}" class="btn btn-danger btn-sm" title="Excluir chamado">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% empty %}
+                    <tr>
+                        <td colspan="5">Nenhum registrado encontrado.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                    
+            </table>
+        </div>
+    </div>
+    
+    <!-- ABA CONCLUÍDOS -->
+    <div class="tab-pane fade py-5" id="fechados" role="tabpanel" aria-labelledby="fechados-tab">
+
+        <div class="table-responsive">
+            <table class="table table-striped tabela-listar">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-calendar-alt"></i> Data Abertura</th>
+                        <th><i class="fas fa-user-nurse"></i> Solicitante</th>
+                        <th><i class="fas fa-clinic-medical"></i> Unidade</th>
+                        <th><i class="fas fa-file-alt"></i> Ocorrência</th>                
+                        <th><i class="fas fa-tools"></i> Técnico</th>                
+                        <th><i class="fas fa-calendar-alt"></i> Data Operação</th>                
+                        <th><i class="fas fa-calendar-alt"></i> Data Resolução</th>                
+                        <th><i class="fas fa-comment-dots"></i> Obs</th>
+                        <th><i class="fas fa-info-circle"></i> Status</th>
+                        <th>Opção <i class="fas fa-ellipsis-v"></i></th>
+                        
+                    </tr>
+                </thead>
+        
+                <tbody>
+                    {% for chamado in object_list %}
+                        {% if chamado.status == 4 %}
+                            <tr>
+                                <td>{{ chamado.dataAbertura|date:"d/m/Y"  }} às {{ chamado.dataAbertura|date:"H:m" }}</td>
+                                <td title="Aberto por: {{ chamado.createdBy_user.first_name }} {{ chamado.createdBy_user.last_name }}" data-toggle="tooltip">{{ chamado.solicitante }}</td>
+                                <td>{{ chamado.unidade }}</td>
+                                <td>{{ chamado.ocorrencia }}</td>
+                                {% if chamado.tecnico == None %}
+                                    <td>Não Atribuído</td>
+                                {% else %}
+                                    <td>{{ chamado.tecnico }}</td>
+                                {% endif %}
+                                <td>{{ chamado.dataOperacao|date:"d/m/Y" }}</td>
+                                <td>{{ chamado.dataResolucao|date:"d/m/Y" }}</td>
+                                {% if chamado.tecnico == None %}
+                                    <td>-</td>
+                                {% else %}
+                                    <td>{{ chamado.observacao }}</td>
+                                {% endif %}
+                
+                                {% if chamado.status == 1 %}
+                                    <td>Aguardando atendimento</td>
+                                {% elif chamado.status == 2 %}
+                                    <td>Aguardando peça de reposição</td>
+                                {% elif chamado.status == 3 %}
+                                    <td>Em andamento</td>
+                                {% elif chamado.status == 4 %}
+                                    <td>Concluído</td>
+                                {% elif chamado.status == 5 %}
+                                    <td>Não tem conserto</td>
+                                {% elif chamado.status == 6 %}
+                                    <td>Equipamento depreciado</td>
+                                {% endif %}
+                                <td>
+                                    <a href="{% url 'update-chamado' chamado.id %}" class="btn btn-warning btn-sm" title="Editar">
+                                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                                    </a>
+                                    <a href="{% url 'delete-chamado' chamado.id %}" class="btn btn-danger btn-sm" title="Excluir chamado">
+                                        <i class="fa fa-trash" aria-hidden="true"></i> 
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% empty %}
+                    <tr>
+                        <td colspan="9">Nenhum registrado encontrado.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>                    
+            </table>
+        </div>
+
+    </div>
+
+    <!-- ABA SEM CONSERTO -->
+    <div class="tab-pane fade py-5" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+        
+        <div class="table-responsive">
+            <table class="table table-striped tabela-listar">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-calendar-alt"></i> Data Abertura</th>
+                        <th><i class="fas fa-user-nurse"></i> Solicitante</th>
+                        <th><i class="fas fa-clinic-medical"></i> Unidade</th>
+                        <th><i class="fas fa-file-alt"></i> Ocorrência</th>                
+                        <th><i class="fas fa-tools"></i> Técnico</th>                
+                        <th><i class="fas fa-calendar-alt"></i> Data Operação</th>                
+                        <th><i class="fas fa-calendar-alt"></i> Data Resolução</th>                
+                        <th><i class="fas fa-comment-dots"></i> Obs</th>
+                        <th><i class="fas fa-info-circle"></i> Status</th>
+                        <th>Opção <i class="fas fa-ellipsis-v"></i></th>
+                        
+                    </tr>
+                </thead>
+        
+                <tbody>
+                    {% for chamado in object_list %}
+                        {% if chamado.status == 5 %}
+                            <tr>
+                                <td>{{ chamado.dataAbertura|date:"d/m/Y"  }} às {{ chamado.dataAbertura|date:"H:m" }}</td>
+                                <td title="Aberto por: {{ chamado.createdBy_user.first_name }} {{ chamado.createdBy_user.last_name }}" data-toggle="tooltip">{{ chamado.solicitante }}</td>
+                                <td>{{ chamado.unidade }}</td>
+                                <td>{{ chamado.ocorrencia }}</td>
+                                {% if chamado.tecnico == None %}
+                                    <td>Não Atribuído</td>
+                                {% else %}
+                                    <td>{{ chamado.tecnico_id }}</td>
+                                {% endif %}
+                                <td>{{ chamado.dataOperacao|date:"d/m/Y" }}</td>
+                                <td>{{ chamado.dataResolucao|date:"d/m/Y" }}</td>
+                                {% if chamado.observacao|default_if_none:"-" %}                                    
+                                    <td>{{ chamado.observacao }}</td>
+                                {% endif %}
+                
+                                {% if chamado.status == 1 %}
+                                    <td>Aguardando atendimento</td>
+                                    {% elif chamado.status == 2 %}
+                                    <td>Aguardando peça de reposição</td>
+                                    {% elif chamado.status == 3 %}
+                                    <td>Em andamento</td>
+                                    {% elif chamado.status == 4 %}
+                                    <td>Concluído</td>
+                                    {% elif chamado.status == 5 %}
+                                    <td>Não tem conserto</td>
+                                    {% elif chamado.status == 6 %}
+                                    <td>Equipamento depreciado</td>
+                                {% endif %}
+                                <td>
+                                    <a href="{% url 'update-chamado' chamado.id %}" class="btn btn-warning btn-sm" title="Editar">
+                                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                                    </a>
+                                    <a href="{% url 'delete-chamado' chamado.id %}" class="btn btn-danger btn-sm" title="Excluir chamado">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% empty %}
+                    <tr>
+                        <td colspan="9">Nenhum registrado encontrado.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                    
+            </table>
+        </div>
+
+    </div>
+
+    <div class="tab-pane fade py-5" id="depreciados" role="tabpanel" aria-labelledby="depreciados-tab">
+    
+        <div class="table-responsive">
+            <table class="table table-striped tabela-listar">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-calendar-alt"></i> Data Abertura</th>
+                        <th><i class="fas fa-user-nurse"></i> Solicitante</th>
+                        <th><i class="fas fa-clinic-medical"></i> Unidade</th>
+                        <th><i class="fas fa-file-alt"></i> Ocorrência</th>
+                        <th><i class="fas fa-tools"></i> Técnico</th>
+                        <th><i class="fas fa-calendar-alt"></i> Data Operação</th>
+                        <th><i class="fas fa-calendar-alt"></i> Data Resolução</th>
+                        <th><i class="fas fa-comment-dots"></i> Obs</th>
+                        <th><i class="fas fa-info-circle"></i> Status</th>
+                        <th>Opção <i class="fas fa-ellipsis-v"></i></th>
+    
+                    </tr>
+                </thead>
+    
+                <tbody>
+                    {% for chamado in object_list %}
+                        {% if chamado.status == 6 %}
+                            <tr>
+                                <td>{{ chamado.dataAbertura|date:"d/m/Y"  }} às {{ chamado.dataAbertura|date:"H:m" }}</td>
+                                <td title="Aberto por: {{ chamado.createdBy_user.first_name }} {{ chamado.createdBy_user.last_name }}" data-toggle="tooltip">{{ chamado.solicitante }}</td>
+                                <td>{{ chamado.unidade }}</td>
+                                <td>{{ chamado.ocorrencia }}</td>
+                                {% if chamado.tecnico == None %}
+                                    <td>Não Atribuído</td>
+                                {% else %}
+                                    <td>{{ chamado.tecnico }}</td>
+                                {% endif %}
+                                <td>{{ chamado.dataOperacao|date:"d/m/Y" }}</td>
+                                <td>{{ chamado.dataResolucao|date:"d/m/Y" }}</td>
+                                {% if chamado.tecnico == None %}
+                                    <td>-</td>
+                                {% else %}
+                                    <td>{{ chamado.observacao }}</td>
+                                {% endif %}
+        
+                                {% if chamado.status == 1 %}
+                                <td>Aguardando atendimento</td>
+                                {% elif chamado.status == 2 %}
+                                <td>Aguardando peça de reposição</td>
+                                {% elif chamado.status == 3 %}
+                                <td>Em andamento</td>
+                                {% elif chamado.status == 4 %}
+                                <td>Concluído</td>
+                                {% elif chamado.status == 5 %}
+                                <td>Não tem conserto</td>
+                                {% elif chamado.status == 6 %}
+                                <td>Equipamento depreciado</td>
+                                {% endif %}
+                                    <td>
+                                        <a href="{% url 'update-chamado' chamado.id %}" class="btn btn-warning btn-sm" title="Editar">
+                                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                                        </a>
+                                        <a href="{% url 'delete-chamado' chamado.id %}" class="btn btn-danger btn-sm" title="Excluir chamado">
+                                            <i class="fa fa-trash" aria-hidden="true"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                        {% endif %}
+                        {% empty %}
+                        <tr>
+                            <td colspan="9">Nenhum registrado encontrado.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+    
+            </table>
+        </div>
+    
+    </div>
+  </div>
+
+{% endblock %}
+
+
+
+{% block scripts %}
+<script>
+    $(".tabela-listar").DataTable({
+        responsive: true,
+        // "bSort": false,
+        "aaSorting": [],
+        // "order": [[0, 'asc']],
+        "pageLength": 10,
+        "lengthMenu": [
+            [10, 25, 50, -1],
+            [10, 25, 50, 'todos']
+        ],
+        "language": {
+            "decimal": "",
+            "emptyTable": "Sem dados disponíveis",
+            "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+            "infoEmpty": "Mostrando de 0 até 0 de 0 registros",
+            "infoFiltered": "(filtrado de _MAX_ registros no total)",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "loadingRecords": "A carregar dados...",
+            "processing": "A processar...",
+            "search": "Procurar:",
+            "zeroRecords": "Não foram encontrados resultados",
+            "paginate": {
+                "first": "Primeiro",
+                "last": "Último",
+                "next": "Seguinte",
+                "previous": "Anterior"
+            },
+            "aria": {
+                "sortAscending": ": ordem crescente",
+                "sortDescending": ": ordem decrescente"
+            }
+        }
+    });
+</script>
+{% endblock %}
+
+{% block rodape-links %}
+
+{% endblock %}
+
